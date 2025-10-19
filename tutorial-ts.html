@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TypeScript 蹇€熶笂鎵嬩笌瀹炴垬</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <style>.hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0} .icons{display:flex;gap:12px;margin:8px 0} .icons img{width:48px;height:48px}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
+    <h1>TypeScript 上手指南</h1>
+    <p>绫诲瀷系统銆佹硾鍨嬨€佹ā鍧椼€佸伐绋嬪疄璺典笌甯歌鍧戙€?/p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="缂栫▼涔嬫梾" />
+    <div class="icons">
+      <img src="assets/icon-beginner.svg" alt="鏂版墜" />
+      <img src="assets/icon-project.svg" alt="椤圭洰" />
+      <img src="assets/icon-debug.svg" alt="璋冭瘯" />
+    </div>
+    <h2>瀹夎涓庣幆澧?/h2>
+    <ul>
+      <li>瀹夎锛?code>npm i -D typescript</code>锛屽垵濮嬪寲 <code>tsc --init</code>銆?/li>
+      <li>杩愯锛歂ode.js + <code>ts-node</code> 鎴栫紪璇戝悗杩愯銆?/li>
+      <li>鍓嶇锛歏ite/webpack锛岄厤缃?<code>tsconfig.json</code> 鍜岃矾寰勫埆鍚嶃€?/li>
+    </ul>
+    <h2>基础璇硶</h2>
+    <pre><code>// 绫诲瀷涓庢帴鍙?type Id = number | string;
+interface User { id: Id; name: string; age?: number }
+// 娉涘瀷
+function wrap<T>(value: T){ return { value } }
+// 鏋氫妇涓庡瓧闈㈤噺绫诲瀷
+type Direction = 'up'|'down';
+// 绫诲瀷鏀剁獎
+function len(x: string | string[]){ return Array.isArray(x) ? x.length : x.length }
+// 妯″潡涓庡鍏?export function add(a:number,b:number){ return a+b }
+</code></pre>
+    <h2>甯歌鍧?/h2>
+    <ul>
+      <li><code>any</code> 婊ョ敤锛氫紭鍏?<code>unknown</code> 涓庣被鍨嬫敹绐勩€?/li>
+      <li>绫诲瀷鏂█锛氳皑鎱庝娇鐢?<code>as</code>锛岄伩鍏嶆帺鐩栫湡瀹為棶棰樸€?/li>
+      <li>this 涓婁笅鏂囷細绠ご鍑芥暟閬垮厤 <code>this</code> 缁戝畾閿欒銆?/li>
+    </ul>
+    <h2>缁冧範棰?/h2>
+    <ol>
+      <li>灏佽涓€涓?<code>Result&lt;T,E&gt;</code> 绫诲瀷骞剁紪鍐欏伐鍏峰嚱鏁般€?/li>
+      <li>瀹炵幇涓€涓被鍨嬪畨鍏ㄧ殑浜嬩欢鎬荤嚎銆?/li>
+      <li>缁?REST 鍝嶅簲寤烘ā锛屽寘鍚垎椤典笌閿欒绫诲瀷銆?/li>
+    </ol>
+    <h2>缁欏畬鍏ㄦ柊鎵嬶細绗竴姝ユ€庝箞鍋?/h2>
+    <ol>
+      <li>瀹夎 Node.js 涓?TypeScript锛涘垵濮嬪寲 <code>tsc --init</code>銆?/li>
+      <li>鏂板缓 <code>index.ts</code> 鍐?Hello锛涗娇鐢?<code>ts-node</code> 鎴栫紪璇戝悗杩愯銆?/li>
+      <li>鍒涘缓椤圭洰缁撴瀯涓?<code>tsconfig.json</code>锛屾坊鍔犺矾寰勫埆鍚嶃€?/li>
+      <li>寮曞叆绗笁鏂圭被鍨嬪０鏄庯紝纭繚缂栬緫鍣ㄦ彁绀哄畬鏁淬€?/li>
+    </ol>
+    <h2>椤圭洰瀹炴垬锛堝叆闂級</h2>
+    <ol>
+      <li>绫诲瀷瀹夊叏鐨勪簨浠舵€荤嚎銆?/li>
+      <li>鍒嗛〉涓庨敊璇被鍨嬪缓妯＄殑 REST 瀹㈡埛绔€?/li>
+      <li>灏忓瀷鍓嶇缁勪欢搴擄細鎸夐挳銆佽緭鍏ユ銆佸崱鐗囥€?/li>
+    </ol>
+    <h2>涓鎻掑浘</h2>
+    <img class="hero-img" src="assets/diagram-architecture.svg" alt="鏋舵瀯绀烘剰鍥? />
+    <img class="hero-img" src="assets/illustration-code.svg" alt="浠ｇ爜绀烘剰鍥? />
+
+    <h2>杩涢樁鍐呭</h2>
+    <ul>
+      <li>楂樼骇绫诲瀷锛氭潯浠剁被鍨嬨€佹槧灏勭被鍨嬩笌绫诲瀷浣撴搷銆?/li>
+      <li>搴撹璁★細API 璁捐涓?<code>tsup</code>/<code>vite</code> 鎵撳寘銆?/li>
+      <li>鍓嶇宸ョ▼锛?code>eslint</code>/<code>prettier</code>/<code>vitest</code> 闆嗘垚銆?/li>
+    </ul>
+    <h2>鏇村缁冧範</h2>
+    <ol>
+      <li>瀹炵幇涓€涓己绫诲瀷 <code>fetch</code> 灏佽锛屾敮鎸佸垎椤典笌閿欒銆?/li>
+      <li>缂栧啓涓€涓〃鍗曟牎楠屽簱锛岀被鍨嬪畨鍏ㄣ€佸彲鎵╁睍銆?/li>
+      <li>鎼缓缁勪欢搴撳苟鍙戝竷鍒?npm锛堢鍖呬害鍙級銆?/li>
+    </ol>
+  <hr/>
+<section id="theory-index">
+  <h2>理论与论文到代码索引（TypeScript）</h2>
+  <ul>
+    <li><a href="./tutorial-p2c-mapreduce.html">MapReduce（概念）</a>；前端可用于数据处理与可视化演示。</li>
+  </ul>
+</section>
+ </main>
+  <section style="max-width:920px;margin:0 auto;padding:0 16px;">
+    <h2>鏉冨▉璧勬簮</h2>
+    <ul>
+      <li><a href="https://www.typescriptlang.org/docs/" target="_blank" rel="noopener">TypeScript 官方文档</a>锛堢被鍨嬬郴缁熶笌缂栬瘧鍣級</li>
+      <li><a href="https://www.typescriptlang.org/tsconfig" target="_blank" rel="noopener">TSConfig 鍙傝€?/a>锛堥」鐩厤缃瑙ｏ級</li>
+      <li><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html" target="_blank" rel="noopener">Utility Types</a>锛堝父鐢ㄥ唴缃伐鍏风被鍨嬶級</li>
+  </ul>
+  <h2>系统瀛︿範璺緞</h2>
+    <ol>
+      <li>绫诲瀷基础锛氳仈鍚?浜ゅ弶銆佹硾鍨嬨€佹潯浠朵笌鏄犲皠绫诲瀷銆?/li>
+      <li>宸ョ▼鍖栵細閰嶇疆涓庣紪璇戙€丩int 涓庢牸寮忓寲銆佹祴璇曚笌绫诲瀷娴嬭瘯銆?/li>
+      <li>鍓嶅悗绔崗浣滐細鍓嶇妗嗘灦 TS 鍖栥€佸悗绔被鍨嬪叡浜€丄PI 绫诲瀷瀹堟姢銆?/li>
+    </ol>
+    <h2>杩涢樁椤圭洰</h2>
+    <ol>
+      <li>绫诲瀷瀹夊叏鐨勫墠绔姸鎬佷笌鎺ュ彛灞傦紙閿欒杈圭晫/閲嶈瘯/缂撳瓨锛夈€?/li>
+      <li>Monorepo 绫诲瀷鍏变韩锛氬寘闂寸被鍨嬬粺涓€銆佸彂甯冩祦绋嬩笌鏍￠獙銆?/li>
+      <li>绫诲瀷椹卞姩鐨勮〃鍗曠郴缁燂細Schema鈫掔被鍨嬧啋娓叉煋涓庢牎楠屻€?/li>
+    </ol>
+  </section>
+  <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
+    <h2>加长版：工程化与进阶（TypeScript）</h2>
+    <p>面向能落地项目的 TS 指南：类型系统进阶、工具类型、类型缩小、tsconfig 配置、测试与工具链、后端/前端快速上手，以及 10 道练习题。</p>
+
+    <h3>类型系统进阶与工具类型</h3>
+    <pre><code>// 联合/交叉/字面量/可辨识联合
+type Id = number | string
+type WithMeta<T> = T & { createdAt: Date }
+type Direction = 'up' | 'down'
+interface Shape { kind: 'circle'|'rect'; area(): number }
+
+// 工具类型：Partial/Pick/Omit/Readonly/Record/Required/NonNullable
+type User = { id: Id; name: string; age?: number }
+type UserPatch = Partial<User>
+type UserView = Pick<User, 'id'|'name'>
+type UserRequired = Required<User>
+type Dict = Record<string, number>
+    </code></pre>
+    <p>建议：优先用类型表达业务约束（可辨识联合 + 类型缩小），减少运行时分支错误。</p>
+
+    <h3>类型缩小与守卫</h3>
+    <pre><code>function len(x: string | string[]) {
+  if (Array.isArray(x)) return x.length; // 缩小到 string[]
+  return x.length; // string
+}
+
+function handle(u: User | null) {
+  if (!u) return;
+  // 在此之后 u: User
+}
+    </code></pre>
+
+    <h3>泛型与约束</h3>
+    <pre><code>function wrap<T>(value: T) { return { value } }
+function top<T extends { score: number }>(arr: T[]) {
+  return [...arr].sort((a,b)=>b.score-a.score)[0]
+}
+    </code></pre>
+
+    <h3>模块与 tsconfig（严格模式强烈推荐）</h3>
+    <pre><code>{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}
+    </code></pre>
+    <p>使用严格模式能提前发现大量类型/可空性问题，减少线上错误。</p>
+
+    <h3>测试与工具链</h3>
+    <pre><code>// 安装：npm i -D jest ts-jest @types/jest
+// 初始化：npx ts-jest config:init
+// 示例：src/add.ts 与 tests/add.test.ts
+
+export const add = (a:number,b:number)=>a+b
+
+test('add', () => {
+  expect(add(1,2)).toBe(3)
+})
+
+// 代码质量：eslint + prettier
+// 打包：tsup/vite/esbuild（小型库推荐 tsup）
+    </code></pre>
+
+    <h3>后端：Node + Express + TS 快速起步</h3>
+    <pre><code>// 安装：npm i express && npm i -D @types/express ts-node-dev
+import express, { Request, Response } from 'express'
+const app = express()
+app.use(express.json())
+app.get('/ping', (_req: Request, res: Response) => res.json({ ok: true }))
+app.post('/sum', (req: Request, res: Response) => {
+  const arr: number[] = req.body || []
+  res.json({ sum: arr.reduce((a,b)=>a+b, 0) })
+})
+app.listen(3000)
+// 开发运行：ts-node-dev src/index.ts
+    </code></pre>
+
+    <h3>前端：React + TS 快速起步</h3>
+    <pre><code>// 使用 Vite：npm create vite@latest my-app -- --template react-ts
+// 组件示例
+type ButtonProps = { text: string; onClick?: ()=>void }
+export function Button({text,onClick}: ButtonProps){
+  return &lt;button onClick={onClick}&gt;{text}&lt;/button&gt;
+}
+    </code></pre>
+
+    <h3>练习题（10 题）</h3>
+    <ol>
+      <li>实现 <code>Result&lt;T,E&gt;</code> 类型与配套工具函数 <code>ok/err/isOk</code>。</li>
+      <li>编写 <code>fetchJSON(url)</code>，返回 <code>Promise&lt;Result&lt;unknown,Error&gt;&gt;</code>。</li>
+      <li>为 Express 项目补全请求/响应的类型，避免 <code>any</code>。</li>
+      <li>实现一个 <code>retry(fn, tries)</code> 的工具函数（TS + Jest 测试）。</li>
+      <li>用工具类型实现 <code>DeepPartial&lt;T&gt;</code> 与 <code>DeepReadonly&lt;T&gt;</code>。</li>
+      <li>为 React 组件添加严格的 Props 类型与默认值，检查交互事件。</li>
+      <li>配置 <code>eslint/prettier</code>，并为项目添加 <code>npm run lint</code>/<code>format</code>。</li>
+      <li>使用 <code>tsup</code> 打包一个小型库并发布到 npm（可用私有 scoped 包）。</li>
+      <li>编写 <code>zod</code> 或 <code>yup</code> 的数据校验 Schema 并与 API 结合。</li>
+      <li>使用 <code>vitest</code> 或 Jest 为核心业务写 5 个单测与 1 个集成测。</li>
+    </ol>
+  </main>
+<script src="script.js"></script>
+</body>
+</html>
+
+
+
+

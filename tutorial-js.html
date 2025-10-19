@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JavaScript 上手指南</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <style>.hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0} .icons{display:flex;gap:12px;margin:8px 0} .icons img{width:48px;height:48px}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
+    <h1>JavaScript 上手指南</h1>
+    <p>覆盖基础语法、浏览器与 Node.js 环境、常见概念与问题。按练习推进，尽快做到“能跑能用”。</p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="开发与学习插画" />
+    <div class="icons">
+      <img src="assets/icon-beginner.svg" alt="新手" />
+      <img src="assets/icon-project.svg" alt="项目" />
+      <img src="assets/icon-debug.svg" alt="调试" />
+    </div>
+    <h2>安装与环境</h2>
+    <ul>
+      <li>Node.js：推荐 LTS，使用 <code>nvm-windows</code> 管理版本。</li>
+      <li>包管理：<code>npm</code> / <code>pnpm</code> / <code>yarn</code>，推荐 <code>pnpm</code>。</li>
+      <li>浏览器：使用 DevTools 的 Console 与 Network 面板调试。</li>
+    </ul>
+    <h2>完整新手路径：第一步怎么做</h2>
+    <ol>
+      <li>安装 Node.js（LTS），推荐 <code>nvm-windows</code> 管理版本。</li>
+      <li>VS Code 安装官方 JS/TS 扩展，熟悉终端与调试面板。</li>
+      <li>新建文件夹 <code>learn-js</code>，新建 <code>hello.js</code>：<code>console.log('Hello')</code>。</li>
+      <li>在终端运行：<code>node hello.js</code>；改为 <code>console.log(1+2)</code> 再运行。</li>
+      <li>用浏览器 Console 试验：按 F12 打开 DevTools，输入 JS 表达式。</li>
+    </ol>
+
+    <h2>基础语法</h2>
+    <pre><code>// 变量与常量
+let a = 1; const b = 2;
+// 模板字符串
+const s = `sum=${a+b}`;
+// 解构与展开
+const obj = {x:1,y:2}; const {x} = obj; const obj2 = {...obj, z:3};
+// 可选链与空值合并
+const city = user?.profile?.city ?? "unknown";
+// 异步与 Promise
+async function fetchJSON(url){
+  const res = await fetch(url);
+  if(!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+</code></pre>
+    <h2>如何运行与调试</h2>
+    <ul>
+      <li>Node.js：<code>node your_script.js</code>；部分工具支持 <code>--watch</code> 自动重载。</li>
+      <li>浏览器：使用 Console、Network、Sources 面板断点调试。</li>
+      <li>模块化：在 Node 中用 <code>import/export</code> 需设置 <code>"type":"module"</code> 或使用 <code>require</code>。</li>
+    </ul>
+
+    <h2>常见坑</h2>
+    <ul>
+      <li>隐式类型转换：尽量用全等 <code>===</code>，避免松散比较引发问题。</li>
+      <li>异步错误：在 <code>async</code> 中使用 <code>try/catch</code> 或 <code>.catch()</code>。</li>
+      <li>作用域与循环：<code>for(let i...)</code>；避免 <code>var</code> 带来的函数作用域陷阱。</li>
+    </ul>
+    <h2>项目入门</h2>
+    <ol>
+      <li>命令行工具：读取一个文本文件，统计词频并输出前 20。</li>
+      <li>网页抓取：请求一个新闻站点，提取标题列表并保存为 CSV。</li>
+      <li>小型前端页面：待办事项，支持新增/完成/删除，数据保存到 <code>localStorage</code>。</li>
+    </ol>
+    <h2>配图</h2>
+    <img class="hero-img" src="assets/diagram-flow.svg" alt="流程示意图" />
+    <img class="hero-img" src="assets/illustration-code.svg" alt="代码示意图" />
+
+    <h2>扩展内容</h2>
+    <ul>
+      <li>工具链：ESLint/Prettier/Vitest 与 CI 集成。</li>
+      <li>性能：避免长任务；使用 Web Workers 与懒加载。</li>
+      <li>工程化：Monorepo（npm workspace）与发布流程。</li>
+    </ul>
+    <h2>练习题</h2>
+    <ol>
+      <li>编写一个请求重试函数，支持次数与退避策略。</li>
+      <li>实现一个简单的事件总线 <code>on/emit/off</code>。</li>
+      <li>写一个并发控制器，限制同时进行的任务数量。</li>
+    </ol>
+
+    <h2>国内网络建议</h2>
+    <ul>
+      <li>使用国内镜像源（如 <code>npmmirror.com</code>）：<code>npm config set registry https://registry.npmmirror.com/</code></li>
+      <li>遇到网络受限，优先使用本地“国内模式”和代理下载（本站提供）。</li>
+      <li>图片/脚本加载失败时，打开 DevTools 查看具体错误与失败 URL。</li>
+    </ul>
+
+    <h2>参考资源</h2>
+    <ul>
+      <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript" target="_blank" rel="noopener">MDN JavaScript 指南</a>（语法与运行时）</li>
+      <li><a href="https://nodejs.org/en/docs" target="_blank" rel="noopener">Node.js 官方文档</a>（API 与实践）</li>
+      <li><a href="https://tc39.es/" target="_blank" rel="noopener">TC39 提案</a>（理解新语法演进）</li>
+    </ul>
+
+    <h2>系统化学习路径</h2>
+    <ol>
+      <li>语言能力：JS 基础、ES6+、异步与模块、TypeScript（可选）。</li>
+      <li>浏览器开发：DOM/事件、存储、网络、性能与可访问性。</li>
+      <li>工程与全栈：打包构建、测试、CI/CD、Node.js 服务与数据库。</li>
+    </ol>
+
+    <h2>进阶项目</h2>
+    <ol>
+      <li>可测试、可观察的前端组件框架（路由、状态、覆盖率）。</li>
+      <li>Serverless 全栈板：前端 + API 网关 + 云函数 + 存储。</li>
+      <li>实时协作应用：WebSocket/RTC、CRDT/OT，同步与冲突解决。</li>
+    </ol>
+
+    <hr/>
+    <section id="theory-index">
+      <h2>理论与论文到代码索引（JavaScript）</h2>
+      <ul>
+        <li><a href="./tutorial-p2c-mapreduce.html">MapReduce（概念）</a>；前端可用于数据处理与可视化演示。</li>
+      </ul>
+    </section>
+  </main>
+  <section style="max-width:920px;margin:0 auto;padding:0 16px;">
+    <h2>模块系统详解</h2>
+    <p>现代 JS 推荐使用 ES Modules（<code>import/export</code>）。在 Node.js 使用需设置 <code>package.json</code> 中的 <code>"type":"module"</code>，或将文件扩展名设为 <code>.mjs</code>；在浏览器中则通过 <code>&lt;script type="module"&gt;</code> 引入。</p>
+    <pre><code>// math.js
+export function add(a,b){ return a+b }
+// main.mjs
+import { add } from './math.js'
+console.log(add(1,2))
+    </code></pre>
+
+    <h2>异步进阶：Promise、async/await、并发控制</h2>
+    <pre><code>// 封装请求：失败重试与指数退避
+async function fetchRetry(url, times=3, baseDelay=300){
+  for(let i=0;i<times;i++){
+    try{
+      const res = await fetch(url);
+      if(!res.ok) throw new Error(res.statusText);
+      return await res.json();
+    }catch(e){
+      if(i === times-1) throw e;
+      const wait = baseDelay * Math.pow(2, i);
+      await new Promise(r => setTimeout(r, wait));
+    }
+  }
+}
+
+// 并发控制：限制同时进行的任务（简化版）
+async function withLimit(tasks, limit=3){
+  const ret = [];
+  const pool = [];
+  for(const t of tasks){
+    const p = Promise.resolve().then(t);
+    ret.push(p);
+    pool.push(p);
+    if(pool.length >= limit){
+      await Promise.race(pool);
+      for(let i=pool.length-1;i>=0;i--){ if(pool[i].resolved) pool.splice(i,1); }
+    }
+    p.then(() => p.resolved = true).catch(() => p.resolved = true);
+  }
+  return Promise.all(ret);
+}
+    </code></pre>
+
+    <h2>TypeScript 快速上手</h2>
+    <pre><code>// tsconfig.json 基本配置
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}
+
+// 示例：类型与接口
+interface User { id: number; name: string; admin?: boolean }
+function greet(u: User){ return `Hi ${u.name}` }
+    </code></pre>
+
+    <h2>测试与工具链</h2>
+    <ul>
+      <li>ESLint + Prettier：统一风格与语法检查。</li>
+      <li>Vitest/Jest：单元测试，建议覆盖核心逻辑。</li>
+      <li>Vite/Webpack：开发与打包，按项目规模选型。</li>
+      <li>CI/发布：GitHub Actions + npm registry（企业可用私有仓库）。</li>
+    </ul>
+
+    <h2>项目实战：前后端一体</h2>
+    <ol>
+      <li>后端：用 Node.js + Express/Koa/Fastify 写一个 REST 接口，返回分页列表。</li>
+      <li>前端：用原生或框架（Vue/React/Svelte）构建表格页，调用接口并做筛选。</li>
+      <li>工程：增加 ESLint/Vitest、环境变量与部署脚本（Dockerfile）。</li>
+    </ol>
+
+    <h2>练习扩展（10 题）</h2>
+    <ol>
+      <li>封装 <code>fetchJSON</code> 支持超时、中断（AbortController）、重试。</li>
+      <li>实现一个 <code>memoize</code>（带过期与最大容量）。</li>
+      <li>写一个 <code>EventBus</code>（优先级与一次性监听）。</li>
+      <li>实现 <code>LRU</code> 缓存（Map + 双向链表）。</li>
+      <li>实现 <code>debounce/throttle</code> 并比较适用场景。</li>
+      <li>实现并发下载器（限制并发数、失败重试、进度展示）。</li>
+      <li>写一个 <code>Schema</code> 校验器（类型/必填/枚举/自定义规则）。</li>
+      <li>写一个路由器（hash/history），支持动态路由与守卫。</li>
+      <li>将待办应用重构为可测试与可扩展的架构（状态管理与组件划分）。</li>
+      <li>在前端项目中加入 <code>eslint+prettier+vitest+ci</code> 并通过一次构建。</li>
+    </ol>
+  </section>
+<script src="script.js"></script>
+</body>
+</html>

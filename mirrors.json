@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "updated": "2025-10-14",
+  "mirrors": [
+    {
+      "id": "netlify",
+      "name": "Netlify",
+      "url": "https://niao.netlify.app/",
+      "region": "global",
+      "priority": 100,
+      "notes": "主入口"
+    }
+  ]
+}
+
+

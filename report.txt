@@ -1,0 +1,150 @@
+﻿File: 瓒呰嚜鐒舵懜閲戝皬鍔╂墜1.18鍏煎.exe
+Machine: 0x014c
+Timestamp: 1759479395
+Sections: ['.text', '.rdata', '.data', '.vmp0', '.vmp1', '.rsrc']
+Section details:
+  .text: RVA=0x1000, VSZ=0x17a21e, RAW=0x0, RSZ=0x0
+  .rdata: RVA=0x17c000, VSZ=0x5b2d48, RAW=0x0, RSZ=0x0
+  .data: RVA=0x72f000, VSZ=0x9086a, RAW=0x0, RSZ=0x0
+  .vmp0: RVA=0x7c0000, VSZ=0x5e42e9, RAW=0x0, RSZ=0x0
+  .vmp1: RVA=0xda5000, VSZ=0xd4b9a0, RAW=0x1000, RSZ=0xd4c000
+  .rsrc: RVA=0x1af1000, VSZ=0xda5, RAW=0xd4d000, RSZ=0x1000
+Is .NET: False
+Possible packed (sections with zero raw size): ['.text', '.rdata', '.data', '.vmp0']
+Imports (top 50):
+  01. MSVFW32.dll!DrawDibDraw
+  02. AVIFIL32.dll!AVIStreamGetFrame
+  03. WINMM.dll!midiStreamOut
+  04. WS2_32.dll!ntohl
+  05. KERNEL32.dll!GetVersion
+  06. KERNEL32.dll!GetVersionExA
+  07. USER32.dll!LoadStringA
+  08. GDI32.dll!PatBlt
+  09. MSIMG32.dll!GradientFill
+  10. WINSPOOL.DRV!OpenPrinterA
+  11. comdlg32.dll!GetFileTitleA
+  12. ADVAPI32.dll!RegCreateKeyExA
+  13. SHELL32.dll!Shell_NotifyIconA
+  14. ole32.dll!CLSIDFromProgID
+  15. OLEAUT32.dll!SafeArrayAccessData
+  16. COMCTL32.dll!ImageList_EndDrag
+  17. WTSAPI32.dll!WTSSendMessageW
+  18. KERNEL32.dll!VirtualQuery
+  19. USER32.dll!GetUserObjectInformationW
+  20. KERNEL32.dll!LocalAlloc
+  21. KERNEL32.dll!LocalFree
+  22. KERNEL32.dll!GetModuleFileNameW
+  23. KERNEL32.dll!GetProcessAffinityMask
+  24. KERNEL32.dll!SetProcessAffinityMask
+  25. KERNEL32.dll!SetThreadAffinityMask
+  26. KERNEL32.dll!Sleep
+  27. KERNEL32.dll!ExitProcess
+  28. KERNEL32.dll!FreeLibrary
+  29. KERNEL32.dll!LoadLibraryA
+  30. KERNEL32.dll!GetModuleHandleA
+  31. KERNEL32.dll!GetProcAddress
+  32. USER32.dll!GetProcessWindowStation
+  33. USER32.dll!GetUserObjectInformationW
+No exports or failed to parse exports.
+
+Strings (top 100):
+  !This program cannot be run in DOS mode.
+  `.rdata
+  ^Q<Q634
+  ]'a&\X_
+  GetModuleHandleA
+  ['Euk 2
+  9APD1$$M
+  w{3gLdY:X
+  =Lv<I9L\
+  kT"]^k`
+  Rw7|Jyj
+  SHM5cO:
+  e$TDU##
+  001F-i(
+  ok1}xTi
+  Rej<P?g
+  $)96!1M8zE_
+  x8\$'!3s
+  A;>,q<I
+  wW']GPP
+  *'O](U0,9X
+  ha|v{R)
+  \I+y0&v
+  Y\SCeI?#
+  TcnQ;+h
+  ~?t5T]M
+  GT8|wSO
+  ryY"g(!?
+  #JLwYWH
+  {uul=0Aq
+  XfSgha$
+  CJBl(DeV
+  ZZX&_O*h
+  OYfYyi[
+  eri,ew[?.
+  nW]RlQ"
+  (^m"}3d
+  KbxOTcf
+  ImageList_EndDrag
+  tAP1,$fA
+  1,$AXHc
+  d8Ii*+cY
+  9ao(#8#:
+  Rj1NCih
+  @*?DCuL
+  wjDrZ;5b8
+  5(Q?J-:<=c
+  l_p`yD)
+  OpenPrinterA
+  7}-L'],+LEKz
+  fK~G=L7
+  AP1,$fA
+  DrawDibDraw
+  8>1,$fA
+  5(Q?J-:<=c
+  qn=4<Iw
+  AXXA_Hc
+  8$][T|v4W
+  @qh'WqC
+  B[Z3r\-
+  t7CBD04
+  >Ue-gB^
+  j+;3yc{jQ
+  ^g-r$aR
+  +L?)</LK
+  ]G2Z}927
+  q.}4mpT
+  Uj*s0l7
+  ID{U}uc
+  HKUoUP/*
+  [7--Qd.
+  c(e_0T(
+  BBO%(\a
+   X'2B.:
+  K/o@9W'
+  w5_Q[XO
+  d$~yC*_
+  CuU)(4_N
+  <G6"/=|
+  sU!v)!FvS
+  g;<)7q~
+  s1}@/Xo[
+  q]t?$GE.ljH
+  Kczj<>L
+  E7~3XB;
+  ?v>FB#at
+  G9'k$Uo
+  IFkL"n@
+  Gs.=31l#
+  $I;bXCT
+  WQP@lv\
+  e*%s]<)
+  yy2:^qB
+  sa`nTOp
+  q{K,IF0
+  %>,1"P'
+  BCwOIQI
+  sXE4QZt~
+  xkuD7APA:
+  aK1'D8S

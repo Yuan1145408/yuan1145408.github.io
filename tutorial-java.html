@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Java 入门与语法速览</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <style>main{max-width:920px;margin:20px auto;padding:0 16px;}pre{background:#111;color:#eee;padding:12px;overflow:auto} .hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Java 入门与语法速览</h1>
+    <p>覆盖 JDK 安装、IDE/构建工具、基础语法与集合、异常与文件、项目入门与扩展实践。先跑起来，再迭代优化。</p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="开发与学习插画" />
+
+    <h2>完整新手路径：第一步怎么做</h2>
+    <ol>
+      <li>安装 JDK（推荐 Adoptium Temurin 17 LTS），确认 <code>java -version</code> 可用。</li>
+      <li>安装 VS Code 或 IntelliJ IDEA，熟悉终端 Console。</li>
+      <li>新建 <code>Main.java</code> 写 Hello World，先跑起来。</li>
+      <li>尝试简单表达式 <code>1+2</code>，形成“修改-保存-运行”的节奏。</li>
+      <li>了解 Maven/Gradle 构建工具，后续用于依赖管理与打包。</li>
+    </ol>
+
+    <h2>Hello, World</h2>
+    <pre><code>public class Main {
+  public static void main(String[] args) {
+    System.out.println("Hello, Java!");
+  }
+}
+    </code></pre>
+
+    <h2>基础语法</h2>
+    <pre><code>// 变量与类型
+int a = 1; double pi = 3.14; String s = "abc";
+
+// 循环与条件
+for (int i=0;i<3;i++) { System.out.println(i); }
+if (a > 0) { System.out.println("positive"); }
+
+// 类与对象
+class User { String name; int age; }
+User u = new User(); u.name = "Bob"; u.age = 20;
+    </code></pre>
+
+    <h2>集合与流</h2>
+    <pre><code>import java.util.*;
+List<String> list = Arrays.asList("a","b","c");
+list.stream().filter(x -> x.startsWith("a")).forEach(System.out::println);
+Map<String,Integer> map = new HashMap<>(); map.put("a",1);
+    </code></pre>
+
+    <h2>异常与文件</h2>
+    <pre><code>try { throw new RuntimeException("err"); }
+catch (Exception e) { e.printStackTrace(); }
+
+import java.nio.file.*;
+Files.writeString(Path.of("data.txt"), "hello");
+String s2 = Files.readString(Path.of("data.txt"));
+    </code></pre>
+
+    <h2>构建工具</h2>
+    <pre><code>// Maven
+mvn -v
+// Gradle
+gradle -v
+    </code></pre>
+
+    <h2>运行与调试</h2>
+    <ul>
+      <li>命令行：<code>javac Main.java</code> 编译，<code>java Main</code> 运行。</li>
+      <li>IDE：断点调试、查看变量与调用栈，结合单元测试与日志定位问题。</li>
+      <li>测试：<code>JUnit</code> 使用 <code>@Test</code> 编写用例，结合断言与覆盖率。</li>
+    </ul>
+
+    <h2>项目入门（练手）</h2>
+    <ol>
+      <li>命令行词频统计：读取文本输出 Top-N；保存为 CSV。</li>
+      <li>HTTP 客户端：使用 <code>HttpClient</code> 请求 JSON 并解析输出。</li>
+      <li>文件处理：遍历目录统计文件大小与类型，输出报告。</li>
+    </ol>
+
+    <h2>配图</h2>
+    <img class="hero-img" src="assets/diagram-architecture.svg" alt="架构示意图" />
+    <img class="hero-img" src="assets/illustration-code.svg" alt="代码示意图" />
+
+    <h2>扩展实践</h2>
+    <ul>
+      <li>并发与响应式：<code>CompletableFuture</code> 与 <code>Project Reactor</code>。</li>
+      <li>静态检查：<code>Checkstyle</code>/<code>SpotBugs</code> 与 CI 集成。</li>
+      <li>性能与基准：<code>JMH</code> 做微基准测试。</li>
+    </ul>
+
+    <h2>练习题</h2>
+    <ol>
+      <li>实现命令行参数解析，统计出现次数。</li>
+      <li>编写 JSON 解析器小工具，输出规范化结果。</li>
+      <li>用 Spring Boot 写一个简单 REST API，返回分页数据。</li>
+    </ol>
+
+    <h2>理论与论文到代码索引（Java）</h2>
+    <ul>
+      <li><a href="./tutorial-p2c-raft.html">Raft 共识算法（概念与实现路径）</a></li>
+      <li><a href="./tutorial-p2c-lsm.html">LSM-Tree 键值存储（写放大/读放大与合并）</a></li>
+      <li><a href="./tutorial-p2c-mapreduce.html">MapReduce 框架（任务调度与案例）</a></li>
+    </ul>
+    <p>可将概念移植到 Java 生态（Netty/Vert.x/Spring）进行工程化实现。</p>
+  </main>
+  <section style="max-width:920px;margin:0 auto;padding:0 16px;">
+    <h2>语法速查</h2>
+    <ul>
+      <li>字符串：<code>String.format("%s-%d", s, a)</code></li>
+      <li>集合遍历：<code>for (var x : list) { ... }</code></li>
+      <li>记录类型：<code>record User(String name, int age) {}</code> (Java 16+)</li>
+    </ul>
+    <h2>国内网络建议</h2>
+    <ul>
+      <li>使用国内镜像下载 JDK 或依赖（如 Maven 镜像源）。</li>
+      <li>遇到网络受限，优先使用本站“国内模式”与代理下载。</li>
+      <li>排错：看错误最后几行的类名与行号，结合断点调试定位。</li>
+    </ul>
+    <h2>参考资源</h2>
+    <ul>
+      <li><a href="https://docs.oracle.com/en/java/" target="_blank" rel="noopener">Oracle Java SE 文档</a>（官方 API 与指南）</li>
+      <li><a href="https://docs.spring.io/spring-boot/" target="_blank" rel="noopener">Spring Boot 文档</a>（快速构建应用）</li>
+      <li><a href="https://maven.apache.org/guides/" target="_blank" rel="noopener">Maven 指南</a>（依赖管理与构建）</li>
+    </ul>
+    <h2>系统化学习路径</h2>
+    <ol>
+      <li>语言与标准库：集合、并发、I/O、异常与类型。</li>
+      <li>工程化：构建（Maven/Gradle）、测试（JUnit）、日志与配置。</li>
+      <li>服务与生态：Spring Boot、ORM、REST/安全与部署。</li>
+    </ol>
+    <h2>进阶项目</h2>
+    <ol>
+      <li>企业级 REST 服务：分层与过滤、统一错误、监控与指标。</li>
+      <li>故障处理与韧性：超时/重试、熔断与限流、断点续传与追踪。</li>
+      <li>模块化单体或微服务：配置中心、注册与发现、网关与链路。</li>
+    </ol>
+  </section>
+  <section style="max-width:920px;margin:0 auto;padding:0 16px;">
+    <h2>泛型与集合深入</h2>
+    <pre><code>// 泛型方法与上下界
+static &lt;T extends Number&gt; double sum(List&lt;T&gt; list){
+  double s = 0; for(T x: list) s += x.doubleValue(); return s;
+}
+// 不可变集合与流管道
+List&lt;String&gt; names = List.of("Alice","Bob","Carol");
+long cnt = names.stream().filter(n -&gt; n.startsWith("A")).count();
+    </code></pre>
+
+    <h2>并发与线程池</h2>
+    <pre><code>import java.util.concurrent.*;
+ExecutorService pool = Executors.newFixedThreadPool(4);
+Future&lt;Integer&gt; f = pool.submit(() -&gt; 1+2);
+System.out.println(f.get());
+pool.shutdown();
+
+// CompletableFuture 组合
+CompletableFuture&lt;Integer&gt; a = CompletableFuture.supplyAsync(() -&gt; 1);
+CompletableFuture&lt;Integer&gt; b = CompletableFuture.supplyAsync(() -&gt; 2);
+CompletableFuture&lt;Integer&gt; c = a.thenCombine(b, Integer::sum);
+System.out.println(c.join());
+    </code></pre>
+
+    <h2>注解与反射</h2>
+    <pre><code>import java.lang.annotation.*;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@interface Model { String table(); }
+
+@Model(table = "users")
+class User { public String name; }
+
+Class&lt;?&gt; cls = User.class;
+Model m = cls.getAnnotation(Model.class);
+System.out.println(m.table());
+    </code></pre>
+
+    <h2>Spring Boot 快速实战</h2>
+    <pre><code>// build.gradle（KTS）核心片段
+dependencies {
+  implementation("org.springframework.boot:spring-boot-starter-web")
+}
+
+// DemoController.java
+@RestController
+@RequestMapping("/api")
+public class DemoController {
+  @GetMapping("/hello")
+  public Map&lt;String, Object&gt; hello(){
+    return Map.of("ok", true, "ts", System.currentTimeMillis());
+  }
+}
+    </code></pre>
+    <p>启动应用后访问 <code>/api/hello</code>，结合前端或命令行做简单联调与分页。</p>
+
+    <h2>练习扩展（10 题）</h2>
+    <ol>
+      <li>写一个 <code>LRUCache&lt;K,V&gt;</code>，支持容量限制与并发安全。</li>
+      <li>基于 <code>ExecutorService</code> 实现并发下载器，支持重试与进度。</li>
+      <li>封装 <code>HttpClient</code> 工具，支持 JSON 序列化与错误处理。</li>
+      <li>写一个注解处理器，生成简单的 <code>toString()</code> 方法。</li>
+      <li>用 Spring Boot 写 REST 列表接口，支持分页、过滤与排序。</li>
+      <li>集成单元测试与集成测试（<code>Testcontainers</code> / <code>H2</code>）。</li>
+      <li>实现 <code>Retry</code> 与熔断（Guava Retry 或自定义）。</li>
+      <li>实现配置管理与 Profiles（dev/prod），抽象日志与审计。</li>
+      <li>写一个文件扫描器，统计目录树的类型与大小输出报告。</li>
+      <li>编写一个 <code>CSV-&gt;JSON</code> 转换器，支持模式校验与错误行定位。</li>
+    </ol>
+  </section>
+<script src="script.js"></script>
+</body>
+</html>

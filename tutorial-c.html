@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>C 语言入门与语法速览</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <style>main{max-width:920px;margin:20px auto;padding:0 16px;}pre{background:#111;color:#eee;padding:12px;overflow:auto} .hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0} .icons{display:flex;gap:12px;margin:8px 0} .icons img{width:48px;height:48px}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>C 语言入门与语法速览</h1>
+    <p>覆盖编译环境、基础语法、标准库常用函数与项目入门。按照步骤练习，先能跑、再优化。</p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="开发与学习插画" />
+
+    <div class="icons">
+      <img src="assets/icon-beginner.svg" alt="新手" />
+      <img src="assets/icon-project.svg" alt="项目" />
+      <img src="assets/icon-debug.svg" alt="调试" />
+    </div>
+
+    <h2>完整新手路径：第一步怎么做</h2>
+    <ol>
+      <li>安装编译器（MSVC 或 MinGW-w64），确认 <code>gcc --version</code> / <code>cl</code> 可用。</li>
+      <li>创建 <code>main.c</code> 写 Hello World，先跑起来再逐步优化。</li>
+      <li>拆分头文件与源文件，练习多文件编译。</li>
+      <li>安装 <code>gdb</code> 或使用 VS 的断点调试。</li>
+    </ol>
+
+    <h2>编译环境</h2>
+    <ul>
+      <li>MSVC：安装 Visual Studio Build Tools，使用 <code>cl</code> 编译。</li>
+      <li>MinGW-w64：安装后使用 <code>gcc</code> 与 <code>gdb</code>。</li>
+    </ul>
+
+    <h2>Hello, World</h2>
+    <pre><code>#include <stdio.h>
+int main(){
+    printf("Hello, C!\n");
+    return 0;
+}
+    </code></pre>
+
+    <h2>基础语法</h2>
+    <pre><code>// 变量与类型
+int a = 10; double pi = 3.14; char c = 'x';
+
+// 条件与循环
+for(int i=0;i<3;i++){ printf("%d\n", i); }
+if(a > 0){ puts("positive"); }
+
+// 函数
+int add(int x,int y){ return x+y; }
+
+// 指针与数组
+int nums[3] = {1,2,3};
+int *p = nums; printf("%d\n", *(p+1));
+
+// 结构体
+struct User { char name[16]; int age; };
+struct User u = {"Bob", 20};
+    </code></pre>
+
+    <h2>标准库</h2>
+    <pre><code>#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <time.h>
+
+printf("len=%zu\n", strlen("abc"));
+printf("sqrt=%f\n", sqrt(9.0));
+printf("time=%ld\n", time(NULL));
+    </code></pre>
+
+    <h2>编译与运行</h2>
+    <pre><code>// gcc
+gcc main.c -o main
+./main
+
+// cl (MSVC)
+cl /EHsc main.c && main.exe
+    </code></pre>
+
+    <h2>如何调试</h2>
+    <ul>
+      <li>使用 <code>gdb</code> 设置断点、单步、查看变量。</li>
+      <li>内存：用 <code>valgrind</code> 检查内存泄漏（在支持的平台）。</li>
+      <li>测试：为核心函数编写小测试，先小后大逐步构建。</li>
+    </ul>
+
+    <h2>项目入门</h2>
+    <ol>
+      <li>命令行词频统计：读取文本输出 Top-N。</li>
+      <li>CSV 解析器：解析数据并按列统计。</li>
+      <li>简单 HTTP 客户端：用 <code>libcurl</code> 请求并打印响应。</li>
+    </ol>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>头文件与多文件编辑、Make/CMake 构建系统。</li>
+      <li>内存管理与避免泄漏、错误处理与统一日志接口。</li>
+      <li>区分 Debug/Release，开启优化与编译选项。</li>
+    </ul>
+
+    <h2>配图</h2>
+    <img class="hero-img" src="assets/diagram-flow.svg" alt="流程示意图" />
+    <img class="hero-img" src="assets/illustration-debug.svg" alt="调试示意图" />
+
+    <h2>常见坑</h2>
+    <ul>
+      <li>缓冲区越界：严格检查数组下标与长度。</li>
+      <li>未初始化：全局变量与指针使用前必须初始化。</li>
+      <li>资源释放：每次 <code>malloc</code> 都应有对应 <code>free</code>。</li>
+    </ul>
+
+    <h2>练习题</h2>
+    <ol>
+      <li>实现一个命令行参数解析并统计出现次数的程序。</li>
+      <li>用链表实现简单队列并支持出入队操作。</li>
+      <li>读取文本文件，统计每行字符数并输出统计报告。</li>
+    </ol>
+
+    <h2>国内网络建议</h2>
+    <ul>
+      <li>使用国内镜像安装工具链与依赖。</li>
+      <li>遇到网络受限，优先使用本地“国内模式”和代理下载。</li>
+    </ul>
+
+    <h2>参考资源</h2>
+    <ul>
+      <li><a href="https://en.cppreference.com/w/c" target="_blank" rel="noopener">cppreference C 参考</a>（标准库详解）</li>
+      <li><a href="https://www.gnu.org/software/gnu-c-manual/" target="_blank" rel="noopener">GNU C Manual</a>（语言与编译器说明）</li>
+      <li><a href="https://www.cprogramming.com/tutorial/c-tutorial.html" target="_blank" rel="noopener">C Programming Tutorial</a>（系统学习）</li>
+    </ul>
+
+    <h2>系统化学习路径</h2>
+    <ol>
+      <li>语言与内存：指针与数组、结构体与文件 IO、错误处理。</li>
+      <li>工程化：多文件与构建、测试与调试。</li>
+      <li>网络与扩展：libcurl/SQLite 等库、跨平台构建与分发。</li>
+    </ol>
+
+    <h2>进阶项目</h2>
+    <ol>
+      <li>文件处理平台：异常处理、日志与错误、配置与部署。</li>
+      <li>HTTP/CLI 工具集：请求、解析与输出，支持并发与压测。</li>
+      <li>沉淀代码风格：模块化、内存与性能、监控与升级。</li>
+    </ol>
+  </main>
+  <section style="max-width:920px;margin:0 auto;padding:0 16px;">
+    <h2>语法速查</h2>
+    <ul>
+      <li>字符串：<code>char s[32]; strcpy(s, "abc");</code></li>
+      <li>动态分配：<code>int *p = malloc(n*sizeof(int)); free(p);</code></li>
+      <li>文件 IO：<code>FILE *f=fopen("a.txt","w"); fprintf(f,"hi"); fclose(f);</code></li>
+    </ul>
+  </section>
+<script src="script.js"></script>
+</body>
+</html>

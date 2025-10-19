@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>C++ 鍏ラ棬涓庤娉曢€熻</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>main{max-width:920px;margin:20px auto;padding:0 16px;}pre{background:#111;color:#eee;padding:12px;overflow:auto} .hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0} .icons{display:flex;gap:12px;margin:8px 0} .icons img{width:48px;height:48px}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>C++ 鍏ラ棬涓庤娉曢€熻</h1>
+    <p>娑电洊鐜颁唬 C++锛圕++11+锛夊熀纭€銆丼TL銆佺紪璇戜笌璋冭瘯銆?/p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="缂栫▼涔嬫梾" />
+    <div class="icons">
+      <img src="assets/icon-beginner.svg" alt="鏂版墜" />
+      <img src="assets/icon-project.svg" alt="椤圭洰" />
+      <img src="assets/icon-debug.svg" alt="璋冭瘯" />
+    </div>
+
+    <h2>缁欏畬鍏ㄦ柊鎵嬶細绗竴姝ユ€庝箞鍋?/h2>
+    <ol>
+      <li>鍑嗗缂栬瘧鍣紙g++ 鎴?MSVC锛夛紝纭 <code>g++ --version</code> / <code>cl</code> 鍙敤銆?/li>
+      <li>鍐?<code>main.cpp</code> 鐨?Hello World 骞舵垚鍔熻繍琛屻€?/li>
+      <li>瀛︿範澶存枃浠朵笌婧愭枃浠跺垎绂伙紝灏濊瘯 CMake 构建銆?/li>
+      <li>浣跨敤鏂偣涓庤皟璇曞櫒鏌ョ湅鍙橀噺涓庤皟鐢ㄦ爤銆?/li>
+    </ol>
+
+    <h2>Hello, World</h2>
+    <pre><code>#include &lt;iostream&gt;
+using namespace std;
+int main(){
+    cout &lt;&lt; "Hello, C++!" &lt;&lt; endl;
+}
+    </code></pre>
+
+    <h2>鏍稿績璇硶</h2>
+    <pre><code>#include &lt;vector&gt; #include &lt;string&gt; #include &lt;map&gt;
+vector&lt;int&gt; v = {1,2,3};
+string s = "abc";
+map&lt;string,int&gt; m{{"a",1},{"b",2}};
+
+// 鍙傝€冧笌绉诲姩
+int x = 10; int &amp;ref = x; auto y = move(x);
+
+// RAII 涓庢櫤鑳芥寚閽?#include &lt;memory&gt;
+unique_ptr&lt;int&gt; p = make_unique&lt;int&gt;(42);
+
+// 鑼冨瀷涓?Lambda
+template&lt;typename T&gt; T add(T a, T b){ return a+b; }
+auto sum = [](int a,int b){ return a+b; };
+    </code></pre>
+
+    <h2>瀛楃涓蹭笌IO</h2>
+    <pre><code>#include &lt;fstream&gt;
+ofstream out("data.txt"); out &lt;&lt; "hello";
+ifstream in("data.txt"); string line; getline(in, line);
+    </code></pre>
+
+    <h2>骞跺彂绠€渚?/h2>
+    <pre><code>#include &lt;thread&gt; #include &lt;chrono&gt;
+void work(){ this_thread::sleep_for(chrono::milliseconds(100)); }
+int main(){ thread t(work); t.join(); }
+    </code></pre>
+
+    <h2>缂栬瘧</h2>
+    <pre><code>// g++
+g++ -std=c++17 main.cpp -o app
+./app
+
+// MSVC
+cl /EHsc /std:c++17 main.cpp &amp;&amp; app.exe
+    </code></pre>
+
+    <h2>椤圭洰瀹炴垬锛堝叆闂級</h2>
+    <ol>
+      <li>JSON 瑙ｆ瀽锛氫娇鐢?<code>nlohmann/json</code> 璇诲彇骞跺鐞嗘暟鎹€?/li>
+      <li>骞跺彂下载锛?code>std::thread</code> + 闄愰€?+ 鍚堝苟缁撴灉銆?/li>
+      <li>文件鏍戝伐鍏凤細<code>std::filesystem</code> 閬嶅巻骞剁敓鎴愭姤鍛娿€?/li>
+    </ol>
+    <h2>涓嬩竴姝?/h2>
+    <ul>
+      <li>CMake/Ninja 构建涓庡崟鍏冩祴璇?/li>
+      <li>STL 瀹瑰櫒涓庣畻娉曠殑杩涢樁鐢ㄦ硶</li>
+      <li>寮傚父銆佸畨鍏ㄤ笌鎬ц兘浼樺寲</li>
+    </ul>
+    <h2>涓鎻掑浘</h2>
+    <img class="hero-img" src="assets/diagram-architecture.svg" alt="鏋舵瀯绀烘剰鍥? />
+    <img class="hero-img" src="assets/illustration-code.svg" alt="浠ｇ爜绀烘剰鍥? />
+
+    <h2>杩涢樁鍐呭</h2>
+    <ul>
+      <li>鍊艰涔変笌闆跺紑閿€鎶借薄锛氱悊瑙ｆ嫹璐?绉诲姩鎴愭湰銆?/li>
+      <li>骞跺彂鍘熻锛?code>std::mutex</code>銆?code>std::future</code> 涓庣嚎绋嬫睜銆?/li>
+      <li>构建系统锛氱幇浠?CMake 鐩爣銆侀€夐」涓庡寘鍙戠幇銆?/li>
+    </ul>
+    <h2>鏇村缁冧範</h2>
+    <ol>
+      <li>瀹炵幇涓€涓嚎绋嬫睜骞舵彁浜や换鍔￠槦鍒椼€?/li>
+      <li>灏佽涓€涓?JSON 閰嶇疆加载鍣紝鏀寔鏍￠獙涓庡悎骞躲€?/li>
+      <li>缂栧啓文件鐩戞帶宸ュ叿锛屾娴嬫洿鏀瑰苟杈撳嚭鍙樻洿鏃ュ織銆?/li>
+    </ol>
+  <hr/>
+<section id="theory-index">
+  <h2>理论与论文到代码索引（C++）</h2>
+  <ul>
+    <li><a href="./tutorial-p2c-raft.html">Raft 共识算法（概念）</a>；C++ 可用 asio/libuv 实现网络与事件。</li>
+    <li><a href="./tutorial-p2c-lsm.html">LSM-Tree（概念）</a>；参照 LevelDB/rocksdb 的工程实践。</li>
+  </ul>
+  <p>配合本章并发与内存模型、锁与无锁结构的理论部分一起阅读。</p>
+</section>
+ </main>
+  <section style="max-width:920px;margin:0 auto;padding:0 16px;">
+    <h2>璇硶閫熸煡</h2>
+    <ul>
+      <li>鑼冨洿 for锛?code>for (auto &x : v) { ... }</code></li>
+      <li>缁撴瀯鍖栫粦瀹氾細<code>auto [k, v] = pair;</code></li>
+      <li>瀛楃涓叉嫾鎺ワ細<code>std::string s = a + b;</code></li>
+      <li>鏍煎紡鍖栵細<code>std::format("{} {}", a, b)</code> (C++20)</li>
+    </ul>
+    <h2>甯歌鍧?/h2>
+    <ul>
+      <li>鎮┖寮曠敤/鎸囬拡锛氱‘淇濆璞＄敓鍛藉懆鏈熶笌鎵€鏈夋潈鏄庣‘銆?/li>
+      <li>寮傚父瀹夊叏锛氫娇鐢?RAII锛岄伩鍏嶈祫婧愭硠婕忋€?/li>
+      <li>鎷疯礉 vs 绉诲姩锛氫紭鍏堜娇鐢ㄧЩ鍔ㄦ瀯閫犱笌 <code>std::move</code>銆?/li>
+    </ul>
+    <h2>缁冧範棰?/h2>
+    <ol>
+      <li>瀹炵幇涓€涓?<code>LRU</code> 缂撳瓨锛坢ap+list 鎴?unordered_map+list锛夈€?/li>
+      <li>鐢?<code>std::thread</code> 瀹炵幇骞跺彂下载骞跺悎骞剁粨鏋溿€?/li>
+      <li>鐢?<code>std::filesystem</code> 閬嶅巻鐩綍锛岀敓鎴愭枃浠舵爲 JSON銆?/li>
+    </ol>
+    <h2>国内网络建议</h2>
+    <ul>
+      <li>浣跨敤鍥藉唴镜像瀹夎渚濊禆涓庣紪璇戝伐鍏枫€?/li>
+      <li>閬囧埌网络受限锛屼紭鍏堜娇鐢ㄦ湰绔欌€滃浗鍐呮ā寮忊€濅笌代理下载銆?/li>
+    </ul>
+    <h2>鏉冨▉璧勬簮</h2>
+    <ul>
+      <li><a href="https://en.cppreference.com/w/" target="_blank" rel="noopener">cppreference</a>锛堟爣鍑嗗簱涓庤瑷€缁嗚妭锛?/li>
+      <li><a href="https://isocpp.org/" target="_blank" rel="noopener">isocpp.org</a>锛堢ぞ鍖轰笌鏍囧噯鍔ㄦ€侊級</li>
+      <li><a href="https://cmake.org/cmake/help/latest/" target="_blank" rel="noopener">CMake 文档</a>锛堢幇浠ｆ瀯寤虹郴缁燂級</li>
+    </ul>
+    <h2>系统瀛︿範璺緞</h2>
+    <ol>
+      <li>璇█涓?STL锛氬€艰涔?绉诲姩璇箟銆佸鍣ㄤ笌绠楁硶銆佸紓甯镐笌 RAII銆?/li>
+      <li>宸ョ▼鍖栵細鐜颁唬 CMake銆佸崟鍏冩祴璇曪紙Catch2/GTest锛夈€侀潤鎬佸垎鏋愪笌鏍煎紡鍖栥€?/li>
+      <li>骞跺彂涓庣綉缁滐細绾跨▼涓庡師璇€佸紓姝ユā鍨嬨€佸父鐢ㄧ綉缁滃簱涓庨儴缃层€?/li>
+    </ol>
+    <h2>杩涢樁椤圭洰</h2>
+    <ol>
+      <li>妯″潡鍖栧伐鍏烽泦锛氬簱/鍙墽琛屾媶鍒嗐€侀€夐」涓庡寘鍙戠幇銆佽法骞冲彴构建銆?/li>
+      <li>楂樻€ц兘鏁版嵁绠￠亾锛氶浂鎷疯礉銆佺紦瀛樹笌骞惰銆佹寚鏍囦笌瑙傛祴銆?/li>
+      <li>REST 服务鏍锋澘锛歝gicc/crow/oat++锛屽垎椤典笌杩囨护銆佺粺涓€閿欒涓庨壌鏉冦€?/li>
+    </ol>
+  </section>
+<script src="script.js"></script>
+</body>
+</html>
+
+
+
+

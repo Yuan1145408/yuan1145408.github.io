@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paper-to-Code: Transformer 从零实现  论文到代码</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Paper-to-Code: Transformer 从零实现</h1>
+    <p>依据 Attention is All You Need 复现核心模块，含最小训练示例。</p>
+    <hr/>
+    <h2>1. 摘要与关键点</h2>
+<ul>
+  <li>多头自注意力（Scaled Dot-Product Attention）</li>
+  <li>位置编码（Positional Encoding）</li>
+  <li>残差连接与层归一化</li>
+</ul>
+<h2>2. 从零实现（PyTorch）</h2>
+<pre>
+import torch, math
+class PositionalEncoding(torch.nn.Module):
+    def __init__(self, d_model, max_len=5000):
+        super().__init__()
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        self.register_buffer('pe', pe.unsqueeze(0))
+    def forward(self, x):
+        return x + self.pe[:, :x.size(1)]
+</pre>
+<h2>3. 训练小数据集示例</h2>
+<pre>
+# 构造小语料与训练循环（略），建议使用 torchtext 或自制 DataLoader
+</pre>
+    <hr/>
+    <p>提示：本教程以论文为蓝本，配套代码示例均可在本页复制运行。建议结合你本机环境进行实验与扩展。</p>
+    <p><a class="btn" href="./index.html">返回首页</a></p>
+  </main>
+<script src="script.js"></script>
+</body>
+</html>
+
+
+

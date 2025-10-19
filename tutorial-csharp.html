@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>C# 蹇€熶笂鎵嬩笌瀹炴垬</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
+    <h1>C# 上手指南锛?NET锛?/h1>
+    <p>基础璇硶銆侀」鐩粨鏋勩€佸紓姝ヤ笌 LINQ銆佸父瑙佸潙涓庣粌涔犻銆傝窡鐫€姝ラ浠庨浂鍒拌兘鍋氶」鐩€?/p>
+    <h2>缁欏畬鍏ㄦ柊鎵嬶細绗竴姝ユ€庝箞鍋?/h2>
+    <ol>
+      <li>瀹夎 .NET SDK锛?code>dotnet --info</code> 鐪嬬増鏈€?/li>
+      <li>鏂板缓鎺у埗鍙伴」鐩細<code>dotnet new console -n HelloApp</code>銆?/li>
+      <li>鍦?<code>Program.cs</code> 鎵撳嵃 Hello锛屽苟灏濊瘯 <code>Task.Delay</code>銆?/li>
+      <li>鐢?VS Code 鎴?VS 寮€鍚柇鐐癸紝鏌ョ湅鍙橀噺鍙樺寲銆?/li>
+      <li>浜嗚В <code>dotnet run</code> 涓?<code>dotnet build</code> 鐨勫尯鍒€?/li>
+    </ol>
+    <h2>瀹夎涓庣幆澧?/h2>
+    <ul>
+      <li>.NET SDK锛氫娇鐢?<code>dotnet</code> 鍛戒护琛岋紝鏂板缓椤圭洰 <code>dotnet new console</code>銆?/li>
+      <li>IDE锛歏S Code + C# 鎵╁睍 鎴?Visual Studio Community銆?/li>
+    </ul>
+    <h2>基础璇硶</h2>
+    <pre><code>// 璁板綍涓庝笉鍙彉
+public record User(string Name, int Age);
+// 妯″紡鍖归厤
+static string Classify(object o) => o switch {
+  int n when n > 0 => "positive",
+  string s => $"str:{s}",
+  _ => "unknown"
+};
+// 寮傛
+static async Task&lt;string&gt; FetchAsync(string url){
+  using var http = new HttpClient();
+  return await http.GetStringAsync(url);
+}
+</code></pre>
+    <h2>甯歌鍧?/h2>
+    <ul>
+      <li>寮傛姝婚攣锛歎I 鐜閬垮厤 <code>.Result</code>/<code>.Wait()</code>锛屼娇鐢?<code>await</code>銆?/li>
+      <li>鍙┖寮曠敤锛氬惎鐢?<code>nullable</code>锛岄厤鍚?<code>?</code> 鍜?<code>!</code> 浣跨敤銆?/li>
+      <li>璧勬簮閲婃斁锛氫紭鍏?<code>using</code> 涓?<code>IAsyncDisposable</code>銆?/li>
+    </ul>
+    <h2>缁冧範棰?/h2>
+    <ol>
+      <li>瀹炵幇涓€涓?CLI 下载鍣紝鏀寔骞跺彂涓庡彇娑堛€?/li>
+      <li>缂栧啓涓€涓?LINQ 鏌ヨ绠￠亾锛屽瀵硅薄鍒楄〃鍋氳仛鍚堛€?/li>
+      <li>鍒涘缓涓€涓?ASP.NET Minimal API锛岃繑鍥?JSON 鍒楄〃銆?/li>
+    </ol>
+    <h2>椤圭洰瀹炴垬锛堝叆闂級</h2>
+    <ol>
+      <li>鍛戒护琛屽伐鍏凤細璇诲彇鏂囨湰缁熻璇嶉锛屾敮鎸佸弬鏁颁笌甯姪銆?/li>
+      <li>Web API锛氭渶灏?API 杩斿洖 <code>/ping</code>锛岀敤 <code>HttpClient</code> 璋冪敤銆?/li>
+      <li>文件鎵瑰鐞嗭細閬嶅巻鐩綍銆侀噸鍛藉悕銆佽褰曟棩蹇楋紝鏀寔鎾ら攢銆?/li>
+    </ol>
+    <h2>涓鎻掑浘</h2>
+    <img class="hero-img" src="assets/diagram-network.svg" alt="网络示意图? />
+    <img class="hero-img" src="assets/illustration-debug.svg" alt="璋冭瘯绀烘剰鍥? />
+
+    <h2>杩涢樁鍐呭</h2>
+    <ul>
+      <li>骞跺彂涓庡紓姝ワ細<code>Task</code>/<code>ValueTask</code>銆侀€氶亾涓庢暟鎹祦銆?/li>
+      <li>宸ョ▼鍖栵細<code>StyleCop</code>/<code>FxCop</code>銆?code>BenchmarkDotNet</code> 涓?CI銆?/li>
+      <li>Web 妗嗘灦锛欰SP.NET 璺敱銆佷腑闂翠欢涓庝緷璧栨敞鍏ャ€?/li>
+    </ul>
+    <h2>鏇村缁冧範</h2>
+    <ol>
+      <li>瀹炵幇涓€涓檺娴佷笌閲嶈瘯鐨?<code>HttpClient</code> 灏佽銆?/li>
+      <li>鍐欎竴涓粨鏋勫寲鏃ュ織鍣紝鏀寔 JSON 杈撳嚭涓庢寜鏃ヨ疆杞€?/li>
+      <li>鎼缓涓€涓垎椤垫煡璇㈢殑 REST API锛屽寘鍚敊璇鐞嗐€?/li>
+    </ol>
+    <h2>国内网络建议</h2>
+    <ul>
+      <li>NuGet 鍥藉唴镜像锛?code>dotnet nuget add source</code> 娣诲姞镜像婧愩€?/li>
+      <li>閬囧埌网络受限锛屼紭鍏堜娇鐢ㄦ湰绔欌€滃浗鍐呮ā寮忊€濅笌代理下载銆?/li>
+      <li>閮ㄧ讲锛氫娇鐢?<code>dotnet publish -r win-x64 --self-contained</code> 鐢熸垚鍗曟枃浠跺垎鍙戙€?/li>
+    </ul>
+    <h2>鏉冨▉璧勬簮</h2>
+    <ul>
+      <li><a href="https://learn.microsoft.com/dotnet/csharp/" target="_blank" rel="noopener">C# 官方文档</a>锛堣瑷€涓庡簱鍙傝€冿級</li>
+      <li><a href="https://learn.microsoft.com/dotnet/core/" target="_blank" rel="noopener">.NET 官方文档</a>锛堣繍琛屾椂銆丼DK 涓庣敓鎬侊級</li>
+      <li><a href="https://learn.microsoft.com/aspnet/core/" target="_blank" rel="noopener">ASP.NET Core 文档</a>锛圵eb/服务绔鏋讹級</li>
+    </ul>
+    <h2>系统瀛︿範璺緞</h2>
+    <ol>
+      <li>璇█基础涓庨潰鍚戝璞★細绫诲瀷系统銆佹硾鍨嬨€丩INQ銆佸紓甯镐笌鍐呭瓨妯″瀷銆?/li>
+      <li>宸ョ▼涓庢祴璇曪細椤圭洰缁撴瀯銆丏I銆亁Unit/NUnit銆佹棩蹇椾笌閰嶇疆绠＄悊銆?/li>
+      <li>Web 涓庝簯鍘熺敓锛欰SP.NET Core銆丒F Core銆佸鍣ㄥ寲涓庨儴缃叉祦姘寸嚎銆?/li>
+    </ol>
+    <h2>杩涢樁椤圭洰</h2>
+    <ol>
+      <li>妯″潡鍖栧悗绔細鍒嗗眰/DDD銆丷epository銆佺粺涓€寮傚父涓庡搷搴旀牸寮忋€?/li>
+      <li>楂樺苟鍙?API锛氬紓姝?I/O銆佽繛鎺ユ睜涓庣紦瀛樸€佹寚鏍囦笌鍙娴嬫€с€?/li>
+      <li>澶氱鎴?SaaS锛氱鎴烽殧绂汇€佹巿鏉冧笌璁¤垂銆佺伆搴︿笌杩愮淮宸ュ叿銆?/li>
+    </ol>
+  <hr/>
+<section id="theory-index">
+  <h2>理论与论文到代码索引（C#/.NET）</h2>
+  <ul>
+    <li><a href="./tutorial-p2c-raft.html">Raft（概念）</a>；.NET 可实现集群模拟与日志复制。</li>
+    <li><a href="./tutorial-p2c-lsm.html">LSM-Tree（概念）</a>；可使用 .NET 的 I/O 库进行工程实现。</li>
+  </ul>
+</section>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>我的世界资源 - 鸟国网站</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html" class="active">游戏专区</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container">
+          <h3>我的世界（Minecraft）资源</h3>
+          <p>本页提供“启动器”和“模组/光影/材质包”两个分区，均支持直接下载安装（直装）与搜索筛选。</p>
+          <p>提示：部分直链可能随官方发布变动而变化，如遇下载失败请点击“官网”进入官方发布页。</p>
+        </div>
+      </section>
+
+      <!-- 启动器分区 -->
+      <section class="section">
+        <div class="container">
+          <h3>启动器</h3>
+          <div class="grid" id="mcLaunchersGrid"><!-- 动态渲染区域 --></div>
+        </div>
+      </section>
+
+      <!-- 模组分区（含搜索） -->
+      <section class="section">
+        <div class="container">
+          <h3>模组 / 光影 / 材质包</h3>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+            <input id="modSearchInput" type="text" placeholder="搜索：模组/光影/材质关键字，如 背包 / 幸运方块 / 动态光源" style="flex:1;min-width:260px;" />
+            <select id="modPlatformSelect" style="min-width:140px;">
+              <option value="">全部平台</option>
+              <option value="java">Java版</option>
+              <option value="bedrock">基岩版</option>
+            </select>
+            <select id="modVersionSelect" style="min-width:160px;">
+              <option value="">全部版本</option>
+              <option value="1.21.0">1.21.0（基岩）</option>
+              <option value="1.21.x">1.21.x（Java）</option>
+              <option value="1.20.6">1.20.6（Java）</option>
+              <option value="1.20.x">1.20.x（Java）</option>
+            </select>
+          </div>
+          <div class="grid" id="mcModsGrid"><!-- 动态渲染区域 --></div>
+          <div class="card" style="margin-top:12px;">
+            <h4>更多模组（在线搜索 Modrinth）</h4>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+              <input id="modrinthQuery" type="text" placeholder="在线搜索关键字，如 Create / JEI / 地图 / 工业" style="flex:1;min-width:260px;" />
+              <button class="btn" id="modrinthBtn">搜索</button>
+            </div>
+            <div class="grid" id="modrinthGrid"><!-- 在线搜索结果 --></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 基岩版专区（Windows） -->
+      <section class="section">
+        <div class="container">
+          <h3>基岩版专区（Windows）</h3>
+          <p>基岩版通过微软商店分发（Minecraft for Windows）。Windows 平台的基岩版使用 RenderDragon 渲染管线，对第三方着色器支持有限；推荐使用“行为包/资源包”扩展玩法。</p>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+            <input id="bedrockQuery" type="text" placeholder="搜索 MCPEDL：如 vein miner / backpack / tree capitator" style="flex:1;min-width:260px;" />
+            <button class="btn" id="bedrockSearchBtn">打开 MCPEDL 搜索</button>
+          </div>
+          <div class="grid" id="mcBedrockGrid"><!-- 动态渲染区域 --></div>
+          <div class="card" style="margin-top:12px;">
+            <h4>基岩版 Add-ons 全集（自动抓取 MCPEDL）</h4>
+            <p>点击“加载更多”可自动爬取 MCPEDL 的 Add-ons 列表并在此展示（部署到 Netlify 后生效，本地预览可能无法抓取）。也可在下方搜索已加载的条目。</p>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+              <button class="btn" id="bedrockAllLoadBtn">加载更多</button>
+              <input id="bedrockAllFilter" type="text" placeholder="在已加载内容中搜索，如 vein / tree / backpack" style="flex:1;min-width:260px;" />
+            </div>
+            <div id="bedrockAllStatus" class="card"><p>尚未抓取内容。</p></div>
+            <div class="grid" id="mcBedrockAllGrid"><!-- 自动抓取的 Add-ons 列表 --></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer"><div class="container"><span>© 2025 鸟国网站 niaoguo.com</span></div></footer>
+    <script>
+      (function(){
+        'use strict';
+
+        // 数据源（可后续迁移到独立 JSON）
+        const mcLaunchers = [
+          {
+            id: 'prismlauncher',
+            name: 'Prism Launcher',
+            website: 'https://github.com/PrismLauncher/PrismLauncher/releases',
+            direct: 'https://github.com/PrismLauncher/PrismLauncher/releases/latest/download/PrismLauncher-Windows-msvc-Setup.exe',
+            desc: '开源多实例启动器（推荐），支持 Modrinth/CurseForge 等生态，提供 Windows 安装包。',
+            platforms: ['java'],
+            mcvers: ['1.7-1.21.x'],
+            tags: ['启动器','开源','多实例']
+          },
+          {
+            id: 'hmcl',
+            name: 'HMCL 启动器',
+            website: 'https://github.com/HMCL-dev/HMCL',
+            direct: 'https://sourceforge.net/projects/hello-minecraft-launch.mirror/files/latest/download',
+            desc: '国人维护的跨平台启动器，支持 Forge/NeoForge/Fabric/Quilt/OptiFine 等。',
+            platforms: ['java'],
+            mcvers: ['1.7-1.21.x'],
+            tags: ['启动器','跨平台']
+          },
+          {
+            id: 'multimc',
+            name: 'MultiMC',
+            website: 'https://multimc.org/',
+            direct: '',
+            desc: '早期经典多实例启动器（Windows 通常以压缩包分发，解压即用）。',
+            platforms: ['java'],
+            mcvers: ['1.7-1.20.x'],
+            tags: ['启动器','多实例']
+          }
+        ];
+
+        const mcMods = [
+          // 必备模组（中文诉求）
+          {
+            id: 'lambdynamiclights',
+            name: '移动光源（LambDynamicLights / Fabric）',
+            website: 'https://modrinth.com/mod/lambdynamiclights',
+            direct: 'https://modrinth.com/mod/lambdynamiclights',
+            desc: '让玩家持有的光源在移动时照亮周围（Fabric 生态）。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.21.x','1.20.x'],
+            tags: ['模组','动态光源','Fabric']
+          },
+          {
+            id: 'travelersbackpack',
+            name: '背包（Traveler\'s Backpack）',
+            website: 'https://modrinth.com/mod/travelersbackpack',
+            direct: 'https://modrinth.com/mod/travelersbackpack',
+            desc: '可升级的大容量背包，支持装备位与多种能力（Forge/NeoForge）。',
+            platforms: ['java'],
+            loader: 'Forge/NeoForge',
+            mcvers: ['1.21.x','1.20.x','1.19.x'],
+            tags: ['模组','背包','Forge']
+          },
+          {
+            id: 'luckyblocks',
+            name: '幸运方块（Lucky Blocks / Fabric）',
+            website: 'https://modrinth.com/mod/luckyblocks',
+            direct: 'https://modrinth.com/mod/luckyblocks',
+            desc: '现代风格幸运方块，事件与掉落可配置（Fabric 生态）。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.20.x','1.19.x'],
+            tags: ['模组','幸运方块','Fabric']
+          },
+          {
+            id: 'inventory-profiles-next',
+            name: '背包整理（Inventory Profiles Next）',
+            website: 'https://modrinth.com/mod/inventory-profiles-next',
+            direct: 'https://modrinth.com/mod/inventory-profiles-next',
+            desc: '库存排序、物品匹配移动、自动补充等功能（Fabric/Forge）。',
+            platforms: ['java'],
+            loader: 'Fabric/Forge',
+            mcvers: ['1.21.x','1.20.x','1.19.x'],
+            tags: ['模组','背包整理','Fabric','Forge']
+          },
+          {
+            id: 'backhand',
+            name: '副手扩展（Backhand）',
+            website: 'https://modrinth.com/mod/backhand',
+            direct: 'https://modrinth.com/mod/backhand',
+            desc: '强化副手使用逻辑（多版本支持，详见 Modrinth 页）。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.20.x','1.19.x'],
+            tags: ['模组','副手扩展']
+          },
+          // 常用光影/性能
+          {
+            id: 'iris',
+            name: 'Iris Shaders（光影框架）',
+            website: 'https://modrinth.com/mod/iris',
+            direct: 'https://modrinth.com/mod/iris',
+            desc: 'Fabric 光影框架，与 Sodium 兼容，支持多种 Shader 包。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.21.x','1.20.x'],
+            tags: ['光影','Fabric']
+          },
+          {
+            id: 'sodium',
+            name: 'Sodium（性能优化）',
+            website: 'https://modrinth.com/mod/sodium',
+            direct: 'https://modrinth.com/mod/sodium',
+            desc: 'Fabric 下图形性能优化大幅提升 FPS。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.21.x','1.20.x'],
+            tags: ['优化','Fabric']
+          },
+          {
+            id: 'lithium',
+            name: 'Lithium（逻辑优化）',
+            website: 'https://modrinth.com/mod/lithium',
+            direct: 'https://modrinth.com/mod/lithium',
+            desc: '游戏逻辑层性能优化，搭配 Sodium 使用（Fabric）。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.21.x','1.20.x'],
+            tags: ['优化','Fabric']
+          },
+          {
+            id: 'modmenu',
+            name: 'Mod Menu（模组菜单）',
+            website: 'https://modrinth.com/mod/modmenu',
+            direct: 'https://modrinth.com/mod/modmenu',
+            desc: '在游戏中查看与管理模组设置（Fabric）。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.21.x','1.20.x'],
+            tags: ['工具','Fabric']
+          },
+          {
+            id: 'cloth-config',
+            name: 'Cloth Config（配置库）',
+            website: 'https://modrinth.com/mod/cloth-config',
+            direct: 'https://modrinth.com/mod/cloth-config',
+            desc: '众多 Fabric 模组依赖的配置库。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.21.x','1.20.x'],
+            tags: ['依赖','Fabric']
+          },
+          {
+            id: 'betterf3',
+            name: 'BetterF3（更好看的 F3）',
+            website: 'https://modrinth.com/mod/betterf3',
+            direct: 'https://modrinth.com/mod/betterf3',
+            desc: '替换原版调试界面为可配置的美观面板。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.21.x','1.20.x'],
+            tags: ['UI','Fabric']
+          },
+          {
+            id: 'create-fabric',
+            name: '机械动力（Create - Fabric）',
+            website: 'https://modrinth.com/mod/create-fabric',
+            direct: 'https://modrinth.com/mod/create-fabric',
+            desc: '超人气机械自动化模组的 Fabric 版本。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.20.x','1.19.x'],
+            tags: ['模组','机械','Fabric']
+          },
+          {
+            id: 'ftb-chunks',
+            name: 'FTB Chunks（领地与地图）',
+            website: 'https://modrinth.com/mod/ftb-chunks',
+            direct: 'https://modrinth.com/mod/ftb-chunks',
+            desc: '支持领地标记与区块加载，Forge/Fabric 均可用。',
+            platforms: ['java'],
+            loader: 'Fabric/Forge',
+            mcvers: ['1.20.x','1.19.x'],
+            tags: ['地图','领地','Fabric','Forge']
+          },
+          {
+            id: 'appleskin',
+            name: 'AppleSkin（饥饿值显示）',
+            website: 'https://modrinth.com/mod/appleskin',
+            direct: 'https://modrinth.com/mod/appleskin',
+            desc: '在物品与状态栏中显示饥饿/饱食等信息。',
+            platforms: ['java'],
+            loader: 'Fabric/Forge',
+            mcvers: ['1.21.x','1.20.x','1.19.x'],
+            tags: ['UI','Fabric','Forge']
+          },
+          {
+            id: 'mouse-wheelie',
+            name: 'Mouse Wheelie（滚轮操作增强）',
+            website: 'https://modrinth.com/mod/mouse-wheelie',
+            direct: 'https://modrinth.com/mod/mouse-wheelie',
+            desc: '滚轮快速移动与排序等（Fabric）。',
+            platforms: ['java'],
+            loader: 'Fabric',
+            mcvers: ['1.21.x','1.20.x'],
+            tags: ['便捷','Fabric']
+          }
+        ];
+
+        function sanitizeUrl(u){
+          try { return String(u||'').replace(/`/g,'').trim(); } catch(_) { return ''; }
+        }
+
+        function renderCard(d){
+          const website = sanitizeUrl(d.website);
+          const direct = sanitizeUrl(d.direct);
+          const websiteBtn = website ? `<a class="btn" href="${website}" target="_blank" rel="noopener noreferrer" data-item-id="${d.id||''}" data-item-name="${d.name||''}">官网</a>` : '';
+          const directBtn = direct ? `<a class="btn primary" href="${direct}" target="_blank" rel="noopener noreferrer" data-item-id="${d.id||''}" data-item-name="${d.name||''}">直装</a>` : '';
+          const tags = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${t}</span>`).join('') : '';
+          const platforms = Array.isArray(d.platforms) ? d.platforms.map(p => `<span class="chip">${p==='java'?'Java版':'基岩版'}</span>`).join('') : '';
+          const loader = d.loader ? `<span class="chip">${d.loader}</span>` : '';
+          const mcvers = Array.isArray(d.mcvers) ? d.mcvers.map(v => `<span class="chip">${v}</span>`).join('') : (d.mcver ? `<span class="chip">${d.mcver}</span>` : '');
+          return `
+            <div class="card">
+              <h4>${d.name || '未命名'}</h4>
+              <p>${d.desc || ''}</p>
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                ${websiteBtn}
+                ${directBtn}
+                ${platforms}
+                ${loader}
+                ${mcvers}
+                ${tags}
+              </div>
+            </div>
+          `;
+        }
+
+        function renderLaunchers(){
+          const grid = document.getElementById('mcLaunchersGrid');
+          if (!grid) return;
+          grid.innerHTML = mcLaunchers.map(renderCard).join('');
+        }
+
+        function renderMods(list){
+          const grid = document.getElementById('mcModsGrid');
+          if (!grid) return;
+          grid.innerHTML = list.map(renderCard).join('');
+        }
+
+        // 基岩版资源
+        const mcBedrockResources = [
+          {
+            id: 'mc-bedrock-store',
+            name: 'Minecraft for Windows（基岩版）',
+            website: 'https://www.minecraft.net/zh-hans/store/minecraft-deluxe-collection-pc',
+            direct: 'https://pan.baidu.com/s/1oXi7oxhvsSJSFUEU4EHnKg#list/path=%2F',
+            desc: '通过百度网盘页面进行获取与安装（含基岩版与 Java 版套装）。点击直装将同时下载本地密钥文件。',
+            platforms: ['bedrock'],
+            mcver: '1.21.0',
+            tags: ['商店','基岩版']
+          },
+          {
+            id: 'mcpedl',
+            name: 'MCPEDL（基岩版资源站）',
+            website: 'https://mcpedl.com/',
+            direct: 'https://mcpedl.com/',
+            desc: '大型 Bedrock 行为包/资源包/地图/着色包资源站。',
+            platforms: ['bedrock'],
+            mcver: '1.21.0',
+            tags: ['资源','行为包','资源包']
+          },
+          {
+            id: 'estn-shaders',
+            name: 'ESTN Shaders（着色包）',
+            website: 'https://mcpedl.com/estn-shaders/',
+            direct: 'https://mcpedl.com/estn-shaders/',
+            desc: '常见基岩版着色包之一（Android/部分平台生效，Windows RenderDragon 限制）。',
+            platforms: ['bedrock'],
+            tags: ['着色包']
+          },
+          {
+            id: 'zebra-shaders',
+            name: 'Zebra Shaders（着色包）',
+            website: 'https://mcpedl.com/zebra-shaders/',
+            direct: 'https://mcpedl.com/zebra-shaders/',
+            desc: '轻量级着色包（移动端效果较佳，Windows 平台受 RenderDragon 限制）。',
+            platforms: ['bedrock'],
+            tags: ['着色包']
+          },
+          {
+            id: 'faithful-32-bedrock',
+            name: 'Faithful 32x（资源包，Bedrock）',
+            website: 'https://faithful.team/downloads/',
+            direct: 'https://faithful.team/downloads/',
+            desc: '提升纹理清晰度的经典资源包，提供基岩版下载页面。',
+            platforms: ['bedrock'],
+            tags: ['资源包']
+          },
+          {
+            id: 'purebdcraft-bedrock',
+            name: 'PureBDcraft（资源包，Bedrock）',
+            website: 'https://purebdcraft.com/',
+            direct: 'https://purebdcraft.com/',
+            desc: '卡通风格高质量资源包，提供基岩版版本与市场发布。',
+            platforms: ['bedrock'],
+            tags: ['资源包']
+          },
+          {
+            id: 'vein-miner-bedrock',
+            name: 'Vein Miner（行为包，Bedrock）',
+            website: 'https://mcpedl.com/vein-miner-addon/',
+            direct: 'https://mcpedl.com/vein-miner-addon/',
+            desc: '一键挖矿行为包（版本适配请以页面说明为准）。',
+            platforms: ['bedrock'],
+            tags: ['行为包']
+          },
+          {
+            id: 'tree-capitator-bedrock',
+            name: 'Tree Capitator（行为包，Bedrock）',
+            website: 'https://mcpedl.com/treecapitator-addon/',
+            direct: 'https://mcpedl.com/treecapitator-addon/',
+            desc: '砍树连带倒下行为包（版本适配请以页面说明为准）。',
+            platforms: ['bedrock'],
+            tags: ['行为包']
+          },
+          {
+            id: 'backpack-bedrock',
+            name: 'Backpack 背包（行为包，Bedrock）',
+            website: 'https://mcpedl.com/backpack-addon/',
+            direct: 'https://mcpedl.com/backpack-addon/',
+            desc: '增加背包功能的行为包。',
+            platforms: ['bedrock'],
+            tags: ['行为包']
+          },
+          {
+            id: 'blockbench',
+            name: 'Blockbench（模型编辑）',
+            website: 'https://www.blockbench.net/',
+            direct: 'https://blockbench.net/downloads',
+            desc: '编辑模型与动画，支持基岩版 Add-on 开发。',
+            platforms: ['bedrock'],
+            tags: ['开发','模型']
+          },
+          {
+            id: 'bridge',
+            name: 'bridge.（Add-on 编辑器）',
+            website: 'https://bridge-core.app/',
+            direct: 'https://bridge-core.app/',
+            desc: '可视化编辑 Bedrock 行为包与资源包。',
+            platforms: ['bedrock'],
+            tags: ['开发','行为包']
+          },
+          {
+            id: 'ms-doc-bedrock',
+            name: 'Minecraft Creator 文档（基岩版）',
+            website: 'https://learn.microsoft.com/minecraft/creator/',
+            direct: 'https://learn.microsoft.com/minecraft/creator/',
+            desc: '官方创作者文档：行为包、资源包、组件与 API。',
+            platforms: ['bedrock'],
+            tags: ['文档','开发']
+          }
+        ];
+
+        function renderBedrock(){
+          const grid = document.getElementById('mcBedrockGrid');
+          if (!grid) return;
+          grid.innerHTML = mcBedrockResources.map(renderCard).join('');
+        }
+
+        function applyModSearch(){
+          const q = String(document.getElementById('modSearchInput')?.value || '').trim().toLowerCase();
+          const plat = String(document.getElementById('modPlatformSelect')?.value || '').trim();
+          const ver = String(document.getElementById('modVersionSelect')?.value || '').trim();
+          const filtered = mcMods.filter(m => {
+            const nameMatch = String(m.name||'').toLowerCase().includes(q);
+            const descMatch = String(m.desc||'').toLowerCase().includes(q);
+            const tagMatch = Array.isArray(m.tags) && m.tags.some(t => String(t).toLowerCase().includes(q));
+            const qOk = !q || nameMatch || descMatch || tagMatch;
+            const platOk = !plat || (Array.isArray(m.platforms) && m.platforms.includes(plat));
+            const verOk = !ver || (
+              (Array.isArray(m.mcvers) && m.mcvers.some(v => String(v).includes(ver))) ||
+              (m.mcver && String(m.mcver).includes(ver))
+            );
+            return qOk && platOk && verOk;
+          });
+          renderMods(filtered);
+        }
+
+        function wireEvents(){
+          const search = document.getElementById('modSearchInput');
+          if (search) {
+            ['input','change'].forEach(ev => search.addEventListener(ev, applyModSearch));
+          }
+          const platSel = document.getElementById('modPlatformSelect');
+          const verSel = document.getElementById('modVersionSelect');
+          [platSel, verSel].forEach(el => {
+            if (el) ['input','change'].forEach(ev => el.addEventListener(ev, applyModSearch));
+          });
+
+          // 在线搜索 Modrinth
+          const modrinthBtn = document.getElementById('modrinthBtn');
+          const modrinthInput = document.getElementById('modrinthQuery');
+          const doSearch = async () => {
+            const q = String(modrinthInput?.value || '').trim();
+            const ver = String(document.getElementById('modVersionSelect')?.value || '').trim();
+            const endpointBase = 'https://api.modrinth.com/v2/search';
+            let url = endpointBase + '?query=' + encodeURIComponent(q || '');
+            // 版本 facets（可选）
+            const facets = [];
+            if (ver) {
+              // 处理 1.21.x 为 1.21（更泛化）
+              const verFacet = ver.endsWith('.x') ? ver.slice(0, -2) : ver;
+              facets.push([`versions:${verFacet}`]);
+            }
+            if (facets.length) {
+              try {
+                url += '&facets=' + encodeURIComponent(JSON.stringify(facets));
+              } catch(_) {}
+            }
+            const grid = document.getElementById('modrinthGrid');
+            if (grid) grid.innerHTML = '<div class="card"><p>正在搜索 Modrinth……</p></div>';
+            try {
+              const resp = await fetch(url);
+              const data = await resp.json();
+              const hits = Array.isArray(data?.hits) ? data.hits : [];
+              const html = hits.map(h => {
+                const t = h.title || h.project_id || h.slug || '未命名';
+                const slug = h.slug || h.project_id || '';
+                const ptype = h.project_type || 'mod';
+                const base = 'https://modrinth.com/';
+                const path = ptype === 'mod' ? 'mod/' : (ptype === 'shader' ? 'shader/' : (ptype === 'resourcepack' ? 'resourcepack/' : 'project/'));
+                const link = base + path + slug;
+                return `
+                  <div class="card">
+                    <h4>${t}</h4>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                      <a class="btn" href="${link}" target="_blank" rel="noopener noreferrer">官网</a>
+                      <a class="btn primary" href="${link}" target="_blank" rel="noopener noreferrer">直装</a>
+                      <span class="chip">来源：Modrinth</span>
+                      <span class="chip">类型：${ptype}</span>
+                    </div>
+                  </div>
+                `;
+              }).join('');
+              if (grid) grid.innerHTML = html || '<div class="card"><p>未搜索到结果，请更换关键字或版本筛选。</p></div>';
+            } catch (e) {
+              if (grid) grid.innerHTML = '<div class="card"><p>搜索失败，网络或 Modrinth 接口不可用。</p></div>';
+            }
+          };
+          if (modrinthBtn) modrinthBtn.addEventListener('click', doSearch);
+          if (modrinthInput) modrinthInput.addEventListener('keydown', ev => { if (ev.key === 'Enter') doSearch(); });
+
+          // 基岩版：打开 MCPEDL 搜索
+          const bedrockBtn = document.getElementById('bedrockSearchBtn');
+          const bedrockInput = document.getElementById('bedrockQuery');
+          const openMcpedl = () => {
+            const q = String(bedrockInput?.value || '').trim();
+            const url = 'https://mcpedl.com/' + (q ? ('?s=' + encodeURIComponent(q)) : '');
+            window.open(url, '_blank', 'noopener');
+          };
+          if (bedrockBtn) bedrockBtn.addEventListener('click', openMcpedl);
+          if (bedrockInput) bedrockInput.addEventListener('keydown', ev => { if (ev.key === 'Enter') openMcpedl(); });
+
+          // 自动抓取 MCPEDL 基岩版 Add-ons（通过 Netlify 200 代理）
+          const allBtn = document.getElementById('bedrockAllLoadBtn');
+          const allFilter = document.getElementById('bedrockAllFilter');
+          const allGrid = document.getElementById('mcBedrockAllGrid');
+          const allStatus = document.getElementById('bedrockAllStatus');
+          let bedrockAllItems = [];
+          let nextPageUrl = '/proxy/mcpedl/category/add-ons/';
+
+          const createCard = (name, link) => {
+            const safeName = String(name||'未命名').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            const safeLink = String(link||'#');
+            return `
+              <div class="card">
+                <h4>${safeName}</h4>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                  <a class="btn" href="${safeLink}" target="_blank" rel="noopener noreferrer">官网</a>
+                  <a class="btn primary" href="${safeLink}" target="_blank" rel="noopener noreferrer">直装</a>
+                  <span class="chip">来源：MCPEDL</span>
+                  <span class="chip">Bedrock Add-on</span>
+                </div>
+              </div>
+            `;
+          };
+
+          const renderAll = (list) => {
+            if (!allGrid) return;
+            const l = Array.isArray(list) ? list : [];
+            allGrid.innerHTML = l.map(it => createCard(it.name, it.link)).join('');
+          };
+
+          const parseAddonsFromDoc = (doc) => {
+            const anchors = Array.from(doc.querySelectorAll('a[href]'));
+            const items = [];
+            const seen = new Set();
+            anchors.forEach(a => {
+              const href = a.getAttribute('href');
+              if (!href) return;
+              try {
+                const u = new URL(href, 'https://mcpedl.com/');
+                const path = (u.pathname || '').toLowerCase();
+                // 识别形如 /vein-miner-addon/ 的详情页链接
+                const isAddon = path.includes('-addon/') || path.includes('/addon/');
+                if (isAddon) {
+                  const name = (a.textContent || '').trim() || path.split('/').filter(Boolean).pop().replace(/-/g,' ');
+                  const proxied = '/proxy/mcpedl' + u.pathname + (u.search || '');
+                  if (!seen.has(proxied)) { seen.add(proxied); items.push({ name, link: proxied }); }
+                }
+              } catch(_) { /* ignore */ }
+            });
+            return items;
+          };
+
+          const getNextPage = (doc) => {
+            const nextEl = doc.querySelector('a.next, a.page-numbers.next, a[rel="next"]');
+            if (!nextEl) return null;
+            const href = nextEl.getAttribute('href') || '';
+            try {
+              const u = new URL(href, 'https://mcpedl.com/');
+              return '/proxy/mcpedl' + u.pathname + (u.search || '');
+            } catch(_) { return null; }
+          };
+
+          const fetchDoc = async (url) => {
+            const resp = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const text = await resp.text();
+            const parser = new DOMParser();
+            return parser.parseFromString(text, 'text/html');
+          };
+
+          const loadMore = async () => {
+            if (!nextPageUrl) { if (allStatus) allStatus.innerHTML = `<p>没有更多页面。</p>`; return; }
+            if (allStatus) allStatus.innerHTML = `<p>正在抓取：${nextPageUrl}</p>`;
+            try {
+              const doc = await fetchDoc(nextPageUrl);
+              const items = parseAddonsFromDoc(doc);
+              const seen = new Set(bedrockAllItems.map(i => i.link));
+              const toAdd = items.filter(i => !seen.has(i.link));
+              bedrockAllItems = bedrockAllItems.concat(toAdd);
+              renderAll(bedrockAllItems);
+              nextPageUrl = getNextPage(doc);
+              if (allStatus) allStatus.innerHTML = `<p>已加载 ${bedrockAllItems.length} 项。${nextPageUrl? '可继续加载更多。':'已到最后一页。'}</p>`;
+            } catch(e) {
+              if (allStatus) allStatus.innerHTML = `<p>抓取失败：本地预览通常无法使用代理；请部署到 Netlify 后再试，或直接打开上方的 MCPEDL 站点。</p>`;
+            }
+          };
+
+          const applyFilter = () => {
+            const q = String(allFilter?.value || '').trim().toLowerCase();
+            if (!q) { renderAll(bedrockAllItems); return; }
+            const filtered = bedrockAllItems.filter(i => String(i.name||'').toLowerCase().includes(q));
+            renderAll(filtered);
+          };
+
+          if (allBtn) allBtn.addEventListener('click', loadMore);
+          if (allFilter) ['input','change'].forEach(ev => allFilter.addEventListener(ev, applyFilter));
+          // 初次尝试加载第一页（若在本地预览失败，会显示状态提示）
+          loadMore();
+
+          // 基岩版官方直装：点击直装时，先下载“我的世界密钥.txt”，内容为“564448”，随后打开百度网盘链接
+          document.addEventListener('click', (e) => {
+            const a = e.target && e.target.closest && e.target.closest('a.btn.primary');
+            if (!a) return;
+            const itemId = String(a.getAttribute('data-item-id')||'').trim();
+            if (itemId === 'mc-bedrock-store') {
+              e.preventDefault();
+              try {
+                const blob = new Blob(['564448'], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const dl = document.createElement('a');
+                dl.href = url; dl.download = '我的世界密钥.txt';
+                document.body.appendChild(dl);
+                dl.click();
+                setTimeout(() => { URL.revokeObjectURL(url); dl.remove(); }, 800);
+              } catch(_) {}
+              // 然后打开直装链接（百度网盘）
+              try { window.open(a.href, '_blank', 'noopener'); } catch(_) { window.location.href = a.href; }
+            }
+          }, { capture: true });
+        }
+
+        function init(){
+          renderLaunchers();
+          renderMods(mcMods);
+          renderBedrock();
+          wireEvents();
+        }
+
+        init();
+      })();
+    </script>
+  </body>
+</html>

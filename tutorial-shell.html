@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shell 鑴氭湰蹇€熶笂鎵?/title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <style>.hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0} .icons{display:flex;gap:12px;margin:8px 0} .icons img{width:48px;height:48px}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
+    <h1>Shell 上手指南锛圔ash锛?/h1>
+    <p>鍙橀噺銆佹潯浠朵笌寰幆銆佸嚱鏁般€佺閬撲笌閲嶅畾鍚戙€侀敊璇鐞嗕笌缁冧範銆?/p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="缂栫▼涔嬫梾" />
+    <div class="icons">
+      <img src="assets/icon-beginner.svg" alt="鏂版墜" />
+      <img src="assets/icon-project.svg" alt="椤圭洰" />
+      <img src="assets/icon-debug.svg" alt="璋冭瘯" />
+    </div>
+    <h2>基础璇硶</h2>
+    <pre><code>#!/usr/bin/env bash
+set -euo pipefail
+# 鍙橀噺涓庡弬鏁?name=${1:-world}
+echo "hello $name"
+# 鏉′欢
+if [[ -f file.txt ]]; then echo "exists"; fi
+# 寰幆
+for f in *.log; do echo "$f"; done
+# 鍑芥暟
+log(){ printf "[%s] %s\n" "$(date)" "$*"; }
+</code></pre>
+    <h2>甯歌鍧?/h2>
+    <ul>
+      <li>绌烘牸涓庡紩鍙凤細浣跨敤鍙屽紩鍙峰寘瑁瑰彉閲忥紝閬垮厤鍒嗚瘝閿欒銆?/li>
+      <li>绠￠亾鍑洪敊锛氬姞 <code>set -o pipefail</code> 鎹曡幏澶辫触銆?/li>
+      <li>鍙Щ妞嶆€э細閬垮厤渚濊禆闈炴爣鍑嗗伐鍏锋垨閫夐」銆?/li>
+    </ul>
+    <h2>缁冧範棰?/h2>
+    <ol>
+      <li>鍐欎竴涓棩蹇楄疆杞剼鏈紝鎸夊ぇ灏忔垨鏃ユ湡鍒囧垎銆?/li>
+      <li>瀹炵幇涓€涓苟鍙戜笅杞借剼鏈紝闄愬埗鏈€澶у苟鍙戞暟銆?/li>
+      <li>鍐欎竴涓枃浠跺幓閲嶅伐鍏凤紝杈撳嚭閲嶅鐨勬枃浠惰矾寰勩€?/li>
+    </ol>
+    <h2>缁欏畬鍏ㄦ柊鎵嬶細绗竴姝ユ€庝箞鍋?/h2>
+    <ol>
+      <li>瀹夎 Git Bash 鎴?WSL锛涚‘璁?<code>bash --version</code>銆?/li>
+      <li>鍦ㄦ闈㈠垱寤?<code>hello.sh</code>锛岃繍琛岋細<code>bash hello.sh</code>銆?/li>
+      <li>璇曠潃鍐欎竴涓甫鍙傛暟鐨勮剼鏈紝骞舵墦鍗版棩蹇椼€?/li>
+      <li>瀛︿範 <code>set -euo pipefail</code> 涓庤皟璇?<code>set -x</code>銆?/li>
+    </ol>
+    <h2>椤圭洰瀹炴垬锛堝叆闂級</h2>
+    <ol>
+      <li>鏃ュ織杞浆锛氭寜澶у皬鎴栨棩鏈熷垏鍒嗐€?/li>
+      <li>骞跺彂下载锛?code>xargs -P</code> 鎴栧悗鍙颁换鍔°€?/li>
+      <li>文件鍘婚噸锛氭瘮瀵瑰搱甯岋紝杈撳嚭閲嶅文件鍒楄〃銆?/li>
+    </ol>
+    <h2>涓鎻掑浘</h2>
+    <img class="hero-img" src="assets/diagram-flow.svg" alt="娴佺▼绀烘剰鍥? />
+    <img class="hero-img" src="assets/illustration-debug.svg" alt="璋冭瘯绀烘剰鍥? />
+
+    <h2>杩涢樁鍐呭</h2>
+    <ul>
+      <li>鍋ュ．鎬э細<code>trap</code> 鎹曟崏淇″彿锛屾竻鐞嗕复鏃舵枃浠躲€?/li>
+      <li>鍙祴璇曟€э細灏嗘牳蹇冮€昏緫鎻愬嚱鏁帮紝渚夸簬鍗曟祴銆?/li>
+      <li>鎬ц兘锛氶伩鍏?<code>fork</code> 杩囧锛屼紭鍏堝唴寤轰笌绠￠亾銆?/li>
+    </ul>
+    <h2>鏇村缁冧範</h2>
+    <ol>
+      <li>瀹炵幇涓€涓苟鍙戜换鍔¤皟搴﹀櫒锛岃褰曡€楁椂涓庡け璐ラ噸璇曘€?/li>
+      <li>鍐欎竴涓棩蹇楄仛鍚堝櫒锛屾寜鍏抽敭瀛楁彁鍙栧苟杈撳嚭鎽樿銆?/li>
+      <li>瀹炵幇涓€涓畝鍗曢儴缃茶剼鏈紝甯﹀洖婊氫笌鐘舵€佹鏌ャ€?/li>
+    </ol>
+    <h2>鏉冨▉璧勬簮</h2>
+    <ul>
+      <li><a href="https://www.gnu.org/software/bash/manual/" target="_blank" rel="noopener">GNU Bash Manual</a>锛圔ash 鎵嬪唽锛?/li>
+      <li><a href="https://pubs.opengroup.org/onlinepubs/9699919799/" target="_blank" rel="noopener">POSIX Shell & Utilities</a>锛堟爣鍑嗚鑼冿級</li>
+      <li><a href="https://man7.org/linux/man-pages/" target="_blank" rel="noopener">Linux man-pages</a>锛堢郴缁熷懡浠や笌璋冪敤锛?/li>
+    </ul>
+    <h2>系统瀛︿範璺緞</h2>
+    <ol>
+      <li>Shell 基础锛氬彉閲忎笌鎺у埗娴併€佸嚱鏁颁笌绠￠亾銆佹枃鏈笌文件鎿嶄綔銆?/li>
+      <li>鍙潬鎬т笌鍙祴璇曪細trap銆佷弗鏍兼ā寮忋€佸崟鍏冩祴璇曚笌鎸佺画闆嗘垚銆?/li>
+      <li>鑷姩鍖栦笌杩愮淮锛氬寘绠＄悊銆佽繘绋嬩笌浠诲姟銆佹棩蹇椾笌鐩戞帶銆侀儴缃蹭笌鍥炴粴銆?/li>
+    </ol>
+    <h2>杩涢樁椤圭洰</h2>
+    <ol>
+      <li>鍙鐢ㄧ殑 DevOps 宸ュ叿闆嗭細瀹夎銆侀厤缃€佸仴搴锋鏌ヤ笌鍥炴粴銆?/li>
+      <li>鏃ュ織涓庢寚鏍囬噰闆嗭細缁撴瀯鍖栬緭鍑恒€佽疆杞€佽仛鍚堜笌鍛婅銆?/li>
+      <li>璺ㄥ钩鍙拌剼鏈ā鏉匡細鍏煎 macOS/Linux锛屽悎鐞嗕娇鐢ㄥ彲绉绘鍛戒护銆?/li>
+    </ol>
+  </main>
+  <section style="max-width:920px;margin:0 auto;padding:24px 16px;">
+    <h2>加长版：工程化与进阶（Shell）</h2>
+    <p>专注写“稳健”的 Bash 脚本：严格模式、引用规则、数组/关联数组、trap 信号处理、常用文本工具（grep/sed/awk）、并发下载、日志与质量保障（shellcheck/bats），以及 10 道练习题。</p>
+
+    <h3>严格模式与引用</h3>
+    <pre><code>#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'   # 更安全的 IFS
+
+# 引用与变量展开
+name=${1:-world}
+echo "hello ${name}"   # 始终使用双引号避免空格/通配符问题
+    </code></pre>
+    <p>建议：启用 <code>set -euo pipefail</code>；为数组/字符串统一加引号；避免未定义变量。</p>
+
+    <h3>数组与关联数组</h3>
+    <pre><code>declare -a files=(a.log b.log)
+declare -A conf=([host]=localhost [port]=8080)
+
+for f in "${files[@]}"; do echo "$f"; done
+echo "host=${conf[host]}"
+    </code></pre>
+
+    <h3>trap 与清理</h3>
+    <pre><code>tmp=$(mktemp)
+cleanup(){ rm -f "$tmp"; }
+trap cleanup EXIT INT TERM
+echo "work" > "$tmp"
+# 程序结束或收到信号时自动清理临时文件
+    </code></pre>
+
+    <h3>文本与管线：grep/sed/awk/xargs</h3>
+    <pre><code>grep -i "error" app.log | sed 's/ERROR/ERR/g' | awk '{print NR ":" $0}'
+find images -name '*.jpg' -print0 | xargs -0 -I{} -P 4 cp {} backup/
+    </code></pre>
+    <p><code>xargs -P</code> 用于并行处理；<code>-0</code> 搭配 <code>-print0</code> 处理含空格的文件名。</p>
+
+    <h3>日志与调试</h3>
+    <pre><code>log(){ printf "[%s] %s\n" "$(date '+%F %T')" "$*"; }
+set -x   # 追踪执行的每条命令（调试时开启）
+    </code></pre>
+
+    <h3>质量保障：shellcheck 与 bats</h3>
+    <pre><code># 安装与使用：
+shellcheck script.sh
+
+# bats 测试示例（bats 文件）：
+@test "sum" {
+  run bash -c 'echo $((1+2))'
+  [ "$status" -eq 0 ]
+  [ "$output" -eq 3 ]
+}
+    </code></pre>
+
+    <h3>练习题（10 题）</h3>
+    <ol>
+      <li>实现日志轮转脚本：超过 10MB 自动切分并保留最近 N 份。</li>
+      <li>并发下载器：读取 URL 列表，用 <code>xargs -P</code> 或后台任务并发下载。</li>
+      <li>文件去重：输出目录下重复的文件路径（可用 <code>md5sum</code>/大小+名称）。</li>
+      <li>编写参数解析函数：支持 <code>-o/--output</code>、<code>-v/--verbose</code> 等。</li>
+      <li>实现 <code>trap</code> 清理：捕获 <code>INT/TERM</code>，删除临时目录并退出。</li>
+      <li>写一个 <code>grep+awk</code> 管线：统计日志中各等级的数量（INFO/WARN/ERROR）。</li>
+      <li>写 <code>bats</code> 测试：校验某工具脚本的核心行为与错误分支。</li>
+      <li>写一个“目录同步”脚本：忽略特定后缀文件与目录，并输出对比报告。</li>
+      <li>实现安全的 <code>read</code> 读取：处理包含空格/引号的输入行。</li>
+      <li>封装一个小型库 <code>lib.sh</code>：包含 <code>log/retry/assert</code> 等可复用函数。</li>
+    </ol>
+  </section>
+<script src="script.js"></script>
+</body>
+</html>
+
+
+

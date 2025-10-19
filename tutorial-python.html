@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Python 入门与语法速览</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #111; color: #eee; padding: 12px; overflow: auto; }
+    code { font-family: Consolas, Monaco, monospace; }
+    .hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Python 入门与语法速览</h1>
+    <p>这是一份简明但覆盖全面的 Python 教程。按步骤练习，确保能跑起来、能做项目，再逐步迈向“工程化”。</p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="开发与学习插画" />
+
+    <h2>安装与环境</h2>
+    <ul>
+      <li>Windows：到 <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org</a> 下载并勾选 “Add Python to PATH”。</li>
+      <li>创建虚拟环境：<code>python -m venv .venv</code>，激活：<code>.venv\\Scripts\\activate</code>。</li>
+      <li>安装包：<code>pip install requests</code>，升级 pip：<code>python -m pip install --upgrade pip</code>。</li>
+    </ul>
+
+    <h2>完整新手路径：第一步怎么做</h2>
+    <ol>
+      <li>安装 Python 后，打开 VS Code（或任何你熟悉的编辑器）。</li>
+      <li>在工作目录创建文件夹，例如 <code>learn-python</code>，用 VS Code 打开。</li>
+      <li>新建文件 <code>hello.py</code>，输入：<code>print("Hello, Python!")</code>。</li>
+      <li>运行：在 VS Code 终端输入 <code>python hello.py</code>。</li>
+      <li>见到输出后，继续修改内容再运行，形成“修改-保存-运行”的循环。</li>
+    </ol>
+    <p>缩进非常重要：Python 用空格表示层级（如 <code>if</code> 或函数体内的内容需要缩进 4 个空格），缩进错误会报 <code>IndentationError</code>。</p>
+
+    <h2>Hello, World</h2>
+    <pre><code>print("Hello, World")
+    </code></pre>
+    <p>这一行代码调用内置的 <code>print</code> 函数，将字符串输出到屏幕。保存后即可直接运行。</p>
+
+    <h2>基础语法</h2>
+    <pre><code># 变量与类型
+name = "Alice"      # str
+age = 18             # int
+pi = 3.14            # float
+is_ok = True         # bool
+
+# 容器
+nums = [1, 2, 3]     # list
+user = {"name": "Bob", "age": 20}  # dict
+uniq = {1, 2, 2, 3}  # set -> {1,2,3}
+
+# 条件与循环
+if age >= 18:
+    print("adult")
+for n in nums:
+    print(n)
+
+# 函数与模块
+def add(a, b=0):
+    return a + b
+
+import math
+print(math.sqrt(9))
+    </code></pre>
+    <p>说明：</p>
+    <ul>
+      <li>变量无需显式声明类型，赋值即可；运行时会根据值决定类型。</li>
+      <li><code>list</code> 是有序可变序列；<code>dict</code> 是“键-值”映射；<code>set</code> 是不重复元素的集合。</li>
+      <li><code>if/for</code> 后面的代码块需要缩进 4 个空格；循环会遍历列表中的每个元素。</li>
+      <li>函数用 <code>def</code> 定义，<code>b=0</code> 是默认参数；导入模块后可使用其提供的函数。</li>
+    </ul>
+
+    <h2>如何运行与调试（尽量不“调试=遇到问题就停工”）</h2>
+    <ul>
+      <li>交互模式：在终端输入 <code>python</code> 进入 REPL，尝试语法与函数。</li>
+      <li>脚本模式：运行 <code>python your_script.py</code>，适合编写完整程序。</li>
+      <li>VS Code：安装官方 Python 扩展，底部“运行”按钮可直接执行当前文件。</li>
+      <li>调试技巧：使用 <code>print()</code> 输出变量值；出错时先阅读错误末尾几行，含文件名、行号与错误类型。</li>
+    </ul>
+
+    <h2>基础语法详解（拓展，跟着练就能独立做东西）</h2>
+    <h3>字符串与切片</h3>
+    <pre><code>s = "hello"
+print(s.upper())       # HELLO
+print(s[1:4])          # ell （切片：结束不含右端）
+print(s.replace("l","L"))  # heLLo
+    </code></pre>
+    <p>切片语法 <code>s[start:end:step]</code> 可灵活选择；常规操作有大小写转换、查找与替换等。</p>
+
+    <h3>列表/字典/集合常用操作</h3>
+    <pre><code>nums = [3,1,2]
+nums.append(4); nums.sort()     # [1,2,3,4]
+
+user = {"name":"Bob","age":20}
+print(user.get("city","unknown"))  # 安全获取键
+user.update({"city":"BJ"})
+
+uniq = set([1,2,2,3])           # {1,2,3}
+uniq.add(5); uniq.discard(2)
+    </code></pre>
+    <p>列表有增删改查与排序；字典的 <code>get</code> 可设置默认值；集合适合去重与集合运算（并交差）。</p>
+
+    <h3>元组与不可变性</h3>
+    <pre><code>pt = (10, 20)
+x, y = pt     # 解包：x=10, y=20
+    </code></pre>
+    <p>元组不可修改，适合作为字典键或表示不可变的坐标/设置。</p>
+
+    <h3>条件表达式与推导式</h3>
+    <pre><code>status = "adult" if age >= 18 else "minor"
+evens = [x for x in range(10) if x % 2 == 0]
+mapping = {x: x*x for x in range(5)}
+    </code></pre>
+    <p>推导式能将“循环+条件+构造”合并为一行，适合数据转换。</p>
+
+    <h3>函数进阶：可变参数、关键字参数、闭包</h3>
+    <pre><code>def demo(a, *args, **kwargs):
+    return a, args, kwargs
+
+def make_adder(delta):
+    def add(x):
+        return x + delta   # 闭包：内部函数使用外部变量
+    return add
+
+add5 = make_adder(5)
+print(add5(10))  # 15
+    </code></pre>
+    <p>当需要可扩展的函数签名时使用 <code>*args</code> 与 <code>**kwargs</code>；闭包用于生成带“记忆”的函数。</p>
+
+    <h3>模块与包、相对导入</h3>
+    <pre><code># project/
+#   src/
+#     app/
+#       __init__.py
+#       util.py
+#       main.py
+# 相对导入：在 app/main.py 中
+from .util import helper
+    </code></pre>
+    <p>存在 <code>__init__.py</code> 的文件夹就是包；相对导入有助于模块化组织。</p>
+
+    <h3>类型注解（可选）</h3>
+    <pre><code>from typing import List
+def top_n(nums: List[int], n: int) -> List[int]:
+    return sorted(nums, reverse=True)[:n]
+    </code></pre>
+    <p>类型注解能提升可读性与工具提示，但不会改变运行时行为。</p>
+
+    <h3>面向对象基础</h3>
+    <pre><code>class User:
+    def __init__(self, name: str, age: int):
+        self.name = name; self.age = age
+    def greet(self):
+        return f"Hi, {self.name}"
+
+class Admin(User):
+    def greet(self):
+        return f"[admin] {super().greet()}"
+    </code></pre>
+    <p>类封装数据与行为；继承与 <code>super()</code> 可复用与扩展父类方法。</p>
+
+    <h2>文件与路径（做项目一定会用到）</h2>
+    <pre><code>from pathlib import Path
+p = Path("data.txt")
+p.write_text("hello")
+print(p.read_text())
+    </code></pre>
+    <p><code>Path</code> 是标准库中处理文件路径的首选方式，更通用也更健壮（兼容不同操作系统与编码问题）。</p>
+
+    <h2>JSON 与网络（写工具和数据采集必备）</h2>
+    <pre><code>import json, requests
+data = {"a": 1, "b": 2}
+text = json.dumps(data)
+obj = json.loads(text)
+
+r = requests.get("https://httpbin.org/json", timeout=5)
+print(r.status_code, r.json().get("slideshow", {}))
+    </code></pre>
+    <p>说明：用 <code>json</code> 将字典转换为字符串（或反过来）；<code>requests</code> 是常用的第三方库，负责网络请求。第一次使用需要 <code>pip install requests</code>。</p>
+
+    <h2>正则与时间（文本处理与日志常用）</h2>
+    <pre><code>import re, datetime
+m = re.search(r"(\\d+)", "item42")
+print(m.group(1))
+print(datetime.datetime.now().isoformat())
+    </code></pre>
+    <p>正则用于查找或提取文本中的模式，<code>\\d+</code> 表示“一个或多个数字”；<code>datetime</code> 提供日期与时间相关功能。</p>
+
+    <h2>日志与异常（定位问题的放大镜）</h2>
+    <pre><code>import logging
+logging.basicConfig(level=logging.INFO)
+try:
+    1 / 0
+except ZeroDivisionError as e:
+    logging.exception("错误: %s", e)
+    </code></pre>
+    <p>当程序发生异常（如“除以零”）时，<code>try/except</code> 可处理并记录错误。日志能让你在出现问题时更容易定位原因。</p>
+
+    <h2>术语小词典（看不懂报错就先查这个）</h2>
+    <ul>
+      <li><b>解释器</b>：执行 Python 代码的程序，电脑安装的 <code>python.exe</code> 就是。</li>
+      <li><b>虚拟环境</b>：项目隔离的 Python 环境，避免不同项目的依赖相互干扰。</li>
+      <li><b>包/模块</b>：可复用的代码集合；模块是单个 <code>.py</code> 文件，包是有 <code>__init__.py</code> 的文件夹。</li>
+      <li><b>标准库</b>：Python 自带的功能集合（如 <code>json</code>、<code>pathlib</code>）。</li>
+      <li><b>第三方库</b>：别人写的库，用 <code>pip</code> 安装（如 <code>requests</code>）。</li>
+      <li><b>语法错误</b>：代码不符合规则（如少了括号），会报 <code>SyntaxError</code>。</li>
+      <li><b>运行时错误</b>：语法没错，但执行时出问题（如除以零），报 <code>ZeroDivisionError</code>、<code>TypeError</code> 等。</li>
+    </ul>
+
+    <h2>常用库与示例清单（可复制，能立刻做事）</h2>
+    <pre><code># 安装：pip install numpy pandas matplotlib seaborn scikit-learn requests beautifulsoup4 lxml fastapi uvicorn[standard] sqlalchemy pydantic pytest loguru rich typer
+
+import numpy as np
+arr = np.array([1,2,3]); print(arr.mean())
+
+import pandas as pd
+df = pd.read_csv('data.csv'); print(df[df['score']>80].head())
+
+import matplotlib.pyplot as plt
+plt.plot([1,2,3],[3,2,1]); plt.show()
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+X_train, X_test, y_train, y_test = train_test_split([[0],[1],[2]], [0,1,1], test_size=0.2)
+model = LogisticRegression().fit(X_train, y_train)
+print(model.score(X_test, y_test))
+
+import requests
+html = requests.get('https://example.com', timeout=5).text
+
+from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'html.parser'); print([a['href'] for a in soup.select('a')])
+
+from fastapi import FastAPI
+app = FastAPI()
+@app.get('/ping')
+def ping(): return {'ok': True}
+# 运行：uvicorn app:app --reload
+
+from loguru import logger
+logger.info('hello')
+
+import typer
+cli = typer.Typer()
+@cli.command()
+def hello(name: str): print(f'hi {name}')
+# 运行：python cli.py hello Alice
+    </code></pre>
+
+    <h2>常见错误与快速排查</h2>
+    <ul>
+      <li><b>IndentationError</b>：缩进不一致。统一用 4 个空格缩进，避免 Tab 与空格混用。</li>
+      <li><b>NameError</b>：变量未定义。是否拼写错误？是否在使用前赋值？</li>
+      <li><b>ModuleNotFoundError</b>：库未安装或虚拟环境未激活。先 <code>pip install xxx</code>，再确认终端已激活 <code>.venv</code>。</li>
+      <li><b>TypeError</b>：类型不匹配，例如把字符串与数字相加。先 <code>print(type(x))</code> 看类型。</li>
+      <li><b>UnicodeEncodeError</b>：中文编码问题。建议 <code>encoding='utf-8'</code> 或使用 <code>Path</code> 处理文件。</li>
+      <li><b>PermissionError</b>：没有写文件权限。改到自己的目录（如桌面）或以管理员身份运行。</li>
+    </ul>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://docs.python.org/3/" target="_blank" rel="noopener">docs.python.org</a></li>
+      <li>依赖与管理：<code>pip-tools</code>、<code>poetry</code>、<code>pipenv</code></li>
+      <li>打包与发布：<code>setuptools</code>、<code>build</code>、<code>twine</code></li>
+    </ul>
+
+    <h2>学习路径建议：10～20 小时</h2>
+    <ol>
+      <li>第 1～2 天：安装与运行、变量与容器、条件与循环。</li>
+      <li>第 3～4 天：函数与模块、文件与路径、异常与日志。</li>
+      <li>第 5～7 天：网络与 JSON、正则表达式、CLI 程序与工程化。</li>
+      <li>第 8～10 天：单元测试、依赖管理、项目收尾（进入下游“工程化”节点）。</li>
+      <li>进阶方向：数据处理（Pandas）、Web（Flask/FastAPI/Django）、自动化脚本等。</li>
+    </ol>
+
+    <h2>配图</h2>
+    <img class="hero-img" src="assets/diagram-flow.svg" alt="流程示意图" />
+    <img class="hero-img" src="assets/illustration-code.svg" alt="代码示意图" />
+
+    <h2>扩展内容</h2>
+    <ul>
+      <li>并发模型：线程/进程与 <code>asyncio</code> 的场景选择。</li>
+      <li>工程化：Poetry/pytest/ruff 等工具链的组合实践。</li>
+      <li>性能：<code>cProfile</code> 与向量化（NumPy/Pandas）。</li>
+    </ul>
+
+    <h2>加长版：工程化与进阶</h2>
+    <p>下面的章节聚焦“能做项目且可维护”的能力，包括类型系统、装饰器/上下文管理器、生成器、并发与异步、打包与发布、测试与质量、CLI 与 Web 快速上手等。</p>
+
+    <h3>类型系统与数据类（dataclass）</h3>
+    <pre><code>from dataclasses import dataclass, field
+from typing import List, Optional
+
+@dataclass
+class Item:
+    name: str
+    price: float
+
+@dataclass
+class Order:
+    id: str
+    items: List[Item] = field(default_factory=list)
+    note: Optional[str] = None
+
+    def total(self) -> float:
+        return sum(i.price for i in self.items)
+
+o = Order(id="A001", items=[Item("pen", 2.5), Item("book", 18.0)])
+print(o.total())  # 20.5
+    </code></pre>
+    <p><code>dataclass</code> 自动生成 <code>__init__</code> / <code>__repr__</code> 等，配合类型注解可提升可读性与 IDE 提示。</p>
+
+    <h3>装饰器与上下文管理器</h3>
+    <pre><code>import time
+from contextlib import contextmanager
+
+def timing(fn):
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        try:
+            return fn(*args, **kwargs)
+        finally:
+            dur = time.perf_counter() - start
+            print(f"{fn.__name__} took {dur:.3f}s")
+    return wrapper
+
+@contextmanager
+def temp_file(path: str):
+    f = open(path, 'w', encoding='utf-8')
+    try:
+        yield f
+    finally:
+        f.close()
+
+@timing
+def work():
+    with temp_file('tmp.txt') as f:
+        f.write('hello')
+
+work()
+    </code></pre>
+    <p>装饰器用于横切关注点（如计时/鉴权），上下文管理器用于资源的获取与释放（文件/锁/连接等）。</p>
+
+    <h3>生成器与迭代器</h3>
+    <pre><code>def read_lines(path, chunk=1024):
+    with open(path, 'r', encoding='utf-8') as f:
+        buf = ''
+        while True:
+            s = f.read(chunk)
+            if not s: break
+            buf += s
+            while '\n' in buf:
+                line, buf = buf.split('\n', 1)
+                yield line
+
+for line in read_lines('tmp.txt'):
+    print(line)
+    </code></pre>
+    <p>生成器（<code>yield</code>）可以按需产生数据，适合处理大文件或无限序列。</p>
+
+    <h3>并发与异步：线程/进程/asyncio</h3>
+    <pre><code># 线程池：适合 IO 密集型（网络/磁盘）
+from concurrent.futures import ThreadPoolExecutor
+import requests
+
+urls = [
+    'https://httpbin.org/delay/1',
+    'https://httpbin.org/delay/1',
+    'https://httpbin.org/delay/1',
+]
+
+def fetch(u):
+    return requests.get(u, timeout=5).status_code
+
+with ThreadPoolExecutor(max_workers=5) as ex:
+    for code in ex.map(fetch, urls):
+        print(code)
+
+# asyncio：适合高并发 IO，注意仅限支持异步库的场景
+import asyncio, aiohttp
+
+async def afetch(session, url):
+    async with session.get(url) as resp:
+        return resp.status
+
+async def main():
+    async with aiohttp.ClientSession() as s:
+        tasks = [afetch(s, u) for u in urls]
+        for r in await asyncio.gather(*tasks):
+            print(r)
+
+# 运行：
+# pip install aiohttp
+# python -m asyncio run tutorial.py  或在交互环境中运行 asyncio.run(main())
+    </code></pre>
+    <p>选择建议：
+      <br/>CPU 密集型 → 进程（<code>multiprocessing</code>）；IO 密集型 → 线程/协程；若使用异步库（如 <code>aiohttp</code>）可用 <code>asyncio</code> 获得更好的扩展性。</p>
+
+    <h3>打包与发布（pyproject.toml + Poetry）</h3>
+    <pre><code># 安装 Poetry：
+pip install poetry
+
+# 初始化：
+poetry init -n
+
+# 添加依赖：
+poetry add requests fastapi uvicorn[standard]
+
+# 生成锁与安装：
+poetry install
+
+# 构建与发布（示例）：
+poetry build
+poetry publish -u &lt;username&gt; -p &lt;password&gt;
+    </code></pre>
+    <p>使用 <code>pyproject.toml</code> 统一声明项目信息与依赖；Poetry 管理依赖与虚拟环境，简化构建与发布。</p>
+
+    <h3>测试与质量（pytest + ruff + black）</h3>
+    <pre><code># 安装：pip install pytest pytest-cov ruff black
+
+# 测试用例 tests/test_demo.py
+def add(a, b): return a + b
+
+def test_add():
+    assert add(1, 2) == 3
+
+# 运行：pytest -q --cov=. --cov-report=term-missing
+# 代码检查：ruff check .
+# 代码格式化：black .
+    </code></pre>
+    <p>先保证正确性（测试），再统一风格（格式化），最后使用静态检查（ruff）提升稳健性。</p>
+
+    <h3>CLI 与 Web 快速上手</h3>
+    <pre><code># Typer：优雅的 CLI
+import typer
+
+app = typer.Typer()
+
+@app.command()
+def greet(name: str, times: int = 1):
+    for _ in range(times):
+        print(f"Hello, {name}")
+
+if __name__ == "__main__":
+    app()
+
+# FastAPI：声明式 Web API
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+api = FastAPI()
+
+class UserIn(BaseModel):
+    name: str
+    age: int
+
+@api.post('/user')
+def create_user(u: UserIn):
+    return {"ok": True, "user": u.dict()}
+
+# 运行：uvicorn app:api --reload
+    </code></pre>
+    <p>CLI 适合任务编排与自动化；FastAPI 适合快速构建 JSON API，与 Pydantic 搭配保证入参与出参的类型安全。</p>
+
+    <h3>练习题（10 题）</h3>
+    <ol>
+      <li>编写 <code>top_k_words(path, k)</code>：统计文本文件中出现频率最高的 K 个词，忽略大小写与标点。</li>
+      <li>实现装饰器 <code>@retry(n=3)</code>：当函数抛出异常时自动重试。</li>
+      <li>写一个生成器 <code>batched(iterable, size)</code>：把序列按固定大小分批输出。</li>
+      <li>用 <code>ThreadPoolExecutor</code> 并发下载多张图片到 <code>images/</code>，失败自动跳过。</li>
+      <li>写 <code>asyncio</code> 版本的并发抓取，统计响应时间分布（min/avg/max）。</li>
+      <li>用 <code>dataclass</code> 定义订单/商品结构，支持折扣与税率计算。</li>
+      <li>使用 <code>pytest</code> 为一个 <code>Calculator</code> 类写单元测试，覆盖加减乘除与异常分支。</li>
+      <li>写一个 Typer CLI：
+        <ul>
+          <li><code>python cli.py sum 1 2 3</code> 输出总和</li>
+          <li><code>python cli.py greet --times 3 Alice</code> 重复问候</li>
+        </ul>
+      </li>
+      <li>用 FastAPI 写两个端点：<code>/ping</code> 返回 <code>{ok:true}</code>；<code>/sum</code> 接收数组并返回总和。</li>
+      <li>使用 <code>Path</code> 实现增量日志轮转：超过 1MB 自动切分为 <code>app.log.1</code>、<code>app.log.2</code>。</li>
+    </ol>
+
+    <details>
+      <summary>参考思路（展开查看）</summary>
+      <pre><code># 1) top_k_words
+import re
+from collections import Counter
+def top_k_words(path, k=10):
+    text = Path(path).read_text(encoding='utf-8').lower()
+    words = re.findall(r'[a-zA-Z]+', text)
+    return Counter(words).most_common(k)
+
+# 2) retry 装饰器
+import time
+def retry(n=3, delay=0.2):
+    def deco(fn):
+        def wrap(*a, **kw):
+            for i in range(n):
+                try:
+                    return fn(*a, **kw)
+                except Exception as e:
+                    if i == n-1: raise
+                    time.sleep(delay)
+        return wrap
+    return deco
+
+# 3) batched
+def batched(it, size):
+    buf = []
+    for x in it:
+        buf.append(x)
+        if len(buf) == size:
+            yield buf; buf = []
+    if buf: yield buf
+
+# 4) 线程池下载（略，思路：requests.get + Path(url).name）
+# 5) asyncio 抓取（略，思路：aiohttp + asyncio.gather）
+      </code></pre>
+    </details>
+
+    <h2>理论与论文到代码索引（Python）</h2>
+    <ul>
+      <li><a href="./tutorial-p2c-transformer.html">Transformer 从零实现（Attention/位置编码/残差）</a></li>
+      <li><a href="./tutorial-p2c-resnet.html">ResNet 训练实战（残差块与训练理论）</a></li>
+      <li><a href="./tutorial-p2c-raft.html">Raft 共识算法（原理 + 代码骨架）</a></li>
+      <li><a href="./tutorial-p2c-lsm.html">LSM-Tree 键值存储（写放大/读放大与合并策略）</a></li>
+      <li><a href="./tutorial-p2c-mapreduce.html">MapReduce 框架（任务调度与容错）</a></li>
+    </ul>
+    <p>阅读建议：先理论概念，再看代码骨架，最后根据本章的 Python 工程实践延伸。</p>
+  </main>
+  <section style="max-width:920px;margin:0 auto;padding:0 16px;">
+    <h2>语法速查</h2>
+    <ul>
+      <li>字符串：<code>"abc".upper()</code>、<code>"abc"[1:]</code>、<code>"a-b".split("-")</code></li>
+      <li>列表：<code>append</code>、<code>sort</code>、<code>list(range(5))</code></li>
+      <li>字典：<code>d.get(k, default)</code>、<code>d.items()</code>、<code>d.update({...})</code></li>
+      <li>集合：<code>a | b</code>、<code>a &amp; b</code>、<code>a - b</code></li>
+      <li>文件：<code>Path('a.txt').read_text()</code> / <code>write_text</code></li>
+    </ul>
+  </section>
+<script src="script.js"></script>
+</body>
+</html>

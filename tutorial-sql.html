@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SQL 蹇€熶笂鎵?/title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>.hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0} .icons{display:flex;gap:12px;margin:8px 0} .icons img{width:48px;height:48px}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html" class="active">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
+    <h1>SQL 上手指南</h1>
+    <p>寤鸿〃涓庣储寮曘€佸鍒犳敼鏌ャ€佽繛鎺ヤ笌鑱氬悎銆佸父瑙佸潙涓庣粌涔犮€?/p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="缂栫▼涔嬫梾" />
+    <div class="icons">
+      <img src="assets/icon-beginner.svg" alt="鏂版墜" />
+      <img src="assets/icon-project.svg" alt="椤圭洰" />
+      <img src="assets/icon-debug.svg" alt="璋冭瘯" />
+    </div>
+    <h2>基础璇硶</h2>
+    <pre><code>-- 寤鸿〃
+CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT NOT NULL, age INT);
+-- 鏌ヨ
+SELECT name, age FROM users WHERE age &gt;= 18 ORDER BY age DESC;
+-- 杩炴帴
+SELECT u.name, o.amount FROM users u JOIN orders o ON u.id=o.user_id;
+-- 鑱氬悎
+SELECT COUNT(*) AS cnt, AVG(age) AS avg_age FROM users;
+</code></pre>
+    <h2>甯歌鍧?/h2>
+    <ul>
+      <li>绱㈠紩锛氭牴鎹煡璇㈡ā寮忓垱寤哄悎閫傜储寮曪紝閬垮厤鍏ㄨ〃鎵弿銆?/li>
+      <li>N+1锛氬敖閲忕敤杩炴帴鎴栨壒閲忔煡璇㈡浛浠ｅ娆¤姹傘€?/li>
+      <li>浜嬪姟涓庨殧绂伙細鍏抽敭鎿嶄綔浣跨敤浜嬪姟锛屼簡瑙ｉ殧绂荤骇鍒€?/li>
+    </ul>
+    <h2>缁冧範棰?/h2>
+    <ol>
+      <li>璁捐涓€涓敤鎴蜂笌璁㈠崟鐨勬暟鎹簱锛屽苟缂栧啓鏌ヨ缁熻銆?/li>
+      <li>涓烘煡璇㈡坊鍔犵储寮曞苟瀵规瘮鎬ц兘宸紓銆?/li>
+      <li>瀹炵幇涓€濂楀垎椤垫煡璇笌鎬绘暟缁熻鐨?SQL銆?/li>
+    </ol>
+    <h2>缁欏畬鍏ㄦ柊鎵嬶細绗竴姝ユ€庝箞鍋?/h2>
+    <ol>
+      <li>瀹夎 SQLite 鎴栦娇鐢?MySQL/PostgreSQL锛涚‘璁ゅ鎴风鍙繛鎺ャ€?/li>
+      <li>鍒涘缓鏁版嵁搴撲笌琛紝鎻掑叆鍑犳潯鏁版嵁銆?/li>
+      <li>鍐欏嚑鏉℃煡璇笌鏇存柊璇彞锛岀悊瑙ｄ簨鍔′笌鍥炴粴銆?/li>
+      <li>娣诲姞绱㈠紩骞舵瘮杈冩煡璇㈡€ц兘銆?/li>
+    </ol>
+    <h2>椤圭洰瀹炴垬锛堝叆闂級</h2>
+    <ol>
+      <li>用户涓庤鍗曪細璁捐琛ㄧ粨鏋勪笌鍏宠仈锛岀紪鍐欑粺璁℃煡璇€?/li>
+      <li>鍒嗛〉涓庢€绘暟锛氬疄鐜板垎椤垫煡璇笌鎬绘暟缁熻銆?/li>
+      <li>鎶ヨ〃鐢熸垚锛氬鍑轰负 CSV 鎴栧彲瑙嗗寲鍥捐〃銆?/li>
+    </ol>
+    <h2>涓鎻掑浘</h2>
+    <img class="hero-img" src="assets/diagram-architecture.svg" alt="鏋舵瀯绀烘剰鍥? />
+    <img class="hero-img" src="assets/illustration-code.svg" alt="浠ｇ爜绀烘剰鍥? />
+
+    <h2>杩涢樁鍐呭</h2>
+    <ul>
+      <li>绱㈠紩绛栫暐锛氳鐩栫储寮曘€佺粍鍚堢储寮曚笌閫夋嫨鎬с€?/li>
+      <li>鏌ヨ浼樺寲锛氳В閲婅鍒掋€侀伩鍏嶉殣寮忚浆鎹€?/li>
+      <li>浜嬪姟锛氬悎鐞嗗垝鍒嗚竟鐣岋紝鍑忓皯閿佺珵浜夈€?/li>
+    </ul>
+    <h2>鏇村缁冧範</h2>
+    <ol>
+      <li>涓虹數鍟嗗満鏅璁¤鍗曘€佸簱瀛樸€佷紭鎯犵浉鍏宠〃涓庢煡璇€?/li>
+      <li>瀵规參鏌ヨ杩涜绱㈠紩涓庤鍙ユ敼鍐欎紭鍖栥€?/li>
+      <li>瀹炵幇鍒嗗尯涓庡綊妗ｇ瓥鐣ワ紝瀵瑰巻鍙叉暟鎹仛鑱氬悎鎶ヨ〃銆?/li>
+    </ol>
+  </main>
+  <section style="max-width:920px;margin:0 auto;padding:0 16px;">
+    <h2>鏉冨▉璧勬簮</h2>
+    <ul>
+      <li><a href="https://www.postgresql.org/docs/" target="_blank" rel="noopener">PostgreSQL 文档</a>銆?a href="https://dev.mysql.com/doc/" target="_blank" rel="noopener">MySQL 文档</a></li>
+      <li><a href="https://www.sqlite.org/docs.html" target="_blank" rel="noopener">SQLite 文档</a>锛堣交閲忓祵鍏ュ紡锛?/li>
+      <li><a href="https://www.sqlstyle.guide/" target="_blank" rel="noopener">SQL Style Guide</a>锛堝懡鍚嶄笌椋庢牸锛?/li>
+    </ul>
+    <h2>系统瀛︿範璺緞</h2>
+    <ol>
+      <li>寤烘ā涓庤娉曪細琛ㄤ笌绾︽潫銆佽繛鎺ヤ笌鑱氬悎銆佽鍥句笌瀛樺偍杩囩▼銆?/li>
+      <li>绱㈠紩涓庝紭鍖栵細瑙ｉ噴璁″垝銆佺储寮曠瓥鐣ャ€侀伩鍏?N+1 涓庨殣寮忚浆鎹€?/li>
+      <li>浜嬪姟涓庤繍缁达細闅旂绾у埆銆侀攣涓庣珵浜夈€佸浠戒笌杩佺Щ銆佺洃鎺т笌鍛婅銆?/li>
+    </ol>
+    <h2>杩涢樁椤圭洰</h2>
+    <ol>
+      <li>澶氱淮鎶ヨ〃系统锛氬垎鍖轰笌褰掓。銆佽仛鍚堜笌缂撳瓨銆佹寜闇€鐢熸垚鎶ヨ〃銆?/li>
+      <li>瀹¤涓庡悎瑙勶細鍙樻洿璁板綍銆佹暟鎹劚鏁忋€佹潈闄愭ā鍨嬩笌杩借釜銆?/li>
+      <li>鏁版嵁绠￠亾锛氫粠 CSV/JSON 娓呮礂鈫掕〃璁捐鈫扙TL鈫掑澶栨煡璇㈡帴鍙ｃ€?/li>
+    </ol>
+  </section>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+

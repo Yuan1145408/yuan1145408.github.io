@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>安卓专区 - 鸟国网站</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html">游戏专区</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+          <a href="android.html" class="active">安卓专区</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <h3>安卓专区（APK 模式本体 + 网页模式不变）</h3>
+            <div class="controls" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <label>来源：
+                <select id="sourceSel">
+                  <option value="local">本地（C:\niaoA，经由本地服务器）</option>
+                  <option value="mirror" selected>镜像（外网/内网镜像）</option>
+                </select>
+              </label>
+              <label>本地服务地址：
+                <input id="localBaseInput" type="text" value="http://localhost:8007/" style="width:220px;" />
+              </label>
+              <span id="localStatus" class="chip">未检测</span>
+              <button id="refreshBtn" class="btn">刷新列表</button>
+            </div>
+            <p class="muted" style="margin-top:8px;">说明：将 APK 文件放入 C:\niaoA，并在该目录启动本地服务器（例如：python -m http.server 8007），即可通过本页面的“本地来源”进行下载；网页模式不变，仍可使用镜像链接。</p>
+          </div>
+          <div id="androidGrid" class="grid"><!-- 动态渲染区域 --></div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer"><div class="container"><span>© 2025 鸟国网站 niaoguo.com</span></div></footer>
+    <script>
+      (function(){
+        const grid = document.getElementById('androidGrid');
+        const sourceSel = document.getElementById('sourceSel');
+        const localBaseInput = document.getElementById('localBaseInput');
+        const localStatus = document.getElementById('localStatus');
+        const refreshBtn = document.getElementById('refreshBtn');
+        let items = [];
+
+        async function detectLocal(base){
+          try {
+            const url = String(base||'').replace(/\/+$/,'/') + '';
+            const r = await fetch(url, { method: 'HEAD' });
+            localStatus.textContent = r.ok ? '本地服务可用' : '本地服务异常';
+            localStatus.className = r.ok ? 'chip' : 'chip warn';
+          } catch(e){
+            localStatus.textContent = '本地服务未开启';
+            localStatus.className = 'chip warn';
+          }
+        }
+
+        function render(){
+          if (!items.length){ grid.innerHTML = '<p class="muted">暂无数据，请检查 android-extra.json 或点击“刷新列表”。</p>'; return; }
+          const source = sourceSel.value;
+          const localBase = String(localBaseInput.value||'').replace(/\/+$/,'/') + '';
+          grid.innerHTML = '';
+          items.forEach(it => {
+            const a = document.createElement('div'); a.className = 'card';
+            const title = document.createElement('h4'); title.textContent = it.name + (it.pkg? (' ('+it.pkg+')') : ''); a.appendChild(title);
+            const p = document.createElement('p'); p.textContent = it.desc || ''; a.appendChild(p);
+            const meta = document.createElement('p'); meta.className='muted'; meta.textContent = [it.category||'', it.size||'', it.md5? ('md5:'+it.md5):''].filter(Boolean).join(' · '); a.appendChild(meta);
+            const actions = document.createElement('div'); actions.style='display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;';
+            const btn = document.createElement('a'); btn.className = 'btn primary'; btn.target = '_blank';
+            if (source==='local') {
+              const file = (it.filename||'').replace(/^\/+/, '');
+              btn.href = localBase + file;
+              btn.textContent = '本地下载';
+            } else {
+              btn.href = it.mirror || '#';
+              btn.textContent = it.mirror? '镜像下载' : '镜像待配置';
+            }
+            actions.appendChild(btn);
+            if (it.homepage){ const hp=document.createElement('a'); hp.className='btn'; hp.href=it.homepage; hp.target='_blank'; hp.textContent='官网'; actions.appendChild(hp); }
+            a.appendChild(actions);
+            grid.appendChild(a);
+          });
+        }
+
+        async function load(){
+          try {
+            const r = await fetch('android-extra.json');
+            items = await r.json();
+          } catch(e){ items = []; }
+          render();
+        }
+
+        sourceSel.addEventListener('change', render);
+        localBaseInput.addEventListener('change', () => { detectLocal(localBaseInput.value); render(); });
+        refreshBtn.addEventListener('click', () => { load(); detectLocal(localBaseInput.value); });
+        load(); detectLocal(localBaseInput.value);
+      })();
+    </script>
+  </body>
+  </html>

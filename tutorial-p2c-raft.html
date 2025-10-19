@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paper-to-Code: Raft 共识算法  论文到代码</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Paper-to-Code: Raft 共识算法</h1>
+    <p>依据 Raft 论文实现领导者选举、日志复制与心跳，附仿真。</p>
+    <hr/>
+    <h2>1. 摘要与关键点</h2>
+<ul>
+  <li>领导者选举（随机超时 + 心跳）</li>
+  <li>日志复制与提交</li>
+  <li>成员变更与持久化</li>
+</ul>
+<h2>2. 代码骨架（Go/Python）</h2>
+<pre>
+# Python 伪代码结构
+class Node:
+    def __init__(self, id, peers):
+        self.id = id; self.peers = peers
+        self.state = 'follower'; self.term = 0; self.log = []
+        self.voted_for = None
+    def request_vote(self):
+        pass
+    def append_entries(self):
+        pass
+</pre>
+<h2>3. 集群仿真与故障注入</h2>
+<pre>
+# 编写模拟器：丢包、延迟、节点重启，观测一致性与可用性
+</pre>
+    <hr/>
+    <p>提示：本教程以论文为蓝本，配套代码示例均可在本页复制运行。建议结合你本机环境进行实验与扩展。</p>
+    <p><a class="btn" href="./index.html">返回首页</a></p>
+  </main>
+<script src="script.js"></script>
+</body>
+</html>
+
+
+

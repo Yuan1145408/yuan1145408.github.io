@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paper-to-Code: LSM-Tree 键值存储  论文到代码</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Paper-to-Code: LSM-Tree 键值存储</h1>
+    <p>从零实现 KV 存储内核，覆盖写入、读取、合并与压测。</p>
+    <hr/>
+    <h2>1. 设计要点</h2>
+<ul>
+  <li>MemTable（跳表/红黑树） + WAL</li>
+  <li>SSTable（顺序写） + 归并压缩</li>
+  <li>布隆过滤器与读放大控制</li>
+</ul>
+<h2>2. 代码骨架（Go/Python）</h2>
+<pre>
+# 写入：先写 WAL，再写入 MemTable；MemTable 达阈值 flush 为 SSTable
+# 读取：SSTable 自上而下查找 + Bloom 过滤
+</pre>
+<h2>3. 压测与对比</h2>
+<pre>
+# 随机写/读 QPS、延迟、文件大小、合并开销
+</pre>
+    <hr/>
+    <p>提示：本教程以论文为蓝本，配套代码示例均可在本页复制运行。建议结合你本机环境进行实验与扩展。</p>
+    <p><a class="btn" href="./index.html">返回首页</a></p>
+  </main>
+<script src="script.js"></script>
+</body>
+</html>
+
+
+

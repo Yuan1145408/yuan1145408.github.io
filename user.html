@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>用户中心 - 鸟国网站</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html">游戏专区</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" class="active" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container" style="max-width:760px;">
+          <h3>用户中心</h3>
+          <div class="card">
+            <h4>登录</h4>
+            <label>用户名：<input id="loginUser" type="text" placeholder="请输入用户名" /></label>
+            <label>密码：<input id="loginPass" type="password" placeholder="请输入密码" /></label>
+            <div style="display:flex;gap:10px;margin-top:8px;align-items:center;flex-wrap:wrap;">
+              <button id="loginBtn" class="btn">登录</button>
+              <button id="logoutBtn" class="btn">退出登录</button>
+              <span id="loginStatus" class="chip">未登录</span>
+            </div>
+            <p style="margin-top:8px;color:var(--muted);">
+              还没有账号？<a href="#" id="toggleRegister" style="color:var(--primary);text-decoration:none;">注册</a>
+            </p>
+          </div>
+
+          <div class="card" id="registerCard" style="display:none;">
+            <h4>注册</h4>
+            <label>用户名：<input id="regUser" type="text" placeholder="设置一个用户名" /></label>
+            <label>密码：<input id="regPass" type="password" placeholder="设置密码" /></label>
+            <label>确认密码：<input id="regPass2" type="password" placeholder="再次输入密码" /></label>
+            <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;">
+              <button id="regBtn" class="btn">注册</button>
+              <button id="cancelRegBtn" class="btn">取消</button>
+            </div>
+            <p id="regStatus" style="margin-top:8px;color:var(--muted);"></p>
+            <p style="margin-top:8px;color:var(--muted);font-size:13px;">当前为本地演示版，数据默认保存到浏览器（LocalStorage）。如部署到服务器，可接入后端接口进行账号与积分存储。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" style="border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+        <div class="container" style="max-width:760px;">
+          <h3>积分与每日任务</h3>
+      <p style="color:var(--muted);">每日活跃任务：在站内任意页面停留满 15 分钟，即可自动领取 <strong>5 积分</strong>（今日仅可领取一次）。进度会在所有页面累计与同步。</p>
+          <div class="card">
+            <p>当前用户：<span id="currentUser">未登录</span> ｜ 当前积分：<span id="currentPoints">0</span></p>
+            <div style="margin-top:6px;">
+              <div class="progress"><div class="progress-bar" id="taskProgressBar"></div></div>
+      <p id="taskStatus" style="margin:8px 0 0;color:var(--muted);">今日进度：0 / 15 分钟</p>
+            </div>
+            <p style="margin-top:8px;color:var(--muted);font-size:13px;">提示：保持任意站内页面处于打开状态即可计时。本页可随时查看进度与积分。</p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer"><div class="container"><span>© 2025 鸟国网站 niaoguo.com</span></div></footer>
+
+    <!-- 静态模式配置：禁用后端 API，登录/积分仅保存在本地浏览器 -->
+    <script>
+      (function(){
+        window.Niao = window.Niao || {};
+        window.Niao.config = window.Niao.config || {};
+        window.Niao.config.static = true;
+        window.Niao.config.apiBase = '';
+      })();
+    </script>
+    <script src="script.js"></script>
+    <script>
+      (function(){
+        const loginUser = document.getElementById('loginUser');
+        const loginPass = document.getElementById('loginPass');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginStatus = document.getElementById('loginStatus');
+        const toggleRegister = document.getElementById('toggleRegister');
+        const registerCard = document.getElementById('registerCard');
+        const regUser = document.getElementById('regUser');
+        const regPass = document.getElementById('regPass');
+        const regPass2 = document.getElementById('regPass2');
+        const regBtn = document.getElementById('regBtn');
+        const cancelRegBtn = document.getElementById('cancelRegBtn');
+        const regStatus = document.getElementById('regStatus');
+        const currentUserEl = document.getElementById('currentUser');
+        const currentPointsEl = document.getElementById('currentPoints');
+        const taskProgressBar = document.getElementById('taskProgressBar');
+        const taskStatus = document.getElementById('taskStatus');
+
+        async function renderSession(){
+          const u = window.Niao?.auth?.getSessionUser() || '';
+          currentUserEl.textContent = u || '未登录';
+          const pts = u ? (await window.Niao?.auth?.getPoints(u)) : 0;
+          currentPointsEl.textContent = String(pts);
+          loginStatus.textContent = u ? '已登录' : '未登录';
+        }
+
+        // 登录/退出
+        loginBtn.addEventListener('click', async () => {
+          const u = (loginUser.value || '').trim();
+          const p = loginPass.value || '';
+          const ok = await window.Niao?.auth?.login(u, p);
+          loginStatus.textContent = ok ? '登录成功' : '用户名或密码错误';
+          renderSession();
+        });
+        logoutBtn.addEventListener('click', () => {
+          window.Niao?.auth?.logout();
+          loginStatus.textContent = '已退出登录';
+          renderSession();
+        });
+
+        // 注册切换与提交
+        toggleRegister.addEventListener('click', (e) => { e.preventDefault(); registerCard.style.display = 'block'; });
+        cancelRegBtn.addEventListener('click', () => { registerCard.style.display = 'none'; });
+        regBtn.addEventListener('click', async () => {
+          const u = (regUser.value || '').trim();
+          const p = regPass.value || '';
+          const p2 = regPass2.value || '';
+          if (!u || !p) { regStatus.textContent = '请输入用户名与密码'; return; }
+          if (p !== p2) { regStatus.textContent = '两次密码不一致'; return; }
+          const ok = await window.Niao?.auth?.register(u, p);
+          regStatus.textContent = ok ? '注册成功，请登录' : '该用户已存在或注册失败';
+        });
+
+        // 首次渲染与任务 UI 更新绑定
+        renderSession();
+        window.Niao?.daily?.bindUI({ barEl: taskProgressBar, textEl: taskStatus, pointsEl: currentPointsEl });
+      })();
+    </script>
+  </body>
+  </html>

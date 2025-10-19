@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>计算机科学理论手册（简明版）</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html" class="active">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <h1>计算机科学理论手册（简明版）</h1>
+    <p>本手册以“像一本书一样的结构，系统性覆盖算法与数据结构、复杂度与证明、分布式一致性与存储、深度学习理论、并发与内存模型、编译原理与计算机网络等核心理论。每章提供关键概念、结论与阅读参考。</p>
+    <hr/>
+    <h2>目录</h2>
+    <ol>
+      <li><a href="#math">数学基础</a></li>
+      <li><a href="#algo">算法设计思想</a></li>
+      <li><a href="#ds">数据结构内核</a></li>
+      <li><a href="#complexity">复杂度与证明</a></li>
+      <li><a href="#distributed">分布式与一致性</a></li>
+      <li><a href="#dl">深度学习理论</a></li>
+      <li><a href="#concurrency">并发与内存模型</a></li>
+      <li><a href="#compiler">编译原理（简明）</a></li>
+      <li><a href="#network">计算机网络（简明）</a></li>
+    </ol>
+    <hr/>
+    <section id="math">
+      <h2>1. 数学基础</h2>
+      <ul>
+        <li>离散数学：集合与函数、逻辑、图论（树、连通性、最短路）</li>
+        <li>概率统计：大数定律、中心极限定理、马尔可夫过程（简述）</li>
+        <li>线性代数：向量空间、特征分解、奇异值分解（SVD）、范数与稳定性</li>
+      </ul>
+      <p>参考：MIT 6.042J（离散）、概率论教材、线性代数教材。</p>
+    </section>
+    <section id="algo">
+      <h2>2. 算法设计思想</h2>
+      <ul>
+        <li>分治：主定理、递归树法。</li>
+        <li>动态规划：状态设计、转移与无后效性；优化技巧（四边形不等式等）。</li>
+        <li>贪心：可交换性与局部最优导致全局最优的条件；反例构造。</li>
+        <li>图算法：最短路（Dijkstra/Bellman-Ford）、最小生成树（Kruskal/Prim）、网络流（增广路/Dinic）。</li>
+        <li>近似与随机：启发式、拉斯维加斯/蒙特卡罗算法。</li>
+      </ul>
+      <p>参考：CLRS《算法导论》、Kleinberg《算法设计》。</p>
+    </section>
+    <section id="ds">
+      <h2>3. 数据结构内核</h2>
+      <ul>
+        <li>基础：数组、链表、栈、队列、哈希表（开放定址/拉链）、堆。</li>
+        <li>树结构：平衡二叉树（AVL、红黑树）、B树/B+树、Trie、Segment Tree、Fenwick（BIT）。</li>
+        <li>高阶：并查集（路径压缩、按秩合并）、跳表、布隆过滤器、LSM-Tree。</li>
+        <li>并发数据结构：无锁队列、环形缓冲区、读写锁。</li>
+      </ul>
+      <p>参考：Sedgewick《算法（4e）》、LevelDB/LSM 相关论文。</p>
+    </section>
+    <section id="complexity">
+      <h2>4. 复杂度与证明</h2>
+      <ul>
+        <li>时间/空间复杂度：渐进符号（O/Ω/Θ）、摊还分析（势能法）。</li>
+        <li>正确性证明：循环不变式、归纳法、交换论证。</li>
+        <li>NP 完全性：归约、Cook-Levin 定理（概念）、NPC/NP-Hard。</li>
+      </ul>
+      <p>参考：Sipser《计算理论导引》、CLRS相关章节。</p>
+    </section>
+    <section id="distributed">
+      <h2>5. 分布式与一致性</h2>
+      <ul>
+        <li>一致性模型：线性一致性、顺序一致性、最终一致性。</li>
+        <li>CAP 与 PACELC：一致性/可用性/分区容错与延迟/一致性权衡。</li>
+        <li>共识算法：Paxos/Raft 原理与安全性直观解释；日志复制与快照。</li>
+        <li>存储系统：LSM-Tree 合并策略、SSTable 索引、布隆过滤器；副本与容错。</li>
+      </ul>
+      <p>参考：Raft/Paxos 原始论文、Bigtable、Spanner 论文。</p>
+    </section>
+    <section id="dl">
+      <h2>6. 深度学习理论</h2>
+      <ul>
+        <li>优化与泛化：损失、过拟合/欠拟合、正则化与早停。</li>
+        <li>梯度消失/爆炸：初始化、归一化（BatchNorm/LayerNorm）。</li>
+        <li>注意力机制：缩放点积注意力、位置编码、Transformer 框架的理论动机。</li>
+        <li>卷积网络与残差：残差连接与可训练性提升的理论直觉。</li>
+      </ul>
+      <p>参考：Goodfellow《深度学习》、Attention/ResNet 论文。</p>
+    </section>
+    <section id="concurrency">
+      <h2>7. 并发与内存模型</h2>
+      <ul>
+        <li>线程与锁：互斥/死锁/饥饿；条件变量。</li>
+        <li>内存模型：顺序一致性、happens-before、指令重排。</li>
+        <li>无锁结构：CAS、ABA 问题与解决。</li>
+      </ul>
+      <p>参考：Java 内存模型、C++ 内存模型文档。</p>
+    </section>
+    <section id="compiler">
+      <h2>8. 编译原理（简明）</h2>
+      <ul>
+        <li>词法/语法/语义分析：正则与上下文无关文法。</li>
+        <li>中间表示（IR）与优化：SSA、常量传播、循环优化。</li>
+        <li>寄存器分配：图着色思想。</li>
+      </ul>
+      <p>参考：龙书（Aho）与现代编译课程。</p>
+    </section>
+    <section id="network">
+      <h2>9. 计算机网络（简明）</h2>
+      <ul>
+        <li>五层模型：链路/网络/传输/应用层。</li>
+        <li>可靠传输与拥塞控制：TCP/QUIC。</li>
+        <li>路由与负载均衡：BGP 简述与数据中心实践。</li>
+      </ul>
+      <p>参考：Kurose《自顶向下方法》、QUIC 相关文献。</p>
+    </section>
+    <hr/>
+    <p>注：本手册强调理论脉络与结论，将配合各章节附带的示意代码或外链，不强制练习。你可以与本站的 Paper-to-Code 系列交叉阅读，形成理论实现的双通路。</p>
+    <p><a class="btn" href="./index.html">返回首页</a></p>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+

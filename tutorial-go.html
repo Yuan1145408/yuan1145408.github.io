@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Go 入门与语法速览</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <style>main{max-width:920px;margin:20px auto;padding:0 16px;}pre{background:#111;color:#eee;padding:12px;overflow:auto} .hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Go 入门与语法速览</h1>
+    <p>覆盖环境安装、go mod、并发与通道、标准库（net/http、json、os/fs）、测试与构建。强调“快速能跑，再优化”。</p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="开发与学习插画" />
+
+    <h2>完整新手路径：第一步怎么做</h2>
+    <ol>
+      <li>安装 Go（推荐 1.21+），确认 <code>go version</code> 可用。</li>
+      <li>初始化项目：<code>mkdir hello && cd hello && go mod init example.com/hello</code></li>
+      <li>创建 <code>main.go</code> 输出 Hello World 并运行：<code>go run .</code></li>
+      <li>添加一个第三方包（如 <code>golang.org/x/sync</code>），熟悉依赖管理。</li>
+      <li>写一个小函数并配套测试，形成“写-测-跑”的节奏。</li>
+    </ol>
+
+    <h2>Hello, World</h2>
+    <pre><code>package main
+
+import "fmt"
+
+func main() {
+  fmt.Println("Hello, Go!")
+}
+    </code></pre>
+
+    <h2>基础语法</h2>
+    <pre><code>// 变量与类型
+var a int = 1
+pi := 3.14
+s := "abc"
+
+// 循环与条件
+for i := 0; i < 3; i++ { fmt.Println(i) }
+if a > 0 { fmt.Println("positive") }
+
+// 结构体与方法
+type User struct { Name string; Age int }
+func (u User) Say() { fmt.Println("Hi", u.Name) }
+u := User{"Bob", 20}; u.Say()
+    </code></pre>
+
+    <h2>并发与通道</h2>
+    <pre><code>ch := make(chan int)
+go func(){ ch <- 42 }()
+v := <-ch
+fmt.Println("got", v)
+
+// WaitGroup + goroutine
+var wg sync.WaitGroup
+wg.Add(1)
+go func(){ defer wg.Done(); fmt.Println("work") }()
+wg.Wait()
+    </code></pre>
+
+    <h2>标准库常用</h2>
+    <pre><code>// net/http
+http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
+  w.Write([]byte("ok"))
+})
+http.ListenAndServe(":8080", nil)
+
+// JSON
+type Resp struct{ Msg string }
+data, _ := json.Marshal(Resp{"hello"})
+
+// 文件系统
+os.WriteFile("data.txt", []byte("hello"), 0644)
+buf, _ := os.ReadFile("data.txt")
+    </code></pre>
+
+    <h2>测试与基准</h2>
+    <pre><code>// 文件: add.go
+func Add(a, b int) int { return a + b }
+
+// 文件: add_test.go
+func TestAdd(t *testing.T) {
+  if Add(1,2) != 3 { t.Fatal("bad") }
+}
+
+// 运行：
+// go test ./...
+// go test -bench .
+    </code></pre>
+
+    <h2>构建与发布</h2>
+    <ul>
+      <li>本地构建：<code>go build -o app</code>，运行 <code>./app</code>。</li>
+      <li>交叉编译：<code>GOOS=linux GOARCH=amd64 go build</code>（PowerShell 使用 <code>$env:GOOS</code> 设定）。</li>
+      <li>模块与版本：使用 tag 进行版本化，配合 CI 发布二进制。</li>
+    </ul>
+
+    <h2>项目入门（练手）</h2>
+    <ol>
+      <li>命令行词频统计：读取文本输出 Top-N；保存为 CSV。</li>
+      <li>HTTP 服务：实现 <code>/health</code> 与 <code>/echo</code>，返回 JSON。</li>
+      <li>并发下载器：给出多个 URL 并行下载到本地目录。</li>
+    </ol>
+
+    <h2>配图</h2>
+    <img class="hero-img" src="assets/diagram-architecture.svg" alt="架构示意图" />
+    <img class="hero-img" src="assets/illustration-code.svg" alt="代码示意图" />
+
+    <h2>扩展实践</h2>
+    <ul>
+      <li>Context 传递取消与超时、资源清理与错误传递。</li>
+      <li>并发模式：worker 池、限流、重试、熔断与断路器。</li>
+      <li>性能分析：<code>pprof</code> CPU/内存剖析与优化迭代。</li>
+    </ul>
+
+    <h2>练习题</h2>
+    <ol>
+      <li>实现 <code>top N</code> 词频统计，支持并发与停机恢复。</li>
+      <li>编写简易爬虫，处理 robots 与并发抓取、失败重试。</li>
+      <li>写 gRPC 服务并配套客户端，完成请求与流式响应。</li>
+    </ol>
+
+    <h2>理论与论文到代码索引（Go）</h2>
+    <ul>
+      <li><a href="./tutorial-p2c-raft.html">Raft 共识（leader 选举与日志复制）</a></li>
+      <li><a href="./tutorial-p2c-lsm.html">LSM-Tree 存储（memtable/sstable/compact）</a></li>
+      <li><a href="./tutorial-p2c-mapreduce.html">MapReduce（调度/容错与分布式执行）</a></li>
+    </ul>
+    <p>可用 Go 的并发模型实现工程化原型，便于学习与实验。</p>
+  </main>
+  <section style="max-width:920px;margin:0 auto;padding:0 16px;">
+    <h2>语法速查</h2>
+    <ul>
+      <li>切片：<code>arr := []int{1,2,3}; for i, v := range arr {}</code></li>
+      <li>map：<code>m := map[string]int{"a":1}; v, ok := m["a"]</code></li>
+      <li>错误：<code>err != nil</code> 链式传递；自定义错误封装上下文。</li>
+    </ul>
+    <h2>国内网络建议</h2>
+    <ul>
+      <li>设置 <code>GOPROXY</code> 国内代理，如：<code>https://goproxy.cn</code></li>
+      <li>遇到拉取依赖失败，先检查代理与网络环境，或临时使用镜像。</li>
+      <li>排错：打印错误并定位调用栈；用测试和日志最小化复现。</li>
+    </ul>
+    <h2>参考资源</h2>
+    <ul>
+      <li><a href="https://go.dev/doc/" target="_blank" rel="noopener">Go 官方文档</a>（语言规范与包参考）</li>
+      <li><a href="https://pkg.go.dev/" target="_blank" rel="noopener">pkg.go.dev</a>（第三方包文档与示例）</li>
+      <li><a href="https://go.dev/blog/" target="_blank" rel="noopener">Go 官方博客</a>（版本更新与最佳实践）</li>
+    </ul>
+    <h2>系统化学习路径</h2>
+    <ol>
+      <li>语言与标准库：切片、map、接口与并发。</li>
+      <li>工程化：模块与依赖、测试与基准、日志与配置。</li>
+      <li>服务与生态：HTTP/gRPC、数据库、部署与监控。</li>
+    </ol>
+    <h2>进阶项目</h2>
+    <ol>
+      <li>高并发下载器：限流/重试与断点续传，记录指标与报表。</li>
+      <li>Web 服务：整合中间件、鉴权、熔断与限流，灰度与回滚。</li>
+      <li>分布式作业：任务调度、重试队列、可观测性与告警。</li>
+    </ol>
+  </section>
+<script src="script.js"></script>
+</body>
+</html>

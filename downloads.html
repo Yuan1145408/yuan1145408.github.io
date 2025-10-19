@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>软件下载 - 鸟国网站</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html" class="active">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html">游戏专区</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <h3>软件下载</h3>
+            <div class="controls">
+              <label>
+                分类筛选：
+                <select id="filterSelect"><option value="all">全部</option></select>
+              </label>
+              <label>
+                标签筛选：
+                <select id="tagSelect"><option value="all">全部</option></select>
+              </label>
+              <input id="searchInput" type="search" placeholder="搜索软件名称…" />
+              <div class="cn-mode" style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;">
+                <label style="display:inline-flex;align-items:center;gap:6px;">
+                  <input type="checkbox" id="cnModeToggle" /> 国内模式（使用本地代理）
+                </label>
+                <span id="proxyStatus" class="chip">代理未检测</span>
+                <label style="display:inline-flex;align-items:center;gap:6px;">
+                  代理地址：
+                  <input id="proxyInput" type="text" placeholder="http://192.168.1.23:5180" style="width:240px;" />
+                  <button id="proxySaveBtn" class="btn">保存</button>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="grid" id="downloadGrid"><!-- 动态渲染区域 --></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h3>浏览器专区</h3>
+          <p>常用浏览器的下载安装入口。已提供部分离线安装包直链。</p>
+          <div class="grid" id="browserGrid"><!-- 动态渲染区域 --></div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer"><div class="container"><span>© 2025 鸟国网站 niaoguo.com</span></div></footer>
+    <!-- 静态模式：禁用后端 API，下载不需要登录 -->
+    <script>
+      (function(){
+        window.Niao = window.Niao || {};
+        window.Niao.config = window.Niao.config || {};
+        window.Niao.config.static = true;
+        window.Niao.config.apiBase = '';
+      })();
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>

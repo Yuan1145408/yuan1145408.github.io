@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Rust 入门与语法速览</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <style>main{max-width:920px;margin:20px auto;padding:0 16px;}pre{background:#111;color:#eee;padding:12px;overflow:auto} .hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html" class="active">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Rust 入门与语法速览</h1>
+    <p>强调所有权与借用、零成本抽象与强类型安全。覆盖环境安装、Cargo、基础语法与所有权、并发与异步、测试与构建。</p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="开发与学习插画" />
+
+    <h2>快速上手</h2>
+    <ol>
+      <li>安装 Rust（<code>rustup</code>），确认 <code>rustc --version</code> 与 <code>cargo --version</code> 可用。</li>
+      <li>初始化项目：<code>cargo new hello</code> 并运行：<code>cargo run</code>。</li>
+      <li>修改 <code>src/main.rs</code>，尝试字符串与切片，感受所有权与借用。</li>
+      <li>添加依赖（<code>tokio</code> 或 <code>serde</code>），熟悉 <code>Cargo.toml</code>。</li>
+    </ol>
+
+    <h2>Hello, World</h2>
+    <pre><code>fn main() {
+  println!("Hello, Rust!");
+}
+    </code></pre>
+
+    <h2>所有权、借用与生命周期</h2>
+    <pre><code>fn take(s: String) { /* 获得所有权 */ }
+fn borrow(s: &String) { /* 借用，不获取所有权 */ }
+
+let s = String::from("abc");
+borrow(&s);    // s 仍然可用
+take(s);       // s 的所有权被移动
+// println!("{}", s); // 编译错误：s 已被移动
+    </code></pre>
+
+    <h2>基础语法与集合</h2>
+    <pre><code>// 变量与模式匹配
+let mut x = 1; x += 1;
+match x { 0 => println!("zero"), _ => println!("non-zero") }
+
+// 结构体与枚举
+struct User { name: String, age: u8 }
+enum Msg { Quit, Echo(String) }
+
+// Vector 与迭代
+let v = vec![1,2,3];
+for n in &v { println!("{}", n); }
+    </code></pre>
+
+    <h2>错误处理</h2>
+    <pre><code>fn may_fail(x: i32) -> Result<i32, String> {
+  if x < 0 { Err("bad".into()) } else { Ok(x) }
+}
+
+match may_fail(1) {
+  Ok(v) => println!("ok {}", v),
+  Err(e) => eprintln!("err {}", e),
+}
+    </code></pre>
+
+    <h2>文件与序列化</h2>
+    <pre><code>use std::fs;
+let _ = fs::write("data.txt", "hello");
+let s = fs::read_to_string("data.txt").unwrap();
+
+use serde::{Serialize, Deserialize};
+#[derive(Serialize, Deserialize)]
+struct Resp { msg: String }
+let json = serde_json::to_string(&Resp{ msg: "hi".into() }).unwrap();
+    </code></pre>
+
+    <h2>异步与并发（tokio 示例）</h2>
+    <pre><code>// Cargo.toml 添加：tokio = { version = "1", features = ["full"] }
+
+#[tokio::main]
+async fn main_async(){
+  let h = tokio::spawn(async { 42 });
+  let v = h.await.unwrap();
+  println!("{}", v);
+}
+    </code></pre>
+
+    <h2>测试与基准</h2>
+    <pre><code>// src/lib.rs
+pub fn add(a: i32, b: i32) -> i32 { a + b }
+
+// tests/basic.rs
+#[test]
+fn t_add(){ assert_eq!(add(1,2), 3); }
+
+// 运行：cargo test
+    </code></pre>
+
+    <h2>构建与发布</h2>
+    <ul>
+      <li>发布构建：<code>cargo build --release</code> 生成优化二进制。</li>
+      <li>跨平台：配置 <code>rustup target</code> 与交叉编译工具链。</li>
+      <li>Lint 与格式：<code>cargo clippy</code> 与 <code>cargo fmt</code>。</li>
+    </ul>
+
+    <h2>项目入门（练手）</h2>
+    <ol>
+      <li>命令行词频统计：读取文本输出 Top-N；保存为 CSV。</li>
+      <li>HTTP 客户端/服务端：请求 JSON 并解析；实现 <code>/health</code>。</li>
+      <li>异步下载器：<code>tokio</code> 并发抓取与失败重试。</li>
+    </ol>
+
+    <h2>配图</h2>
+    <img class="hero-img" src="assets/diagram-architecture.svg" alt="架构示意图" />
+    <img class="hero-img" src="assets/illustration-code.svg" alt="代码示意图" />
+
+    <h2>扩展实践</h2>
+    <ul>
+      <li>所有权设计：不可变数据结构与借用检查帮助早期发现错误。</li>
+      <li>异步生态：<code>tokio</code>、<code>reqwest</code>、<code>axum</code> 快速搭建服务。</li>
+      <li>性能调优：<code>perf</code>/<code>criterion</code> 度量与优化热点。</li>
+    </ul>
+
+    <h2>理论与论文到代码索引（Rust）</h2>
+    <ul>
+      <li><a href="./tutorial-p2c-raft.html">Raft 共识（日志复制与状态机）</a></li>
+      <li><a href="./tutorial-p2c-lsm.html">LSM-Tree 存储（分层合并与布隆过滤）</a></li>
+      <li><a href="./tutorial-p2c-mapreduce.html">MapReduce 框架（并行化与容错）</a></li>
+    </ul>
+    <p>Rust 的安全并发适合构建高性能原型，便于理解底层实现与工程化权衡。</p>
+  </main>
+  <section style="max-width:920px;margin:0 auto;padding:0 16px;">
+    <h2>语法速查</h2>
+    <ul>
+      <li>字符串与切片：<code>let s = String::from("abc"); let r = &s[..2];</code></li>
+      <li>Option/Result：<code>Option</code> 表示可空；<code>Result</code> 表示可能失败。</li>
+      <li>trait 与泛型：抽象与约束，零成本抽象帮助性能与可维护性。</li>
+    </ul>
+    <h2>国内网络建议</h2>
+    <ul>
+      <li>设置 crates 镜像（如 rsproxy），减少依赖下载失败。</li>
+      <li>遇到编译错误，优先阅读编译器提示并最小化复现。</li>
+    </ul>
+    <h2>参考资源</h2>
+    <ul>
+      <li><a href="https://doc.rust-lang.org/" target="_blank" rel="noopener">Rust 官方文档</a></li>
+      <li><a href="https://tokio.rs/" target="_blank" rel="noopener">Tokio 文档</a></li>
+      <li><a href="https://serde.rs/" target="_blank" rel="noopener">Serde 文档</a></li>
+    </ul>
+    <h2>系统化学习路径</h2>
+    <ol>
+      <li>语言与标准库：所有权/借用、集合、错误与文件。</li>
+      <li>工程化：Cargo、测试、Lint/Format 与发布。</li>
+      <li>服务与生态：异步、Web、数据库与部署。</li>
+    </ol>
+    <h2>进阶项目</h2>
+    <ol>
+      <li>高性能日志服务：零拷贝与批量处理、持久化与压缩。</li>
+      <li>键值存储原型：WAL 与 compaction、快照与恢复。</li>
+      <li>分布式共识演示：Raft 状态同步与可视化。</li>
+    </ol>
+  </section>
+  <script src="script.js"></script>
+</body>
+</html>

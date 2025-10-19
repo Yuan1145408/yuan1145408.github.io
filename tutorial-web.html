@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HTML + CSS 蹇€熶笂鎵?/title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <style>.hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0} .icons{display:flex;gap:12px;margin:8px 0} .icons img{width:48px;height:48px}</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html" class="active">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
+    <h1>HTML + CSS 上手指南</h1>
+    <p>璇箟鍖栥€佸竷灞€銆佸搷搴斿紡銆佺幇浠ｉ€夋嫨鍣ㄤ笌甯歌鍧戙€?/p>
+    <img class="hero-img" src="assets/hero-dev.svg" alt="缂栫▼涔嬫梾" />
+    <div class="icons">
+      <img src="assets/icon-beginner.svg" alt="鏂版墜" />
+      <img src="assets/icon-project.svg" alt="椤圭洰" />
+      <img src="assets/icon-debug.svg" alt="璋冭瘯" />
+    </div>
+    <h2>HTML 璇箟鍖?/h2>
+    <ul>
+      <li>缁撴瀯锛?code>&lt;header&gt;</code> <code>&lt;main&gt;</code> <code>&lt;section&gt;</code> <code>&lt;footer&gt;</code></li>
+      <li>鍙闂€э細鍚堢悊浣跨敤 <code>alt</code>銆佹爣棰樺眰绾т笌琛ㄥ崟标签銆?/li>
+    </ul>
+    <h2>CSS 甯冨眬</h2>
+    <pre><code>/* Flex */
+.row{display:flex;gap:12px;align-items:center}
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+/* 濯掍綋鏌ヨ */
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+</code></pre>
+    <h2>甯歌鍧?/h2>
+    <ul>
+      <li>鐩掓ā鍨嬶細<code>box-sizing: border-box;</code> 鏇存槗鎺у楂樸€?/li>
+      <li>浼樺厛绾э細灏戠敤 <code>!important</code>锛屾彁楂橀€夋嫨鍣ㄥ彲缁存姢鎬с€?/li>
+      <li>鍝嶅簲寮忥細浣跨敤娴佸紡甯冨眬涓庡獟浣撴煡璇€?/li>
+    </ul>
+    <h2>缁冧範棰?/h2>
+    <ol>
+      <li>瀹炵幇涓€涓笁鏍忓搷搴斿紡甯冨眬锛岀Щ鍔ㄧ鎶樹负鍗曞垪銆?/li>
+      <li>鍐欎竴涓彲澶嶇敤鐨勫崱鐗囩粍浠讹紙鍚爣棰樸€佹弿杩般€佹寜閽級銆?/li>
+      <li>瀹炵幇涓€涓浐瀹氬ご閮ㄤ笌鍐呭鍖哄煙婊氬姩鐨勯〉闈€?/li>
+    </ol>
+    <h2>缁欏畬鍏ㄦ柊鎵嬶細绗竴姝ユ€庝箞鍋?/h2>
+    <ol>
+      <li>鍒涘缓涓€涓?<code>index.html</code>锛屽厛鍐欏嚭鍩烘湰缁撴瀯銆?/li>
+      <li>鏂板缓 <code>styles.css</code> 杩炴帴鍒伴〉闈㈠苟鍐欎竴涓崱鐗囨牱寮忋€?/li>
+      <li>灏嗛〉闈㈠仛鎴愬搷搴斿紡锛氫娇鐢?Grid/Flex 涓庡獟浣撴煡璇€?/li>
+      <li>鍔犱笂鎸夐挳涓庝氦浜掓€侊紙hover/active/focus锛夛紝鎻愬崌浣撻獙銆?/li>
+    </ol>
+    <h2>椤圭洰瀹炴垬锛堝叆闂級</h2>
+    <ol>
+      <li>涓夋爮鍝嶅簲寮忎富椤碉細澶撮儴銆佷富鍐呭銆佷晶杈规爮涓庡簳閮ㄣ€?/li>
+      <li>缁勪欢搴擄細鍗＄墖銆佸鑸€佹寜閽€佽緭鍏ユ锛岀粺涓€鏍峰紡銆?/li>
+      <li>鍔ㄧ敾涓庤繃娓★細鍏抽敭甯т笌杩囨浮鏁堟灉锛屾彁鍗囪叮鍛虫€с€?/li>
+    </ol>
+    <h2>涓鎻掑浘</h2>
+    <img class="hero-img" src="assets/diagram-architecture.svg" alt="鏋舵瀯绀烘剰鍥? />
+    <img class="hero-img" src="assets/illustration-code.svg" alt="浠ｇ爜绀烘剰鍥? />
+
+    <h2>杩涢樁鍐呭</h2>
+    <ul>
+      <li>鐜颁唬 CSS锛氬鍣ㄦ煡璇€?has銆乂iew Transitions 绛夈€?/li>
+      <li>鏃犻殰纰嶏細鐒︾偣绠＄悊銆佸姣斿害銆丄RIA 灞炴€с€?/li>
+      <li>鎬ц兘锛氬浘鐗囦紭鍖栥€佸瓧浣撳姞杞界瓥鐣ヤ笌 CSS 浣撶Н鎺у埗銆?/li>
+    </ul>
+    <h2>鏇村缁冧範</h2>
+    <ol>
+      <li>瀹炵幇甯﹀鍣ㄦ煡璇㈢殑鍗＄墖鏍呮牸锛岄€傞厤澶氱瀹瑰櫒瀹藉害銆?/li>
+      <li>鍋氫竴涓彲璁块棶鐨勫璇濇缁勪欢锛堥敭鐩樺彲鎿嶄綔锛夈€?/li>
+      <li>瀹炵幇椤甸潰鍒囨崲鍔ㄧ敾锛圴iew Transitions锛夛紝浼樺寲浣撻獙銆?/li>
+    </ol>
+    <h2>鏉冨▉璧勬簮</h2>
+    <ul>
+      <li><a href="https://developer.mozilla.org/zh-CN/docs/Web" target="_blank" rel="noopener">MDN Web Docs</a>锛堝墠绔潈濞佹枃妗ｏ級</li>
+      <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML" target="_blank" rel="noopener">MDN HTML 指南</a>銆?a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS" target="_blank" rel="noopener">MDN CSS 指南</a></li>
+      <li><a href="https://nodejs.org/en/docs" target="_blank" rel="noopener">Node.js 官方文档</a>锛堟湇鍔＄ JavaScript锛?/li>
+    </ul>
+    <h2>系统瀛︿範璺緞</h2>
+    <ol>
+      <li>基础锛欻TML 璇箟鍖栥€丆SS 甯冨眬涓庡搷搴斿紡銆丣avaScript 璇硶涓?DOM銆?/li>
+      <li>宸ョ▼鍖栵細妯″潡鍖栥€佹墦鍖呬笌构建銆佹祴璇曚笌璐ㄩ噺銆佸彲璁块棶鎬т笌鎬ц兘浼樺寲銆?/li>
+      <li>妗嗘灦涓庡叏鏍堬細React/Vue/Svelte銆丼SR/SSG銆丯ode.js/Koa/Express銆侀儴缃茶繍缁淬€?/li>
+    </ol>
+    <h2>杩涢樁椤圭洰</h2>
+    <ol>
+      <li>缁勪欢搴撲笌璁捐系统锛氫富棰樸€乀oken銆佹棤闅滅銆佹枃妗ｄ笌婕旂ず绔欍€?/li>
+      <li>鍏ㄦ爤搴旂敤锛氬墠鍚庣涓€浣擄紙API 灞傘€侀壌鏉冦€佺紦瀛橈級锛屾敮鎸佸浗闄呭寲涓?SEO銆?/li>
+      <li>PWA 涓庣绾匡細Service Worker銆佺紦瀛樼瓥鐣ャ€佸悗鍙板悓姝ヤ笌閫氱煡銆?/li>
+    </ol>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+

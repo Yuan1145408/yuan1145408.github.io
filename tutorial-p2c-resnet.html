@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paper-to-Code: ResNet 训练实战  论文到代码</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Paper-to-Code: ResNet 训练实战</h1>
+    <p>复现残差块并在 CIFAR-10 训练。</p>
+    <hr/>
+    <h2>1. 关键点</h2>
+<ul>
+  <li>残差块（identity/conv shortcuts）</li>
+  <li>BatchNorm + ReLU</li>
+</ul>
+<h2>2. PyTorch 最小实现</h2>
+<pre>
+import torch.nn as nn
+class BasicBlock(nn.Module):
+    def __init__(self, in_ch, out_ch, stride=1):
+        super().__init__()
+        self.conv1 = nn.Conv2d(in_ch, out_ch, 3, stride, 1, bias=False)
+        self.bn1 = nn.BatchNorm2d(out_ch)
+        self.relu = nn.ReLU(inplace=True)
+        self.conv2 = nn.Conv2d(out_ch, out_ch, 3, 1, 1, bias=False)
+        self.bn2 = nn.BatchNorm2d(out_ch)
+        self.shortcut = nn.Identity()
+    def forward(self, x):
+        out = self.relu(self.bn1(self.conv1(x)))
+        out = self.bn2(self.conv2(out))
+        out += self.shortcut(x)
+        return self.relu(out)
+</pre>
+<h2>3. 训练脚本与指标</h2>
+<pre>
+# 训练/验证循环，保存 best 模型与曲线
+</pre>
+    <hr/>
+    <p>提示：本教程以论文为蓝本，配套代码示例均可在本页复制运行。建议结合你本机环境进行实验与扩展。</p>
+    <p><a class="btn" href="./index.html">返回首页</a></p>
+  </main>
+<script src="script.js"></script>
+</body>
+</html>
+
+
+
