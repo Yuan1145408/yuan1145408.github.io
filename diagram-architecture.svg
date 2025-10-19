@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180" fill="none">
+  <rect width="320" height="180" rx="12" fill="#1B2430"/>
+  <g stroke="#A1D7FF" stroke-width="2" fill="none">
+    <rect x="30" y="25" width="100" height="40" rx="8"/>
+    <rect x="190" y="25" width="100" height="40" rx="8"/>
+    <rect x="30" y="95" width="260" height="60" rx="10"/>
+    <path d="M130 45 H190"/>
+    <path d="M80 65 V95"/>
+    <path d="M240 65 V95"/>
+  </g>
+  <text x="52" y="50" fill="#A1D7FF" font-size="12" font-family="monospace">Client</text>
+  <text x="222" y="50" fill="#A1D7FF" font-size="12" font-family="monospace">Server</text>
+  <text x="115" y="130" fill="#A1D7FF" font-size="12" font-family="monospace">Core / Services / Data</text>
+</svg>

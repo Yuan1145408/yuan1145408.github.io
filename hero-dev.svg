@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="320" viewBox="0 0 800 320">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6ee7b7"/>
+      <stop offset="1" stop-color="#93c5fd"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="800" height="320" rx="16" fill="#0b1220"/>
+  <rect x="24" y="24" width="752" height="200" rx="10" fill="#0f172a" stroke="#1f2937"/>
+  <text x="40" y="70" fill="#93c5fd" font-family="Consolas, monospace" font-size="24">// 开始你的编程之旅</text>
+  <text x="40" y="110" fill="#e5e7eb" font-family="Consolas, monospace" font-size="20">fn main() { println!("Hello, Dev!"); }</text>
+  <text x="40" y="150" fill="#e5e7eb" font-family="Consolas, monospace" font-size="20">console.log('Hello Web');</text>
+  <text x="40" y="190" fill="#e5e7eb" font-family="Consolas, monospace" font-size="20">printf("Hello C++\n");</text>
+  <rect x="24" y="240" width="752" height="56" rx="10" fill="url(#g)"/>
+  <text x="40" y="276" fill="#0b1220" font-family="Inter, Arial" font-size="22" font-weight="700">动手实践 · 项目驱动 · 趣味练习</text>
+</svg>

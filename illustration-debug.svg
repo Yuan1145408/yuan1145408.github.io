@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180" fill="none">
+  <rect width="320" height="180" rx="12" fill="#0D1B2A"/>
+  <g stroke="#FFD166" stroke-width="2" fill="none">
+    <rect x="30" y="30" width="110" height="120" rx="10"/>
+    <circle cx="210" cy="90" r="45"/>
+    <path d="M140 90 H165"/>
+    <path d="M255 90 H280"/>
+    <path d="M210 45 V30"/>
+  </g>
+  <text x="45" y="60" fill="#FFD166" font-size="12" font-family="monospace">Console / Logs</text>
+  <text x="185" y="90" fill="#FFD166" font-size="12" font-family="monospace">Breakpoints</text>
+</svg>
