@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PHP 蹇€熶笂鎵?/title>
+  <title>PHP 上手指南</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-  <style>.hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0} .icons{display:flex;gap:12px;margin:8px 0} .icons img{width:48px;height:48px}</style>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>.hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0}.icons{display:flex;gap:12px;margin:8px 0}.icons img{width:48px;height:48px}</style>
 </head>
 <body>
   <header class="site-header">
@@ -29,88 +29,89 @@
   </header>
   <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
     <h1>PHP 上手指南</h1>
-    <p>瀹夎銆佽娉曘€丆omposer銆乄eb 璺敱涓庡父瑙佸潙銆佺粌涔犻銆?/p>
-    <img class="hero-img" src="assets/hero-dev.svg" alt="缂栫▼涔嬫梾" />
+    <p>安装、基础语法、Composer、Web 路由与常见误区、练习题等。</p>
+    <img class="hero-img" src="hero-dev.svg" alt="开发插图" />
     <div class="icons">
-      <img src="assets/icon-beginner.svg" alt="鏂版墜" />
-      <img src="assets/icon-project.svg" alt="椤圭洰" />
-      <img src="assets/icon-debug.svg" alt="璋冭瘯" />
+      <img src="icon-beginner.svg" alt="新手" />
+      <img src="icon-project.svg" alt="项目" />
+      <img src="icon-debug.svg" alt="调试" />
     </div>
-    <h2>瀹夎涓庣幆澧?/h2>
+    <h2>安装与环境</h2>
     <ul>
-      <li>瀹夎锛氫娇鐢ㄥ畼鏂瑰寘鎴?<code>php</code> + <code>composer</code>銆?/li>
-      <li>鍐呯疆服务鍣細<code>php -S localhost:8080</code>銆?/li>
+      <li>安装：使用官方包或安装 <code>php</code> + <code>composer</code>。</li>
+      <li>内置服务：<code>php -S localhost:8080</code>。</li>
     </ul>
-    <h2>基础璇硶</h2>
+    <h2>基础语法</h2>
     <pre><code>&lt;?php
-// 鏁扮粍涓庡叧鑱旀暟缁?$arr = [1,2,3]; $map = ['a' =&gt; 1, 'b' =&gt; 2];
-// 鍑芥暟涓庣被鍨嬫彁绀?function add(int $a, int $b): int { return $a + $b; }
-// 绫讳笌鍛藉悕绌洪棿
+// 数组与关联数组
+$arr = [1, 2, 3]; $map = ['a' =&gt; 1, 'b' =&gt; 2];
+// 函数与类型提示
+function add(int $a, int $b): int { return $a + $b; }
+// 类与命名空间
 namespace Demo; class User { public function __construct(public string $name){} }
-// Composer 鑷姩加载
+// Composer 自动加载
 // composer init &amp;&amp; composer require psr/log
 </code></pre>
-    <h2>缁欏畬鍏ㄦ柊鎵嬶細绗竴姝ユ€庝箞鍋?/h2>
+    <h2>给完全新手：第一步怎么做</h2>
     <ol>
-      <li>瀹夎 PHP 涓?Composer锛?code>php -v</code>銆?code>composer -V</code> 姝ｅ父銆?/li>
-      <li>鍒涘缓椤圭洰文件澶癸紝鍒濆鍖?<code>composer init</code>銆?/li>
-      <li>鏂板缓 <code>index.php</code> 杈撳嚭 Hello锛涘惎鍔ㄥ唴缃湇鍔″櫒 <code>php -S localhost:8080</code>銆?/li>
-      <li>娣诲姞鑷姩加载涓庝竴涓畝鍗曡矾鐢憋紝璁块棶涓嶅悓璺緞杩斿洖涓嶅悓鍐呭銆?/li>
+      <li>安装 PHP 和 Composer：确保 <code>php -v</code>、<code>composer -V</code> 正常。</li>
+      <li>创建项目文件夹，初始化 <code>composer init</code>。</li>
+      <li>新建 <code>index.php</code> 输出 Hello，启动内置服务器 <code>php -S localhost:8080</code>。</li>
+      <li>添加自动加载与一个简单路由，访问不同路径返回不同内容。</li>
     </ol>
-    <h2>椤圭洰瀹炴垬锛堝叆闂級</h2>
+    <h2>项目实战（入门）</h2>
     <ol>
-      <li>琛ㄥ崟澶勭悊锛氭彁浜ゃ€佹牎楠屻€佷繚瀛樹负 CSV銆?/li>
-      <li>REST API锛氳繑鍥?JSON 鍒楄〃涓庡垎椤点€?/li>
-      <li>文件涓婁紶锛氫繚瀛樺埌鎸囧畾鐩綍骞惰褰曟棩蹇椼€?/li>
+      <li>表单处理：提交、校验、保存为 CSV。</li>
+      <li>REST API：返回 JSON 列表与分页。</li>
+      <li>文件上传：保存到指定目录并记录日志。</li>
     </ol>
-    <h2>甯歌鍧?/h2>
+    <h2>常见坑</h2>
     <ul>
-      <li>涓ユ牸姣旇緝锛氫紭鍏?<code>===</code>锛岄伩鍏嶉殣寮忚浆鎹€?/li>
-      <li>閿欒澶勭悊锛氬惎鐢ㄩ敊璇樉绀轰笌鏃ュ織锛屼娇鐢ㄥ紓甯搞€?/li>
-      <li>瀹夊叏锛氳繃婊よ緭鍏ャ€佸噯澶囪鍙ャ€侀伩鍏?SQL 娉ㄥ叆銆?/li>
+      <li>全等比较：使用 <code>===</code>，避免隐式类型转换。</li>
+      <li>错误处理：启用错误显示与日志，使用异常。</li>
+      <li>安全：输入过滤、参数化查询，避免 SQL 注入。</li>
     </ul>
-    <h2>缁冧範棰?/h2>
+    <h2>练习题</h2>
     <ol>
-      <li>瀹炵幇涓€涓畝鍗曡矾鐢卞櫒锛岃繑鍥炰笉鍚岄〉闈€?/li>
-      <li>缂栧啓涓€涓〃鍗曟彁浜や笌楠岃瘉閫昏緫銆?/li>
-      <li>瀹炵幇涓€涓枃浠朵笂浼犱笌保存鐨勫姛鑳姐€?/li>
+      <li>实现一个简单路由器，返回不同页面。</li>
+      <li>编写一个表单提交与校验流程。</li>
+      <li>实现一个文件上传与保存功能。</li>
     </ol>
-    <h2>涓鎻掑浘</h2>
-    <img class="hero-img" src="assets/diagram-architecture.svg" alt="鏋舵瀯绀烘剰鍥? />
-    <img class="hero-img" src="assets/illustration-code.svg" alt="浠ｇ爜绀烘剰鍥? />
-
-    <h2>杩涢樁鍐呭</h2>
+    <h2>中间插图</h2>
+    <img class="hero-img" src="diagram-architecture.svg" alt="架构示意图" />
+    <img class="hero-img" src="illustration-code.svg" alt="代码示意图" />
+    <h2>进阶内容</h2>
     <ul>
-      <li>渚濊禆绠＄悊涓庤嚜鍔ㄥ姞杞斤細PSR-4銆丆omposer 鑴氭湰涓庡彂甯冦€?/li>
-      <li>Web 妗嗘灦锛氳矾鐢便€佷腑闂翠欢涓庢帶鍒跺櫒锛圫lim/Laravel锛夈€?/li>
-      <li>瀹夊叏瀹炶返锛氳緭鍏ヨ繃婊ゃ€丆SRF銆佸噯澶囪鍙ヤ笌瀵嗙爜鍝堝笇銆?/li>
+      <li>依赖管理与自动加载：PSR-4、Composer 脚本与发布。</li>
+      <li>Web 框架：路由、中间件与控制器（Slim/Laravel）。</li>
+      <li>安全与合规：输入过滤、CSRF、预处理语句与密码哈希。</li>
     </ul>
-    <h2>鏇村缁冧範</h2>
+    <h2>更多练习</h2>
     <ol>
-      <li>瀹炵幇涓€涓垎椤靛垪琛ㄤ笌搜索鎺ュ彛锛岃繑鍥?JSON銆?/li>
-      <li>缂栧啓涓€涓腑闂翠欢锛岃褰曡姹傛棩蹇椾笌鑰楁椂銆?/li>
-      <li>鍋氫竴涓笂浼犳湇鍔★紝闄愬埗文件绫诲瀷涓庡ぇ灏忓苟璁板綍銆?/li>
+      <li>实现一个分页列表与搜索接口，返回 JSON。</li>
+      <li>编写一个中间件：记录请求日志与耗时。</li>
+      <li>做一个上传服务：限制文件类型与大小并记录。</li>
     </ol>
-    <h2>鏉冨▉璧勬簮</h2>
+    <h2>参考资源</h2>
     <ul>
-      <li><a href="https://www.php.net/docs.php" target="_blank" rel="noopener">PHP 官方文档</a>锛堣瑷€涓庢爣鍑嗗簱锛?/li>
-      <li><a href="https://getcomposer.org/doc/" target="_blank" rel="noopener">Composer 文档</a>锛堜緷璧栦笌鑷姩加载锛?/li>
-      <li><a href="https://laravel.com/docs" target="_blank" rel="noopener">Laravel 文档</a>锛堢幇浠?Web 妗嗘灦锛?/li>
+      <li><a href="https://www.php.net/docs.php" target="_blank" rel="noopener">PHP 官方文档</a></li>
+      <li><a href="https://getcomposer.org/doc/" target="_blank" rel="noopener">Composer 文档</a></li>
+      <li><a href="https://laravel.com/docs" target="_blank" rel="noopener">Laravel 文档</a></li>
     </ul>
-    <h2>系统瀛︿範璺緞</h2>
+    <h2>系统化学习路径</h2>
     <ol>
-      <li>璇█涓庡疄璺碉細璇硶銆丳SR 鏍囧噯銆侀敊璇笌寮傚父銆佹祴璇曘€?/li>
-      <li>宸ョ▼鍖栵細Composer銆佽嚜鍔ㄥ姞杞姐€丆I/CD銆佹棩蹇椾笌閰嶇疆銆?/li>
-      <li>Web 涓庡畨鍏細璺敱涓庝腑闂翠欢銆丱RM銆佽璇佹巿鏉冦€佽緭鍏ヤ笌杈撳嚭瀹夊叏銆?/li>
+      <li>语言与实战：语法、PSR 标准、错误与异常、测试。</li>
+      <li>工作流：Composer、自动加载、CI/CD、日志与配置。</li>
+      <li>Web 与安全：路由与中间件、ORM、认证授权、输入输出安全。</li>
     </ol>
-    <h2>杩涢樁椤圭洰</h2>
+    <h2>进阶项目</h2>
     <ol>
-      <li>REST 服务锛氬垎椤典笌杩囨护銆佺粺涓€閿欒銆佸璁′笌閫熺巼闄愬埗銆?/li>
-      <li>涓婁紶涓庡鐞嗭細鍒嗗潡涓婁紶銆佹牎楠屻€佸浘鐗?文档杞崲涓庨瑙堛€?/li>
-      <li>澶氭ā鍧楀钩鍙帮細鏉冮檺系统銆佹椿鍔ㄦ棩蹇椼€侀厤缃腑蹇冧笌缂撳瓨銆?/li>
+      <li>REST 服务：分页与过滤、统一错误、统计与限速。</li>
+      <li>上传与处理：分块上传、校验、图片/文档转换与预览。</li>
+      <li>多模块与钩子：权限系统、活动日志、配置中心与缓存。</li>
     </ol>
   </main>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
 

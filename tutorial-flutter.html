@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Dart/Flutter 教程（跨平台 UI）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #1b2432; color: #e7eaf3; padding: 12px; overflow: auto; border-radius: 8px; }
+    code { font-family: Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="tutorials.html">教程专区</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Flutter 入门</h1>
+    <p class="muted">一套代码多端运行，快速搭建移动与桌面 UI。</p>
+
+    <h2>创建项目</h2>
+    <pre><code># 安装 Flutter SDK 后
+flutter create hello_flutter
+cd hello_flutter
+flutter run
+    </code></pre>
+
+    <h2>计数器示例（核心部件）</h2>
+    <pre><code>// lib/main.dart
+import 'package:flutter/material.dart';
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget{
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext ctx){
+    return MaterialApp(home: CounterPage());
+  }
+}
+
+class CounterPage extends StatefulWidget{
+  @override
+  State createState() => _CounterState();
+}
+class _CounterState extends State<CounterPage>{
+  int n = 0;
+  @override
+  Widget build(BuildContext ctx){
+    return Scaffold(
+      appBar: AppBar(title: const Text('计数器')),
+      body: Center(child: Text('点击: $n')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => setState(()=> n++),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+    </code></pre>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://docs.flutter.dev/" target="_blank" rel="noopener">Flutter Docs</a></li>
+      <li>状态管理：Provider / Riverpod / Bloc。</li>
+    </ul>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

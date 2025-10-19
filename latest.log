@@ -1,5 +1,58 @@
-﻿[INFO] 2025-10-14 19:44:34 站点启动在 http://localhost:8004/
-[INFO] 2025-10-14 19:44:34 静态文件目录 E:\niao
-[WARN] 2025-10-14 19:44:34 外部链接测速失败（可忽略）
-[INFO] 2025-10-14 19:44:34 教程与游戏列表已更新
-[INFO] 2025-10-14 19:44:34 本地预览访问正常
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\404.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\android.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\deploy.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\dns-setup.md: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\downloads.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\features.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\games.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\index.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\minecraft.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\official.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\os.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\README.md: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\report.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\styles.css: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tasks.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-ai.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-algo.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-c.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-cp.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-cpp.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-csharp.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-deeplearning.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-django.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-express.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-fastapi.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-flask.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-flutter.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-go.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-java.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-js.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-julia.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-kotlin.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-node.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-p2c-lsm.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-p2c-mapreduce.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-p2c-raft.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-p2c-resnet.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-p2c-transformer.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-packet.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-php.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-project.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-python.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-r.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-react.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-rust.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-scala.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-scraping.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-shell.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-springboot.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-sql.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-swift.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-theory.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-ts.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-vue.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorial-web.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\tutorials.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\user.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码
+[keep] C:\Users\Administrator\Downloads\摸金小助手1.6\site_yuan1145408\vm.html: utf8_score=0, gb_score=1000000000 -> 保持现有编码

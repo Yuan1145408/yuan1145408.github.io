@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TypeScript 蹇€熶笂鎵嬩笌瀹炴垬</title>
+  <title>TypeScript 上手指南</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <style>.hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0} .icons{display:flex;gap:12px;margin:8px 0} .icons img{width:48px;height:48px}</style>
 </head>
 <body>
@@ -29,70 +29,59 @@
   </header>
   <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
     <h1>TypeScript 上手指南</h1>
-    <p>绫诲瀷系统銆佹硾鍨嬨€佹ā鍧椼€佸伐绋嬪疄璺典笌甯歌鍧戙€?/p>
-    <img class="hero-img" src="assets/hero-dev.svg" alt="缂栫▼涔嬫梾" />
+    <p>类型系统、泛型、模块、工程实践与常见坑的快速上手。</p>
+    <img class="hero-img" src="hero-dev.svg" alt="开发插图" />
     <div class="icons">
-      <img src="assets/icon-beginner.svg" alt="鏂版墜" />
-      <img src="assets/icon-project.svg" alt="椤圭洰" />
-      <img src="assets/icon-debug.svg" alt="璋冭瘯" />
+      <img src="icon-beginner.svg" alt="新手" />
+      <img src="icon-project.svg" alt="项目" />
+      <img src="icon-debug.svg" alt="调试" />
     </div>
-    <h2>瀹夎涓庣幆澧?/h2>
+    <h2>安装与环境</h2>
     <ul>
-      <li>瀹夎锛?code>npm i -D typescript</code>锛屽垵濮嬪寲 <code>tsc --init</code>銆?/li>
-      <li>杩愯锛歂ode.js + <code>ts-node</code> 鎴栫紪璇戝悗杩愯銆?/li>
-      <li>鍓嶇锛歏ite/webpack锛岄厤缃?<code>tsconfig.json</code> 鍜岃矾寰勫埆鍚嶃€?/li>
+      <li>安装：<code>npm i -D typescript</code>，初始化 <code>tsc --init</code></li>
+      <li>运行：Node.js + <code>ts-node</code> 或编译后运行</li>
+      <li>前端：Vite/Webpack，配置 <code>tsconfig.json</code> 与路径别名</li>
     </ul>
-    <h2>基础璇硶</h2>
-    <pre><code>// 绫诲瀷涓庢帴鍙?type Id = number | string;
+    <h2>基础语法</h2>
+    <pre><code>// 类型与接口
+type Id = number | string
 interface User { id: Id; name: string; age?: number }
-// 娉涘瀷
+// 泛型
 function wrap<T>(value: T){ return { value } }
-// 鏋氫妇涓庡瓧闈㈤噺绫诲瀷
-type Direction = 'up'|'down';
-// 绫诲瀷鏀剁獎
+// 字面量与联合类型
+type Direction = 'up'|'down'
+// 类型收窄
 function len(x: string | string[]){ return Array.isArray(x) ? x.length : x.length }
-// 妯″潡涓庡鍏?export function add(a:number,b:number){ return a+b }
+// 模块与导入导出
+export function add(a:number,b:number){ return a+b }
 </code></pre>
-    <h2>甯歌鍧?/h2>
+    <h2>常见坑</h2>
     <ul>
-      <li><code>any</code> 婊ョ敤锛氫紭鍏?<code>unknown</code> 涓庣被鍨嬫敹绐勩€?/li>
-      <li>绫诲瀷鏂█锛氳皑鎱庝娇鐢?<code>as</code>锛岄伩鍏嶆帺鐩栫湡瀹為棶棰樸€?/li>
-      <li>this 涓婁笅鏂囷細绠ご鍑芥暟閬垮厤 <code>this</code> 缁戝畾閿欒銆?/li>
+      <li><code>any</code> 谨慎使用；优先 <code>unknown</code> 并配合类型收窄</li>
+      <li>类型断言：建议节制使用 <code>as</code>，避免掩盖真实问题</li>
+      <li>this 上下文：用箭头函数避免 <code>this</code> 绑定丢失</li>
     </ul>
-    <h2>缁冧範棰?/h2>
+    <h2>练习题（基础）</h2>
     <ol>
-      <li>灏佽涓€涓?<code>Result&lt;T,E&gt;</code> 绫诲瀷骞剁紪鍐欏伐鍏峰嚱鏁般€?/li>
-      <li>瀹炵幇涓€涓被鍨嬪畨鍏ㄧ殑浜嬩欢鎬荤嚎銆?/li>
-      <li>缁?REST 鍝嶅簲寤烘ā锛屽寘鍚垎椤典笌閿欒绫诲瀷銆?/li>
+      <li>实现一个 <code>Result&lt;T,E&gt;</code> 类型并编写配套工具函数（<code>ok</code>/<code>err</code>/<code>isOk</code>）。</li>
+      <li>实现一个类型安全的事件总线。</li>
+      <li>为 REST 响应建模，包含分页与错误类型。</li>
     </ol>
-    <h2>缁欏畬鍏ㄦ柊鎵嬶細绗竴姝ユ€庝箞鍋?/h2>
-    <ol>
-      <li>瀹夎 Node.js 涓?TypeScript锛涘垵濮嬪寲 <code>tsc --init</code>銆?/li>
-      <li>鏂板缓 <code>index.ts</code> 鍐?Hello锛涗娇鐢?<code>ts-node</code> 鎴栫紪璇戝悗杩愯銆?/li>
-      <li>鍒涘缓椤圭洰缁撴瀯涓?<code>tsconfig.json</code>锛屾坊鍔犺矾寰勫埆鍚嶃€?/li>
-      <li>寮曞叆绗笁鏂圭被鍨嬪０鏄庯紝纭繚缂栬緫鍣ㄦ彁绀哄畬鏁淬€?/li>
-    </ol>
-    <h2>椤圭洰瀹炴垬锛堝叆闂級</h2>
-    <ol>
-      <li>绫诲瀷瀹夊叏鐨勪簨浠舵€荤嚎銆?/li>
-      <li>鍒嗛〉涓庨敊璇被鍨嬪缓妯＄殑 REST 瀹㈡埛绔€?/li>
-      <li>灏忓瀷鍓嶇缁勪欢搴擄細鎸夐挳銆佽緭鍏ユ銆佸崱鐗囥€?/li>
-    </ol>
-    <h2>涓鎻掑浘</h2>
-    <img class="hero-img" src="assets/diagram-architecture.svg" alt="鏋舵瀯绀烘剰鍥? />
-    <img class="hero-img" src="assets/illustration-code.svg" alt="浠ｇ爜绀烘剰鍥? />
+    <h2>中段插图</h2>
+    <img class="hero-img" src="diagram-architecture.svg" alt="架构示意图" />
+    <img class="hero-img" src="illustration-code.svg" alt="代码示意图" />
 
-    <h2>杩涢樁鍐呭</h2>
+    <h2>扩展内容</h2>
     <ul>
-      <li>楂樼骇绫诲瀷锛氭潯浠剁被鍨嬨€佹槧灏勭被鍨嬩笌绫诲瀷浣撴搷銆?/li>
-      <li>搴撹璁★細API 璁捐涓?<code>tsup</code>/<code>vite</code> 鎵撳寘銆?/li>
-      <li>鍓嶇宸ョ▼锛?code>eslint</code>/<code>prettier</code>/<code>vitest</code> 闆嗘垚銆?/li>
+      <li>高级类型：条件类型、映射类型与类型编程。</li>
+      <li>库设计：API 设计与 <code>tsup</code>/<code>vite</code> 打包。</li>
+      <li>前端工程：<code>eslint</code>/<code>prettier</code>/<code>vitest</code> 集成。</li>
     </ul>
-    <h2>鏇村缁冧範</h2>
+    <h2>更多练习</h2>
     <ol>
-      <li>瀹炵幇涓€涓己绫诲瀷 <code>fetch</code> 灏佽锛屾敮鎸佸垎椤典笌閿欒銆?/li>
-      <li>缂栧啓涓€涓〃鍗曟牎楠屽簱锛岀被鍨嬪畨鍏ㄣ€佸彲鎵╁睍銆?/li>
-      <li>鎼缓缁勪欢搴撳苟鍙戝竷鍒?npm锛堢鍖呬害鍙級銆?/li>
+      <li>实现一个类型安全的 <code>fetch</code> 封装，支持分页与错误。</li>
+      <li>编写一个表单校验库，类型安全、可扩展。</li>
+      <li>搭建组件库并发布到 npm（可用私有 scoped 包）。</li>
     </ol>
   <hr/>
 <section id="theory-index">
@@ -103,23 +92,23 @@ function len(x: string | string[]){ return Array.isArray(x) ? x.length : x.lengt
 </section>
  </main>
   <section style="max-width:920px;margin:0 auto;padding:0 16px;">
-    <h2>鏉冨▉璧勬簮</h2>
+    <h2>参考资源</h2>
     <ul>
-      <li><a href="https://www.typescriptlang.org/docs/" target="_blank" rel="noopener">TypeScript 官方文档</a>锛堢被鍨嬬郴缁熶笌缂栬瘧鍣級</li>
-      <li><a href="https://www.typescriptlang.org/tsconfig" target="_blank" rel="noopener">TSConfig 鍙傝€?/a>锛堥」鐩厤缃瑙ｏ級</li>
-      <li><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html" target="_blank" rel="noopener">Utility Types</a>锛堝父鐢ㄥ唴缃伐鍏风被鍨嬶級</li>
+      <li><a href="https://www.typescriptlang.org/docs/" target="_blank" rel="noopener">TypeScript 官方文档</a>（类型系统与编译器）</li>
+      <li><a href="https://www.typescriptlang.org/tsconfig" target="_blank" rel="noopener">TSConfig 参考</a>（项目配置详解）</li>
+      <li><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html" target="_blank" rel="noopener">Utility Types</a>（常用内置工具类型）</li>
   </ul>
-  <h2>系统瀛︿範璺緞</h2>
+  <h2>系统学习路径</h2>
     <ol>
-      <li>绫诲瀷基础锛氳仈鍚?浜ゅ弶銆佹硾鍨嬨€佹潯浠朵笌鏄犲皠绫诲瀷銆?/li>
-      <li>宸ョ▼鍖栵細閰嶇疆涓庣紪璇戙€丩int 涓庢牸寮忓寲銆佹祴璇曚笌绫诲瀷娴嬭瘯銆?/li>
-      <li>鍓嶅悗绔崗浣滐細鍓嶇妗嗘灦 TS 鍖栥€佸悗绔被鍨嬪叡浜€丄PI 绫诲瀷瀹堟姢銆?/li>
+      <li>类型基础：联合/交叉、泛型、条件类型与映射类型。</li>
+      <li>工程化：配置与编译、Lint 与格式化、测试与类型测试。</li>
+      <li>前后端协作：前端框架 TS 化、后端类型协作、API 类型管理。</li>
     </ol>
-    <h2>杩涢樁椤圭洰</h2>
+    <h2>进阶项目</h2>
     <ol>
-      <li>绫诲瀷瀹夊叏鐨勫墠绔姸鎬佷笌鎺ュ彛灞傦紙閿欒杈圭晫/閲嶈瘯/缂撳瓨锛夈€?/li>
-      <li>Monorepo 绫诲瀷鍏变韩锛氬寘闂寸被鍨嬬粺涓€銆佸彂甯冩祦绋嬩笌鏍￠獙銆?/li>
-      <li>绫诲瀷椹卞姩鐨勮〃鍗曠郴缁燂細Schema鈫掔被鍨嬧啋娓叉煋涓庢牎楠屻€?/li>
+      <li>类型安全的前端状态与接口层（错误边界/重试/缓存）。</li>
+      <li>Monorepo 类型共享：包内类型统一、发布流程与验证。</li>
+      <li>类型驱动的表单系统：Schema→类型、渲染与校验。</li>
     </ol>
   </section>
   <main style="max-width:920px;margin:0 auto;padding:24px 16px;">

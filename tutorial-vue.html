@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Vue 3 教程（Vite + Composition API）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #1b2432; color: #e7eaf3; padding: 12px; overflow: auto; border-radius: 8px; }
+    code { font-family: Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="tutorials.html">教程专区</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Vue 3 入门（Composition API）</h1>
+    <p class="muted">从脚手架到组件与路由，快速建立最小项目骨架。</p>
+
+    <h2>创建项目</h2>
+    <pre><code># 使用 Vite 创建 Vue 项目
+npm create vite@latest my-vue-app -- --template vue
+cd my-vue-app
+npm install
+npm run dev
+    </code></pre>
+
+    <h2>组合式 API</h2>
+    <pre><code>// src/App.vue
+<script setup>
+import { ref } from 'vue'
+const count = ref(0)
+</script>
+
+<template>
+  <div style="padding:20px">
+    <h2>你好 Vue</h2>
+    <button class="btn" @click="count++">点击 {{ count }}</button>
+  </div>
+</template>
+    </code></pre>
+
+    <h2>路由（Vue Router）</h2>
+    <pre><code>npm i vue-router
+// src/main.js
+import { createApp } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import App from './App.vue'
+
+const Home = { template: '<div>首页</div>' }
+const About = { template: '<div>关于</div>' }
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', component: Home },
+    { path: '/about', component: About },
+  ]
+})
+
+createApp(App).use(router).mount('#app')
+    </code></pre>
+
+    <h2>状态管理（Pinia）</h2>
+    <pre><code>npm i pinia
+// src/stores/counter.js
+import { defineStore } from 'pinia'
+export const useCounter = defineStore('counter', {
+  state: () => ({ n: 0 }),
+  actions: { inc(){ this.n++ } }
+})
+    </code></pre>
+
+    <h2>构建与部署</h2>
+    <pre><code>npm run build
+npx serve dist
+    </code></pre>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a></li>
+      <li>组件库：<a href="https://element-plus.org/" target="_blank" rel="noopener">Element Plus</a>、<a href="https://naiveui.com/" target="_blank" rel="noopener">Naive UI</a></li>
+    </ul>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

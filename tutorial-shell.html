@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Shell 鑴氭湰蹇€熶笂鎵?/title>
+  <title>Shell 脚本上手指南</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <style>.hero-img{max-width:100%;height:auto;border-radius:8px;margin:16px 0} .icons{display:flex;gap:12px;margin:8px 0} .icons img{width:48px;height:48px}</style>
 </head>
 <body>
@@ -28,84 +28,67 @@
     </div>
   </header>
   <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
-    <h1>Shell 上手指南锛圔ash锛?/h1>
-    <p>鍙橀噺銆佹潯浠朵笌寰幆銆佸嚱鏁般€佺閬撲笌閲嶅畾鍚戙€侀敊璇鐞嗕笌缁冧範銆?/p>
-    <img class="hero-img" src="assets/hero-dev.svg" alt="缂栫▼涔嬫梾" />
+    <h1>Shell 上手指南（Bash）</h1>
+    <p>变量、条件与循环、函数、管线与重定向、错误处理与练习题等。</p>
+    <img class="hero-img" src="hero-dev.svg" alt="开发插图" />
     <div class="icons">
-      <img src="assets/icon-beginner.svg" alt="鏂版墜" />
-      <img src="assets/icon-project.svg" alt="椤圭洰" />
-      <img src="assets/icon-debug.svg" alt="璋冭瘯" />
+      <img src="icon-beginner.svg" alt="新手" />
+      <img src="icon-project.svg" alt="项目" />
+      <img src="icon-debug.svg" alt="调试" />
     </div>
-    <h2>基础璇硶</h2>
+    <h2>基础语法</h2>
     <pre><code>#!/usr/bin/env bash
 set -euo pipefail
-# 鍙橀噺涓庡弬鏁?name=${1:-world}
+# 变量与参数
+name=${1:-world}
 echo "hello $name"
-# 鏉′欢
+# 条件
 if [[ -f file.txt ]]; then echo "exists"; fi
-# 寰幆
+# 循环
 for f in *.log; do echo "$f"; done
-# 鍑芥暟
+# 函数
 log(){ printf "[%s] %s\n" "$(date)" "$*"; }
 </code></pre>
-    <h2>甯歌鍧?/h2>
+    <h2>常见坑</h2>
     <ul>
-      <li>绌烘牸涓庡紩鍙凤細浣跨敤鍙屽紩鍙峰寘瑁瑰彉閲忥紝閬垮厤鍒嗚瘝閿欒銆?/li>
-      <li>绠￠亾鍑洪敊锛氬姞 <code>set -o pipefail</code> 鎹曡幏澶辫触銆?/li>
-      <li>鍙Щ妞嶆€э細閬垮厤渚濊禆闈炴爣鍑嗗伐鍏锋垨閫夐」銆?/li>
+      <li>空格与引号：用双引号包裹变量展开，避免拆词错误。</li>
+      <li>管道错误：启用 <code>set -o pipefail</code> 获取失败。</li>
+      <li>可移植性：避免依赖非标准工具或选项。</li>
     </ul>
-    <h2>缁冧範棰?/h2>
+    <h2>练习题</h2>
     <ol>
-      <li>鍐欎竴涓棩蹇楄疆杞剼鏈紝鎸夊ぇ灏忔垨鏃ユ湡鍒囧垎銆?/li>
-      <li>瀹炵幇涓€涓苟鍙戜笅杞借剼鏈紝闄愬埗鏈€澶у苟鍙戞暟銆?/li>
-      <li>鍐欎竴涓枃浠跺幓閲嶅伐鍏凤紝杈撳嚭閲嶅鐨勬枃浠惰矾寰勩€?/li>
+      <li>写一个“日志轮转”脚本，按大小或日期切分。</li>
+      <li>实现一个并发下载器，限制最大并发与重试次数。</li>
+      <li>写一个“文件去重”脚本，输出重复文件路径。</li>
     </ol>
-    <h2>缁欏畬鍏ㄦ柊鎵嬶細绗竴姝ユ€庝箞鍋?/h2>
+    <h2>给完全新手：第一步怎么做</h2>
     <ol>
-      <li>瀹夎 Git Bash 鎴?WSL锛涚‘璁?<code>bash --version</code>銆?/li>
-      <li>鍦ㄦ闈㈠垱寤?<code>hello.sh</code>锛岃繍琛岋細<code>bash hello.sh</code>銆?/li>
-      <li>璇曠潃鍐欎竴涓甫鍙傛暟鐨勮剼鏈紝骞舵墦鍗版棩蹇椼€?/li>
-      <li>瀛︿範 <code>set -euo pipefail</code> 涓庤皟璇?<code>set -x</code>銆?/li>
+      <li>安装 Git Bash 或 WSL；确认 <code>bash --version</code> 正常。</li>
+      <li>在工作目录创建 <code>hello.sh</code>，运行：<code>bash hello.sh</code>。</li>
+      <li>练习编写一个带参数的脚本，并打印日志。</li>
+      <li>学习 <code>set -euo pipefail</code> 与 <code>set -x</code>。</li>
     </ol>
-    <h2>椤圭洰瀹炴垬锛堝叆闂級</h2>
+    <h2>项目实战（入门）</h2>
     <ol>
-      <li>鏃ュ織杞浆锛氭寜澶у皬鎴栨棩鏈熷垏鍒嗐€?/li>
-      <li>骞跺彂下载锛?code>xargs -P</code> 鎴栧悗鍙颁换鍔°€?/li>
-      <li>文件鍘婚噸锛氭瘮瀵瑰搱甯岋紝杈撳嚭閲嶅文件鍒楄〃銆?/li>
+      <li>日志转储：按大小或日期切分。</li>
+      <li>并发下载：<code>xargs -P</code> 或后台任务并发执行。</li>
+      <li>文件去重：比对校验和，输出重复文件列表。</li>
     </ol>
-    <h2>涓鎻掑浘</h2>
-    <img class="hero-img" src="assets/diagram-flow.svg" alt="娴佺▼绀烘剰鍥? />
-    <img class="hero-img" src="assets/illustration-debug.svg" alt="璋冭瘯绀烘剰鍥? />
+    <h2>中间插图</h2>
+    <img class="hero-img" src="diagram-flow.svg" alt="流程示意图" />
+    <img class="hero-img" src="illustration-debug.svg" alt="调试示意图" />
 
-    <h2>杩涢樁鍐呭</h2>
+    <h2>进阶内容</h2>
     <ul>
-      <li>鍋ュ．鎬э細<code>trap</code> 鎹曟崏淇″彿锛屾竻鐞嗕复鏃舵枃浠躲€?/li>
-      <li>鍙祴璇曟€э細灏嗘牳蹇冮€昏緫鎻愬嚱鏁帮紝渚夸簬鍗曟祴銆?/li>
-      <li>鎬ц兘锛氶伩鍏?<code>fork</code> 杩囧锛屼紭鍏堝唴寤轰笌绠￠亾銆?/li>
+      <li>trap 与清理：捕获信号并清理临时文件。</li>
+      <li>可测试性：将核心逻辑封装为函数，便于单测。</li>
+      <li>性能：避免大量 <code>fork</code>，优先内置与管线。</li>
     </ul>
-    <h2>鏇村缁冧範</h2>
+    <h2>更多练习</h2>
     <ol>
-      <li>瀹炵幇涓€涓苟鍙戜换鍔¤皟搴﹀櫒锛岃褰曡€楁椂涓庡け璐ラ噸璇曘€?/li>
-      <li>鍐欎竴涓棩蹇楄仛鍚堝櫒锛屾寜鍏抽敭瀛楁彁鍙栧苟杈撳嚭鎽樿銆?/li>
-      <li>瀹炵幇涓€涓畝鍗曢儴缃茶剼鏈紝甯﹀洖婊氫笌鐘舵€佹鏌ャ€?/li>
-    </ol>
-    <h2>鏉冨▉璧勬簮</h2>
-    <ul>
-      <li><a href="https://www.gnu.org/software/bash/manual/" target="_blank" rel="noopener">GNU Bash Manual</a>锛圔ash 鎵嬪唽锛?/li>
-      <li><a href="https://pubs.opengroup.org/onlinepubs/9699919799/" target="_blank" rel="noopener">POSIX Shell & Utilities</a>锛堟爣鍑嗚鑼冿級</li>
-      <li><a href="https://man7.org/linux/man-pages/" target="_blank" rel="noopener">Linux man-pages</a>锛堢郴缁熷懡浠や笌璋冪敤锛?/li>
-    </ul>
-    <h2>系统瀛︿範璺緞</h2>
-    <ol>
-      <li>Shell 基础锛氬彉閲忎笌鎺у埗娴併€佸嚱鏁颁笌绠￠亾銆佹枃鏈笌文件鎿嶄綔銆?/li>
-      <li>鍙潬鎬т笌鍙祴璇曪細trap銆佷弗鏍兼ā寮忋€佸崟鍏冩祴璇曚笌鎸佺画闆嗘垚銆?/li>
-      <li>鑷姩鍖栦笌杩愮淮锛氬寘绠＄悊銆佽繘绋嬩笌浠诲姟銆佹棩蹇椾笌鐩戞帶銆侀儴缃蹭笌鍥炴粴銆?/li>
-    </ol>
-    <h2>杩涢樁椤圭洰</h2>
-    <ol>
-      <li>鍙鐢ㄧ殑 DevOps 宸ュ叿闆嗭細瀹夎銆侀厤缃€佸仴搴锋鏌ヤ笌鍥炴粴銆?/li>
-      <li>鏃ュ織涓庢寚鏍囬噰闆嗭細缁撴瀯鍖栬緭鍑恒€佽疆杞€佽仛鍚堜笌鍛婅銆?/li>
-      <li>璺ㄥ钩鍙拌剼鏈ā鏉匡細鍏煎 macOS/Linux锛屽悎鐞嗕娇鐢ㄥ彲绉绘鍛戒护銆?/li>
+      <li>实现一个并发任务调度器，记录耗时与失败重试。</li>
+      <li>写一个“日志收集器”，按关键字提取并输出概览。</li>
+      <li>封装一个简单的运维脚本：健康检查与状态自检。</li>
     </ol>
   </main>
   <section style="max-width:920px;margin:0 auto;padding:24px 16px;">
@@ -174,6 +157,26 @@ shellcheck script.sh
       <li>写一个“目录同步”脚本：忽略特定后缀文件与目录，并输出对比报告。</li>
       <li>实现安全的 <code>read</code> 读取：处理包含空格/引号的输入行。</li>
       <li>封装一个小型库 <code>lib.sh</code>：包含 <code>log/retry/assert</code> 等可复用函数。</li>
+    </ol>
+  </section>
+  <section style="max-width:920px;margin:0 auto;padding:24px 16px;">
+    <h2>参考资源</h2>
+    <ul>
+      <li><a href="https://www.gnu.org/software/bash/manual/" target="_blank" rel="noopener">GNU Bash Manual</a></li>
+      <li><a href="https://pubs.opengroup.org/onlinepubs/9699919799/" target="_blank" rel="noopener">POSIX Shell & Utilities</a></li>
+      <li><a href="https://man7.org/linux/man-pages/" target="_blank" rel="noopener">Linux man-pages</a></li>
+    </ul>
+    <h2>系统化学习路径</h2>
+    <ol>
+      <li>Shell 基础：变量与控制流、函数与管线、文本与文件操作。</li>
+      <li>可维护性与可测试性：trap、规范模式、单元测试与持续集成。</li>
+      <li>自动化与工程化：包管理、流程与任务、日志与监控、部署与回滚。</li>
+    </ol>
+    <h2>进阶项目</h2>
+    <ol>
+      <li>可复用的 DevOps 工具集：安装、配置、健康检查与回滚。</li>
+      <li>日志与指标采集：结构化输出、转换与汇总、告警与看板。</li>
+      <li>跨平台脚本模板：兼容 macOS/Linux，合理使用可移植命令。</li>
     </ol>
   </section>
 <script src="script.js"></script>

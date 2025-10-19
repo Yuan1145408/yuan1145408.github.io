@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Swift 教程（iOS 入门）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #1b2432; color: #e7eaf3; padding: 12px; overflow: auto; border-radius: 8px; }
+    code { font-family: Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="tutorials.html">教程专区</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Swift 入门</h1>
+    <p class="muted">语法基础、简单 UI 与网络请求（需 macOS + Xcode）。</p>
+
+    <h2>Hello, Swift</h2>
+    <pre><code>// main.swift
+print("Hello, Swift")
+    </code></pre>
+
+    <h2>网络请求（URLSession）</h2>
+    <pre><code>import Foundation
+let url = URL(string: "https://httpbin.org/json")!
+let task = URLSession.shared.dataTask(with: url){ data, _, _ in
+  let text = String(data: data!, encoding: .utf8)!
+  print(text)
+}
+task.resume()
+RunLoop.main.run()
+    </code></pre>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://www.swift.org/documentation/" target="_blank" rel="noopener">Swift Docs</a></li>
+      <li>UI：SwiftUI；包管理：Swift Package Manager。</li>
+    </ul>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

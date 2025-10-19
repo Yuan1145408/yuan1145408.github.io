@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Kotlin 教程（JVM 与协程）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #1b2432; color: #e7eaf3; padding: 12px; overflow: auto; border-radius: 8px; }
+    code { font-family: Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="tutorials.html">教程专区</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Kotlin 入门</h1>
+    <p class="muted">简洁安全的 JVM 语言；与 Java 互操作；协程易用。</p>
+
+    <h2>Hello, Kotlin（命令行）</h2>
+    <pre><code># 安装 SDKMAN 或使用 IntelliJ IDEA
+# 命令行：kotlinc hello.kt -include-runtime -d hello.jar
+# 运行：java -jar hello.jar
+// hello.kt
+fun main(){
+  println("Hello, Kotlin")
+}
+    </code></pre>
+
+    <h2>协程</h2>
+    <pre><code>implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+// 示例
+import kotlinx.coroutines.*
+fun main() = runBlocking {
+  val job = launch { delay(500); println("done") }
+  job.join()
+}
+    </code></pre>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://kotlinlang.org/docs/home.html" target="_blank" rel="noopener">Kotlin Docs</a></li>
+      <li>后端：Ktor / Spring Boot；Android 开发：Kotlin + Jetpack Compose。</li>
+    </ul>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

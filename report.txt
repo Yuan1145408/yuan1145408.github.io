@@ -1,4 +1,4 @@
-﻿File: 瓒呰嚜鐒舵懜閲戝皬鍔╂墜1.18鍏煎.exe
+超自然摸金小助手1.18兼容.exe 的分析报告
 Machine: 0x014c
 Timestamp: 1759479395
 Sections: ['.text', '.rdata', '.data', '.vmp0', '.vmp1', '.rsrc']

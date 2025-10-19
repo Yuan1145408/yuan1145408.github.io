@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>项目说明（README） - 鸟国网站</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html">游戏专区</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="section">
+        <div class="container">
+          <h3>项目说明（README）</h3>
+          <p>为避免在浏览器直接打开 Markdown 时出现乱码，这里提供一份带 UTF-8 声明的 HTML 渲染版本。</p>
+
+          <article class="content">
+            <h2>鸟国网站：静态站点与部署指引</h2>
+            <p>本项目为纯前端静态站点（<code>index.html</code> + <code>styles.css</code> + <code>script.js</code> + 若干 HTML），不依赖后端服务。你可以将它完整部署到 GitHub Pages 或 Netlify，并直接通过公网访问。</p>
+
+            <h3>一键接入</h3>
+            <ul>
+              <li>GitHub Pages 工作流：<code>.github/workflows/pages.yml</code></li>
+              <li>Netlify 配置：<code>netlify.toml</code></li>
+              <li>添加 <code>.nojekyll</code> 以避免 Jekyll 处理</li>
+              <li>分享地址生成规则：兼容主站与子路径（GitHub 项目站点）</li>
+            </ul>
+            <hr />
+
+            <h3>部署到 GitHub Pages（推荐）</h3>
+            <ol>
+              <li>在 GitHub 创建一个仓库（Public 或 Private with Pages），例如：<code>yourname/niaoguo-site</code></li>
+              <li>在本地运行以下命令（PowerShell）：</li>
+            </ol>
+            <pre><code class="language-powershell"># 初始化并推送到 GitHub（将 &lt;YOUR_REMOTE_URL&gt; 替换为你的远程仓库）
+ git init
+ git add .
+ git commit -m "Init static site"
+ git branch -M main
+ git remote add origin &lt;YOUR_REMOTE_URL&gt;
+ git push -u origin main
+</code></pre>
+            <ol start="3">
+              <li>仓库设置 -> Pages -> Source 选择 GitHub Actions，默认会自动使用 <code>pages.yml</code> 发布。</li>
+              <li>成功后将得到站点地址：
+                <ul>
+                  <li>用户主页：https://&lt;username&gt;.github.io/</li>
+                  <li>项目站点：https://&lt;username&gt;.github.io/&lt;repo&gt;/</li>
+                </ul>
+              </li>
+            </ol>
+            <blockquote>
+              <p>提示：如果你使用项目站点（带子路径），站内的“布局站点分享”会包含实际子路径，复制即可用。</p>
+            </blockquote>
+            <hr />
+
+            <h3>部署到 Netlify</h3>
+            <ol>
+              <li>登录 Netlify，选择 “Add new site” -> “Import from Git”，绑定你的 GitHub 仓库。</li>
+              <li>Build 命令留空（本项目为纯静态），Publish directory 使用项目根目录（已在 <code>netlify.toml</code> 指定为 <code>.</code>）。</li>
+              <li>部署完成后即可获得站点 URL，可在 Netlify 中绑定自定义域名。</li>
+            </ol>
+            <hr />
+
+            <h3>自定义域名与 HTTPS</h3>
+            <ul>
+              <li>GitHub Pages：仓库设置 -> Pages -> Custom domain，按提示在你的 DNS 服务商添加 CNAME 记录。</li>
+              <li>Netlify：在域名管理中添加站点域，将 DNS 指向 Netlify，或使用 CNAME 指向分配的子域。</li>
+            </ul>
+            <hr />
+
+            <h3>可选优化（非必须）</h3>
+            <p><code>.gitignore</code>：如果不需要上传较大的二进制或临时文件，可以在本地添加如下目录/文件后再提交：</p>
+            <pre><code class="language-gitignore">*.exe
+*.dll
+niao/
+disasm.txt
+report.txt
+</code></pre>
+            <p>镜像与国内访问：如需配置更多镜像或本地访问模式，可在 <code>script.js</code> 为特定条目添加 <code>mirrors</code> 字段并覆盖。</p>
+            <p>SEO：如需调整 <code>&lt;link rel="canonical"&gt;</code> 以匹配你的自定义域，可在 <code>index.html</code> 中更新。</p>
+            <hr />
+
+            <h3>本地预览</h3>
+            <p>在项目目录运行：</p>
+            <pre><code class="language-powershell">python -m http.server 8000
+</code></pre>
+            <p>访问 <code>http://localhost:8000/</code> 进行本地预览。</p>
+            <hr />
+
+            <p>如需我为你创建仓库并接入，或编写自动化脚本（含仓库 URL 注入），请把你的 GitHub 仓库地址发我即可。</p>
+          </article>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer"><div class="container"><span>© 2025 鸟国网站 niaoguo.com</span></div></footer>
+    <script src="script.js"></script>
+  </body>
+</html>

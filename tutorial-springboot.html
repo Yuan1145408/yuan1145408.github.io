@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Spring Boot 教程（REST 与数据访问）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #1b2432; color: #e7eaf3; padding: 12px; overflow: auto; border-radius: 8px; }
+    code { font-family: Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="tutorials.html">教程专区</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Spring Boot 入门</h1>
+    <p class="muted">使用 Spring Initializr 创建项目，编写 REST 控制器并联通数据。</p>
+
+    <h2>创建项目</h2>
+    <ul>
+      <li>访问 <a href="https://start.spring.io" target="_blank" rel="noopener">start.spring.io</a> 生成项目（依赖：Spring Web）。</li>
+      <li>解压后用 IDEA 打开，等待依赖下载完成。</li>
+    </ul>
+
+    <h2>控制器</h2>
+    <pre><code>// src/main/java/com/example/demo/HelloController.java
+package com.example.demo;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api")
+public class HelloController {
+  @GetMapping("/hello")
+  public Object hello(){ return java.util.Map.of("msg","hello"); }
+}
+    </code></pre>
+
+    <h2>运行</h2>
+    <pre><code>// DemoApplication 的 main 方法运行，默认端口 8080
+    </code></pre>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://spring.io/projects/spring-boot" target="_blank" rel="noopener">Spring Boot</a></li>
+      <li>数据访问：Spring Data JPA / MyBatis；配置文件：<code>application.yml</code>。</li>
+    </ul>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

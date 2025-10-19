@@ -654,6 +654,58 @@
   // 顶栏登录按钮接入与动态注入
   document.addEventListener('DOMContentLoaded', () => {
     const nav = document.querySelector('.site-nav');
+    // 主题切换：默认深色，可切换为浅色（文字/背景互换）
+    const root = document.documentElement;
+    function applyTheme(t){
+      try { root.setAttribute('data-theme', t); localStorage.setItem('niao.theme', t); }
+      catch(_) { root.setAttribute('data-theme', t); }
+    }
+    function getTheme(){
+      try { return localStorage.getItem('niao.theme') || 'dark'; }
+      catch(_) { return 'dark'; }
+    }
+    let currentTheme = getTheme();
+    applyTheme(currentTheme);
+    if (nav && !document.getElementById('navTheme')){
+      const themeLink = document.createElement('a');
+      themeLink.href = '#';
+      themeLink.id = 'navTheme';
+      themeLink.textContent = currentTheme === 'dark' ? '浅色' : '深色';
+      nav.prepend(themeLink);
+      themeLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        currentTheme = (currentTheme === 'dark' ? 'light' : 'dark');
+        applyTheme(currentTheme);
+        themeLink.textContent = currentTheme === 'dark' ? '浅色' : '深色';
+      });
+    }
+    // 全站返回键：优先插入到导航栏最前；若无导航则创建浮动返回按钮
+    const goBack = () => {
+      try {
+        if (window.history && window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = 'index.html';
+        }
+      } catch(_) { window.location.href = 'index.html'; }
+    };
+    if (nav && !document.getElementById('navBack')) {
+      const back = document.createElement('a');
+      back.href = '#';
+      back.id = 'navBack';
+      back.textContent = '返回';
+      nav.prepend(back);
+      back.addEventListener('click', (e) => { e.preventDefault(); goBack(); });
+    } else if (!document.getElementById('navBack')) {
+      const backFloat = document.createElement('a');
+      backFloat.href = '#';
+      backFloat.className = 'btn back-floating';
+      backFloat.id = 'navBack';
+      backFloat.textContent = '返回';
+      backFloat.addEventListener('click', (e) => { e.preventDefault(); goBack(); });
+      document.body.appendChild(backFloat);
+    }
+
     if (nav && !document.getElementById('navLogin')) {
       const a = document.createElement('a');
       a.href = '#';

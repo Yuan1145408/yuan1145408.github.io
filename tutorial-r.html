@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>R 语言与数据分析（入门）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #1b2432; color: #e7eaf3; padding: 12px; overflow: auto; border-radius: 8px; }
+    code { font-family: Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="tutorials.html">教程专区</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>R 语言入门（数据分析）</h1>
+    <p class="muted">数据清洗、可视化与统计建模的最小路径。</p>
+
+    <h2>安装</h2>
+    <ul>
+      <li>安装 R 与 RStudio：<a href="https://cran.r-project.org/" target="_blank" rel="noopener">CRAN</a>、<a href="https://posit.co/download/rstudio-desktop/" target="_blank" rel="noopener">RStudio</a></li>
+    </ul>
+
+    <h2>数据框与可视化</h2>
+    <pre><code># 安装包：install.packages("tidyverse")
+library(tidyverse)
+
+# 读取 CSV
+df <- read_csv("data.csv")
+
+# 过滤、分组、聚合
+df2 <- df %>% filter(score > 60) %>% group_by(city) %>% summarise(avg = mean(score))
+
+# 可视化
+ggplot(df2, aes(x = city, y = avg)) + geom_col()
+    </code></pre>
+
+    <h2>建模（示例）</h2>
+    <pre><code>model <- lm(mpg ~ cyl + hp, data = mtcars)
+summary(model)
+    </code></pre>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://www.r-project.org/other-docs.html" target="_blank" rel="noopener">R Docs</a></li>
+      <li>可视化：ggplot2；数据科普：tidyverse；报告：R Markdown。</li>
+    </ul>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

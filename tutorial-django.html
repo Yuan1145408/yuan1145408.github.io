@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Django 教程（模型/视图/模板）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #1b2432; color: #e7eaf3; padding: 12px; overflow: auto; border-radius: 8px; }
+    code { font-family: Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="tutorials.html">教程专区</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Django 入门</h1>
+    <p class="muted">从零创建项目，编写模型、视图与模板，跑起来。</p>
+
+    <h2>创建项目与应用</h2>
+    <pre><code>python -m pip install django
+django-admin startproject mysite
+cd mysite
+python manage.py startapp blog
+python manage.py runserver
+    </code></pre>
+
+    <h2>模型（Models）</h2>
+    <pre><code># blog/models.py
+from django.db import models
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+    </code></pre>
+
+    <h2>视图与模板</h2>
+    <pre><code># blog/views.py
+from django.shortcuts import render
+from .models import Post
+
+def home(request):
+    posts = Post.objects.order_by('-created_at')
+    return render(request, 'home.html', { 'posts': posts })
+
+# blog/templates/home.html
+<h2>博客</h2>
+<ul>
+  {% for p in posts %}
+    <li>{{ p.title }} - {{ p.created_at }}</li>
+  {% endfor %}
+</ul>
+    </code></pre>
+
+    <h2>迁移与后台</h2>
+    <pre><code>python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+    </code></pre>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://docs.djangoproject.com/" target="_blank" rel="noopener">Django Docs</a></li>
+      <li>静态资源与部署：collectstatic、Gunicorn+Nginx 或 Docker。</li>
+    </ul>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

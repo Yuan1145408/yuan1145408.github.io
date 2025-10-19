@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>React 教程（Vite 版）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #1b2432; color: #e7eaf3; padding: 12px; overflow: auto; border-radius: 8px; }
+    code { font-family: Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="tutorials.html">教程专区</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>React 入门（使用 Vite）</h1>
+    <p class="muted">组件、状态、路由的最小闭环；从零创建到运行。</p>
+
+    <h2>环境准备</h2>
+    <ul>
+      <li>安装 Node.js（建议 LTS）：<a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a></li>
+      <li>安装 pnpm 或 npm：<code>npm i -g pnpm</code>（可选）</li>
+    </ul>
+
+    <h2>创建项目</h2>
+    <pre><code># 使用 Vite 创建 React 项目
+npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install
+npm run dev
+    </code></pre>
+    <p>打开浏览器访问控制台显示的本地地址，看到页面即可。</p>
+
+    <h2>第一个组件</h2>
+    <pre><code>// src/App.jsx
+import { useState } from 'react'
+
+export default function App(){
+  const [count, setCount] = useState(0)
+  return (
+    <div style={{padding:20}}>
+      <h2>你好 React</h2>
+      <button className="btn" onClick={()=>setCount(count+1)}>点击 {count}</button>
+    </div>
+  )
+}
+    </code></pre>
+
+    <h2>路由（React Router）</h2>
+    <pre><code>npm i react-router-dom
+// src/main.jsx
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import App from './App.jsx'
+
+function About(){ return <div>关于我们</div> }
+
+createRoot(document.getElementById('root')).render(
+  <BrowserRouter>
+    <nav style={{display:'flex', gap:10}}>
+      <Link to="/">首页</Link>
+      <Link to="/about">关于</Link>
+    </nav>
+    <Routes>
+      <Route path="/" element={<App/>} />
+      <Route path="/about" element={<About/>} />
+    </Routes>
+  </BrowserRouter>
+)
+    </code></pre>
+
+    <h2>状态管理（入门选项）</h2>
+    <ul>
+      <li>本地状态：<code>useState/useReducer</code>。</li>
+      <li>全局：<a href="https://redux-toolkit.js.org/" target="_blank" rel="noopener">Redux Toolkit</a> 或 <a href="https://zustand-demo.pmnd.rs/" target="_blank" rel="noopener">Zustand</a>。</li>
+    </ul>
+
+    <h2>生产构建与部署</h2>
+    <pre><code>npm run build
+# 输出在 dist/，可用静态服务器部署
+npx serve dist
+    </code></pre>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://react.dev/" target="_blank" rel="noopener">react.dev</a></li>
+      <li>UI 框架：<a href="https://mui.com/" target="_blank" rel="noopener">MUI</a>、<a href="https://ant.design/" target="_blank" rel="noopener">Ant Design</a></li>
+      <li>接口联调：<code>fetch</code>/<code>axios</code> 与 <code>async/await</code>。</li>
+    </ul>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

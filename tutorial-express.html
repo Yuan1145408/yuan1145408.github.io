@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Express 教程（REST API 与部署）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #1b2432; color: #e7eaf3; padding: 12px; overflow: auto; border-radius: 8px; }
+    code { font-family: Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="tutorials.html">教程专区</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Express 入门</h1>
+    <p class="muted">构建 REST API、路由与中间件、静态资源与部署。</p>
+
+    <h2>初始化项目</h2>
+    <pre><code>npm init -y
+npm i express cors morgan
+    </code></pre>
+
+    <h2>最小服务</h2>
+    <pre><code>// index.js
+const express = require('express')
+const morgan = require('morgan')
+const cors = require('cors')
+const app = express()
+
+app.use(cors())
+app.use(express.json())
+app.use(morgan('dev'))
+
+app.get('/api/hello', (req,res)=>{
+  res.json({ msg: 'hello' })
+})
+
+app.post('/api/echo', (req,res)=>{
+  res.json({ youSent: req.body })
+})
+
+app.listen(5050, ()=>console.log('http://localhost:5050'))
+    </code></pre>
+
+    <h2>静态资源</h2>
+    <pre><code>app.use(express.static('public'))
+// 将 dist/ 部署为静态站点：app.use(express.static('dist'))
+    </code></pre>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://expressjs.com/" target="_blank" rel="noopener">expressjs.com</a></li>
+      <li>部署：PM2/系统服务，或使用 Docker。</li>
+    </ul>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

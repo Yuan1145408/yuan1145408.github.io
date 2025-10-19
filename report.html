@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>技术报告（UTF-8 正常显示）</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { max-width: 920px; margin: 0 auto; padding: 24px; background: #fff; color: #111827; }
+    header { display:flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+    pre { background: #f6f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; overflow: auto; white-space: pre-wrap; word-break: break-word; }
+    .actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .muted { color: #6b7280; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>技术报告</h1>
+    <div class="actions">
+      <a class="btn" href="index.html">返回首页</a>
+      <a class="btn" href="report.txt" target="_blank" rel="noopener noreferrer">查看原始文本</a>
+    </div>
+  </header>
+
+  <p class="muted">说明：直接用浏览器打开 .txt 可能会被当成非 UTF-8 导致中文乱码。此页面会以 UTF-8 读取并展示内容。</p>
+  <pre id="reportPre">加载中...</pre>
+
+  <script>
+    (function(){
+      const pre = document.getElementById('reportPre');
+      fetch('report.txt', { cache: 'no-cache' })
+        .then(resp => resp.text())
+        .then(text => { pre.textContent = text; })
+        .catch(err => {
+          console.error('加载 report.txt 失败：', err);
+          pre.textContent = '加载失败：无法读取 report.txt，请稍后重试。';
+        });
+    })();
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EXE 分析报告（UTF-8）</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { padding: 24px 0; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+    .actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="section">
+      <div class="container">
+        <h3>超自然摸金小助手1.18兼容.exe 的分析报告</h3>
+        <p class="muted">说明：直接打开 .txt 可能在某些浏览器出现中文乱码，此页面以 UTF-8 方式读取并显示原始文本。</p>
+        <div class="actions">
+          <a class="btn" href="index.html">返回首页</a>
+          <a class="btn" href="analysis-exe.txt" target="_blank" rel="noopener noreferrer">查看原始文本</a>
+        </div>
+        <pre id="analysisPre">加载中...</pre>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="container"><span>© 2025 鸟国网站 niaoguo.com</span></div></footer>
+  <script>
+    (function(){
+      const pre = document.getElementById('analysisPre');
+      fetch('analysis-exe.txt', { cache: 'no-cache' })
+        .then(resp => resp.text())
+        .then(text => { pre.textContent = text; })
+        .catch(err => { pre.textContent = '加载失败：' + err; console.error('加载 analysis-exe.txt 失败', err); });
+    })();
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

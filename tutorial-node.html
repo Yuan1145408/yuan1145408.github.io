@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Node.js 教程（入门到实践）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    main { max-width: 920px; margin: 20px auto; padding: 0 16px; }
+    pre { background: #1b2432; color: #e7eaf3; padding: 12px; overflow: auto; border-radius: 8px; }
+    code { font-family: Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="tutorials.html">教程专区</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1>Node.js 入门</h1>
+    <p class="muted">npm 包管理、模块系统、文件与网络。</p>
+
+    <h2>安装</h2>
+    <ul>
+      <li>到 <a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a> 安装 LTS。</li>
+      <li>检查版本：<code>node -v</code>、<code>npm -v</code>。</li>
+    </ul>
+
+    <h2>Hello, HTTP</h2>
+    <pre><code>// server.js
+const http = require('http')
+const server = http.createServer((req,res)=>{
+  res.setHeader('Content-Type','application/json')
+  res.end(JSON.stringify({ ok: true, path: req.url }))
+})
+server.listen(3000, ()=>console.log('http://localhost:3000'))
+    </code></pre>
+
+    <h2>npm 与模块</h2>
+    <pre><code>npm init -y
+npm i axios
+// index.js
+const axios = require('axios')
+async function main(){
+  const { data } = await axios.get('https://httpbin.org/json')
+  console.log(data.slideshow?.title)
+}
+main()
+    </code></pre>
+
+    <h2>文件与路径</h2>
+    <pre><code>const fs = require('fs')
+const path = require('path')
+fs.writeFileSync(path.join(__dirname,'a.txt'),'hello')
+console.log(fs.readFileSync(path.join(__dirname,'a.txt'),'utf8'))
+    </code></pre>
+
+    <h2>下一步</h2>
+    <ul>
+      <li>官方文档：<a href="https://nodejs.org/docs" target="_blank" rel="noopener">Node.js Docs</a></li>
+      <li>现代后端框架：Express、Koa、NestJS。</li>
+    </ul>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
