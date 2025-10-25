@@ -71,6 +71,15 @@
             </div>
             <p style="margin-top:8px;color:var(--muted);font-size:13px;">提示：保持任意站内页面处于打开状态即可计时。本页可随时查看进度与积分。</p>
           </div>
++         <div class="card">
++           <h4>兑换码</h4>
++           <label>输入兑换码：<input id="redeemCodeInput" type="text" placeholder="例如 WELCOME-10" /></label>
++           <div style="display:flex;gap:10px;margin-top:8px;align-items:center;flex-wrap:wrap;">
++             <button id="redeemCodeBtn" class="btn">兑换</button>
++             <span id="redeemCodeStatus" class="chip">未兑换</span>
++           </div>
++           <p style="margin-top:8px;color:var(--muted);font-size:13px;">提示：兑换成功后将自动增加积分或解锁对应资源。</p>
++         </div>
         </div>
       </section>
     </main>
@@ -81,8 +90,8 @@
       (function(){
         window.Niao = window.Niao || {};
         window.Niao.config = window.Niao.config || {};
-        window.Niao.config.static = true;
-        window.Niao.config.apiBase = '';
+        window.Niao.config.static = false;
+        window.Niao.config.apiBase = 'http://localhost:5050';
       })();
     </script>
     <script src="script.js"></script>
@@ -105,6 +114,9 @@
         const currentPointsEl = document.getElementById('currentPoints');
         const taskProgressBar = document.getElementById('taskProgressBar');
         const taskStatus = document.getElementById('taskStatus');
++       const redeemCodeInput = document.getElementById('redeemCodeInput');
++       const redeemCodeBtn = document.getElementById('redeemCodeBtn');
++       const redeemCodeStatus = document.getElementById('redeemCodeStatus');
 
         async function renderSession(){
           const u = window.Niao?.auth?.getSessionUser() || '';
@@ -140,6 +152,23 @@
           const ok = await window.Niao?.auth?.register(u, p);
           regStatus.textContent = ok ? '注册成功，请登录' : '该用户已存在或注册失败';
         });
++
++       // 兑换码提交
++       redeemCodeBtn.addEventListener('click', async () => {
++         const u = window.Niao?.auth?.getSessionUser() || '';
++         if (!u) { redeemCodeStatus.textContent = '请先登录'; return; }
++         const code = (redeemCodeInput.value || '').trim();
++         if (!code) { redeemCodeStatus.textContent = '请输入兑换码'; return; }
++         redeemCodeStatus.textContent = '正在兑换...';
++         const res = await window.Niao?.auth?.redeemCode(code);
++         if (res && res.ok) {
++           redeemCodeStatus.textContent = res.msg || '兑换成功';
++           const pts = await window.Niao?.auth?.getPoints(u);
++           currentPointsEl.textContent = String(pts);
++         } else {
++           redeemCodeStatus.textContent = (res && res.msg) || '兑换失败';
++         }
++       });
 
         // 首次渲染与任务 UI 更新绑定
         renderSession();

@@ -63,6 +63,12 @@
           <div class="grid" id="gameGridSandbox"><!-- 动态渲染区域 --></div>
         </div>
       </section>
+      <section class="section">
+        <div class="container">
+          <h3>小游戏</h3>
+          <div class="grid" id="gameGridMini"><!-- 动态渲染区域 --></div>
+        </div>
+      </section>
     </main>
     <footer class="site-footer"><div class="container"><span>© 2025 鸟国网站 niaoguo.com</span></div></footer>
     <!-- 静态模式：禁用后端 API，下载/安装不需要登录 -->
@@ -70,8 +76,8 @@
       (function(){
         window.Niao = window.Niao || {};
         window.Niao.config = window.Niao.config || {};
-        window.Niao.config.static = true;
-        window.Niao.config.apiBase = '';
+        window.Niao.config.static = false;
+        window.Niao.config.apiBase = 'http://localhost:5050';
       })();
     </script>
     <script src="script.js"></script>

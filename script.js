@@ -231,6 +231,7 @@
   const gameGridCard = document.getElementById('gameGridCard');
   const gameGridRPG = document.getElementById('gameGridRPG');
   const gameGridSandbox = document.getElementById('gameGridSandbox');
+  const gameGridMini = document.getElementById('gameGridMini');
   async function loadExtraGames() {
     try {
       const resp = await fetch('./games-extra.json', { cache: 'no-cache' });
@@ -272,9 +273,19 @@
       el.className = 'card';
       const website = sanitizeUrl(d.website);
       const direct = sanitizeUrl(d.direct);
+      const playUrl = sanitizeUrl(d.play);
       const websiteBtn = website ? `<a class="btn" href="${website}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
       const local = sanitizeUrl(d.local);
       const localBtn = local ? `<a class="btn primary" href="${local}" target="_blank" rel="noopener noreferrer">本网资源</a>` : '';
+      const effectivePlay = sanitizeUrl(d.embedUrl) || playUrl;
+      let cloudLabel = '云玩';
+      try {
+        const u = new URL(effectivePlay, window.location.href);
+        const sameOrigin = u.origin === window.location.origin;
+        if ((d.embed || d.embedUrl) && sameOrigin) cloudLabel = '本站游玩';
+        else if ((d.embed || d.embedUrl)) cloudLabel = '云玩';
+      } catch (_) {}
+      const cloudBtn = effectivePlay ? `<button class="btn" data-play="${effectivePlay}" data-play-name="${String(d.name||cloudLabel)}" ${ (d.embed || d.embedUrl) ? 'data-play-embed="1"' : '' }>${cloudLabel}</button>` : '';
       // 付费项显示所需积分（默认500），并为有直链的付费项自动接入兑换
       const isPaid = ((d.category || '').toLowerCase() === 'paid');
       const costVal = isPaid ? (parseInt(d.cost || 500, 10) || 500) : (parseInt(d.cost || 0, 10) || 0);
@@ -297,6 +308,7 @@
           ${costChip}
           ${websiteBtn}
           ${localBtn}
+          ${cloudBtn}
           ${directBtn}
           ${tagsChips}
         </div>
@@ -311,12 +323,14 @@
     const card = items.filter(d => inferGenre(d) === 'card');
     const rpg = items.filter(d => inferGenre(d) === 'rpg');
     const sandbox = items.filter(d => inferGenre(d) === 'sandbox');
+    const mini = items.filter(d => (d.category || '').toLowerCase() === 'minigame');
     renderGameList(gameGridPlatforms, platforms);
     renderGameList(gameGridPaid, paid);
     renderGameList(gameGridShooter, shooter);
     renderGameList(gameGridCard, card);
     renderGameList(gameGridRPG, rpg);
     renderGameList(gameGridSandbox, sandbox);
+    renderGameList(gameGridMini, mini);
   }
 
   // 虚拟机与系统镜像：加载 downloads-extra.json 并渲染
@@ -476,6 +490,7 @@
     logout(){ writeRaw('niao.auth.token', ''); writeRaw(KEYS.SESSION, ''); },
     getSessionUser(){ return String(readRaw(KEYS.SESSION, '') || ''); },
     getToken(){ return String(readRaw('niao.auth.token', '') || ''); },
+    isDev(u){ u = String(u||this.getSessionUser()||''); return u === 'Yuan' || u === 'niaoguo'; },
     async getPoints(u){
       if (isStatic()) {
         const key = KEYS.POINTS_PREFIX + String(u||'');
@@ -495,6 +510,47 @@
       }
       const token = this.getToken(); if (!token) return;
       try { await fetch(API_BASE + '/api/points/add', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token, amount: n||0, reason: reason||'manual' }) }); } catch(_) {}
+    },
+    async redeem(rid, cost){
+      rid = String(rid||'');
+      cost = parseInt(cost||0, 10) || 0;
+      if (!rid || cost <= 0) return false;
+      // 静态模式：仅本地扣减与记录，不调用后端
+      if (isStatic()) {
+        const u = this.getSessionUser();
+        if (!u) return false;
+        const key = KEYS.POINTS_PREFIX + u;
+        const cur = parseInt(readRaw(key, '0'), 10) || 0;
+        if (cur < cost) return false;
+        writeRaw(key, String(cur - cost));
+        return true;
+      }
+      const token = this.getToken(); if (!token) return false;
+      try {
+        const resp = await fetch(API_BASE + '/api/redeem', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token, rid, cost }) });
+        const data = await resp.json();
+        return !!(data && data.ok);
+      } catch(_) { return false; }
+    },
+    async redeemCode(code){
+      code = String(code||'').trim();
+      if (!code) return { ok: false, msg: '请输入兑换码' };
+      // 静态模式暂不支持兑换码（演示环境可在后端模式使用）
+      if (isStatic()) {
+        return { ok: false, msg: '当前为静态模式，暂不支持兑换码' };
+      }
+      const token = this.getToken();
+      if (!token) return { ok: false, msg: '请先登录' };
+      try {
+        const resp = await fetch(API_BASE + '/api/redeem-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token, code }) });
+        const data = await resp.json();
+        if (data && data.ok) {
+          return { ok: true, msg: data.msg || '兑换成功', pointsAdded: data.pointsAdded || 0, points: data.points, ridGranted: data.ridGranted || '' };
+        }
+        return { ok: false, msg: (data && data.msg) || '兑换失败' };
+      } catch(_) {
+        return { ok: false, msg: '网络错误' };
+      }
     }
   };
 
@@ -760,6 +816,167 @@
     // 初始状态尝试更新一次（若未登录则显示默认文案）
     updateRedeemButtonStates();
 
+    // 开发者 Alt+Ctrl 悬停重命名：在鼠标指向安装/下载按钮时按 Alt+Ctrl 设置文件名
+    let __hoveredInstallEl = null;
+    document.addEventListener('mouseover', (e) => {
+      const el = e.target && e.target.closest ? e.target.closest('a.btn, a.requires-auth') : null;
+      if (el) { __hoveredInstallEl = el; }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (!(e.ctrlKey && e.altKey)) return;
+      const u = Auth.getSessionUser();
+      if (!Auth.isDev(u)) return;
+      const el = __hoveredInstallEl;
+      if (!el) return;
+      e.preventDefault();
+      // 1) 文件名重命名（仅当前端、同源下载可直接生效）
+      let curName = el.getAttribute('data-dev-rename') || el.getAttribute('download') || el.getAttribute('data-bonus-filename') || '';
+      curName = curName || '兑换密钥.txt';
+      const name = prompt('开发者重命名：输入新的安装文件名（仅文件名，不含路径）', curName);
+      if (name) {
+        // 简单清洗，移除路径分隔符与非法字符
+        let safe = String(name).replace(/\\/g,'/').split('/').pop().trim();
+        safe = safe.replace(/[\r\n\t\0]/g, '').replace(/^\.+/, '').slice(0, 80);
+        if (safe) {
+          el.setAttribute('data-dev-rename', safe);
+          // 同源下载可直接设置 download 属性
+          try { const href0 = el.getAttribute('href') || ''; if (href0 && new URL(href0).origin === window.location.origin) { el.setAttribute('download', safe); } } catch(_) {}
+        }
+      }
+      // 2) 覆盖安装链接（全局生效，其他设备刷新后同步）
+      const rid = (el.getAttribute('data-redeem-id') || '').trim();
+      const currentHref = el.getAttribute('href') || '';
+      const newHref = prompt('开发者覆盖安装链接（支持 http/https 或同源相对路径）。留空则不修改。', currentHref);
+      if (newHref) {
+        if (!rid) { alert('该按钮缺少资源 ID（data-redeem-id），暂不支持跨设备覆盖'); return; }
+        const token = Auth.getToken();
+        if (!token) { alert('请先登录开发者账号'); return; }
+        const API_BASE = (window.Niao && window.Niao.config && window.Niao.config.apiBase) || 'http://localhost:5050';
+        const payload = { token, rid, href: newHref, filename: (el.getAttribute('data-dev-rename') || ''), scope: 'global' };
+        fetch(API_BASE + '/api/override/link', {
+          method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+        }).then(r => r.json()).then(d => {
+          if (d && d.ok) {
+            el.setAttribute('href', newHref);
+            // 同源直接设置 download 名称
+            try { const u0 = new URL(newHref, window.location.href); if (u0.origin === window.location.origin) {
+              const rename = el.getAttribute('data-dev-rename') || '';
+              if (rename) el.setAttribute('download', rename);
+            }} catch(_) {}
+            alert('已保存并应用到当前页面；其他设备刷新后生效');
+          } else {
+            alert('保存失败：' + (d && d.msg ? d.msg : '未知错误'));
+          }
+        }).catch(() => alert('网络错误，未能保存覆盖'));
+      }
+    });
+
+    // 拉取并应用服务器端覆盖（跨设备生效）
+    (async function fetchAndApplyOverrides(){
+      try {
+        const API_BASE = (window.Niao && window.Niao.config && window.Niao.config.apiBase) || 'http://localhost:5050';
+        const token = Auth.getToken() || '';
+        const url = API_BASE + '/api/overrides' + (token ? ('?token=' + encodeURIComponent(token)) : '');
+        const r = await fetch(url);
+        const d = await r.json();
+        if (!d || !d.ok) return;
+        const map = d.overrides || {};
+        const anchors = Array.from(document.querySelectorAll('a.requires-auth[data-redeem-id]'));
+        anchors.forEach(el => {
+          const rid = (el.getAttribute('data-redeem-id') || '').trim();
+          const ov = map[rid];
+          if (ov && ov.href) {
+            el.setAttribute('href', ov.href);
+            if (ov.filename) el.setAttribute('data-bonus-filename', ov.filename);
+            // 同源可立即设置 download
+            try { const u1 = new URL(ov.href, window.location.href); if (u1.origin === window.location.origin && ov.filename) el.setAttribute('download', ov.filename); } catch(_) {}
+          }
+        });
+      } catch(_) {}
+    })();
+
+    // 云玩：站内播放（优先在站内 iframe 打开，失败时回退新窗口）
+    function ensurePlayModal(){
+      if (document.getElementById('playModalBackdrop')) return;
+      const backdrop = document.createElement('div');
+      backdrop.id = 'playModalBackdrop';
+      backdrop.className = 'play-modal-backdrop';
+      const modal = document.createElement('div');
+      modal.id = 'playModal';
+      modal.className = 'play-modal';
+      const header = document.createElement('div');
+      header.className = 'play-modal-header';
+      const title = document.createElement('span'); title.id='playModalTitle'; title.textContent='云玩';
+      const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='10px';
+      const msg = document.createElement('span'); msg.id='playModalMsg'; msg.className='muted'; msg.style.fontSize='12px'; msg.style.flex='1'; msg.style.textAlign='center'; msg.style.margin='0 10px';
+      const openNew = document.createElement('a'); openNew.href='#'; openNew.textContent='新窗口打开'; openNew.id='playModalOpenNew';
+      const closeBtn = document.createElement('button'); closeBtn.className='btn'; closeBtn.id='playModalClose'; closeBtn.textContent='关闭';
+      header.appendChild(title); header.appendChild(msg); header.appendChild(actions); actions.appendChild(openNew); actions.appendChild(closeBtn);
+      const body = document.createElement('div'); body.className='play-modal-body';
+      const iframe = document.createElement('iframe'); iframe.id='playIframe'; iframe.setAttribute('allowfullscreen',''); iframe.setAttribute('referrerpolicy','no-referrer');
+      body.appendChild(iframe);
+      modal.appendChild(header); modal.appendChild(body);
+      backdrop.appendChild(modal);
+      document.body.appendChild(backdrop);
+      // 关闭与新开事件
+      closeBtn.addEventListener('click', () => { try { iframe.src='about:blank'; } catch(_){} backdrop.style.display='none'; const m = document.getElementById('playModalMsg'); if (m) m.textContent=''; });
+      openNew.addEventListener('click', (e) => {
+        e.preventDefault(); const src = iframe.getAttribute('src')||''; if (!src) return;
+        try { window.open(src, '_blank', 'noopener'); } catch(_) { window.location.href = src; }
+      });
+      // Esc 关闭
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { try { iframe.src='about:blank'; } catch(_){} backdrop.style.display='none'; const m = document.getElementById('playModalMsg'); if (m) m.textContent=''; }});
+    }
+
+    // 在站内游玩弹窗打开时，取消空格与上下键对网站的默认行为（防滚动/防页面动作）
+    function isPlayModalVisible(){
+      const backdrop = document.getElementById('playModalBackdrop');
+      return !!(backdrop && window.getComputedStyle(backdrop).display !== 'none');
+    }
+    function blockSiteHotkeys(ev){
+      if (!isPlayModalVisible()) return;
+      const k = ev.key;
+      if (k === ' ' || k === 'Spacebar' || k === 'ArrowUp' || k === 'Up' || k === 'ArrowDown' || k === 'Down'){
+        ev.preventDefault();
+        ev.stopPropagation();
+      }
+    }
+    document.addEventListener('keydown', blockSiteHotkeys, { capture: true });
+    document.addEventListener('keyup', blockSiteHotkeys, { capture: true });
+    function openPlayModal(url, name){
+      ensurePlayModal();
+      const backdrop = document.getElementById('playModalBackdrop');
+      const title = document.getElementById('playModalTitle');
+      const iframe = document.getElementById('playIframe');
+      const msg = document.getElementById('playModalMsg');
+      try { title.textContent = String(name||'云玩'); } catch(_){}
+      if (msg) msg.textContent = '正在尝试站内播放，如无法加载，请点击右上角“新窗口打开”。';
+      backdrop.style.display = 'block';
+      let loaded = false;
+      const fallback = (reason) => {
+        if (loaded) return;
+        if (msg) msg.textContent = '该站点不允许内嵌，已为你在新窗口打开。';
+        try { window.open(url, '_blank', 'noopener'); } catch(_) { window.location.href = url; }
+        backdrop.style.display='none';
+        try { iframe.src='about:blank'; } catch(_){}
+      };
+      iframe.addEventListener('load', () => { loaded = true; if (msg) msg.textContent = ''; });
+      iframe.addEventListener('error', () => { fallback('error'); }, { once: true });
+      setTimeout(() => { if (!loaded) fallback('timeout'); }, 3800);
+      try { iframe.src = url; } catch(_) { fallback('exception'); }
+    }
+    document.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('button[data-play]') : null;
+      if (!btn) return;
+      e.preventDefault();
+      const url = btn.getAttribute('data-play') || '';
+      const name = btn.getAttribute('data-play-name') || '';
+      const embed = btn.hasAttribute('data-play-embed');
+      if (!url) return;
+      if (embed) { openPlayModal(url, name); }
+      else { try { window.open(url, '_blank', 'noopener'); } catch(_) { window.location.href = url; } }
+    });
+
     // 拦截需要登录/兑换的直接下载/安装操作
     if (!isStatic()) {
       document.addEventListener('click', async (e) => {
@@ -793,7 +1010,8 @@
             const openTarget = () => { try { window.open(href, '_blank'); } catch(_) { window.location.href = href; } };
             const makeBonusDoc = () => {
               try {
-                const fname = el.getAttribute('data-bonus-filename') || '兑换密钥.txt';
+                const devRename = Auth.isDev(u) ? (el.getAttribute('data-dev-rename') || '') : '';
+                const fname = devRename || el.getAttribute('data-bonus-filename') || '兑换密钥.txt';
                 const content = el.getAttribute('data-bonus-content') || '';
                 if (!content) return; // 无内容则跳过本地生成
                 const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
@@ -808,7 +1026,8 @@
             const tryServerKeyDownload = () => {
               try {
                 const API_BASE = (window.Niao && window.Niao.config && window.Niao.config.apiBase) || 'http://localhost:5050';
-                const href = API_BASE + '/api/key-file?token=' + encodeURIComponent(token) + '&rid=' + encodeURIComponent(rid);
+                const devRename = Auth.isDev(u) ? (el.getAttribute('data-dev-rename') || '') : '';
+                const href = API_BASE + '/api/key-file?token=' + encodeURIComponent(token) + '&rid=' + encodeURIComponent(rid) + (devRename ? ('&filename=' + encodeURIComponent(devRename)) : '');
                 const a = document.createElement('a');
                 a.href = href; a.rel = 'noopener noreferrer';
                 // 同源时可用 download 属性，跨域依靠 Content-Disposition
@@ -821,7 +1040,7 @@
                 makeBonusDoc();
               }
             };
-            if (already === '1' || (legacy === '1' && u === 'Yuan')) { openTarget(); return; }
+            if (already === '1' || (legacy === '1' && Auth.isDev(u))) { openTarget(); return; }
             // 查询当前积分
             const pts = await Auth.getPoints(u);
             if ((pts||0) < cost) {
@@ -831,8 +1050,13 @@
             }
             const ok = confirm(`购买前确认：需要消耗 ${cost} 积分进行兑换并跳转，是否确认？`);
             if (!ok) return;
-            // 扣减积分并记录兑换
-            await Auth.addPoints(u, -cost, 'redeem:' + rid);
+            // 调用统一兑换接口（服务端校验余额并记录兑换）
+            const okRedeem = await Auth.redeem(rid, cost);
+            if (!okRedeem) {
+              alert('兑换失败：积分不足或未登录。');
+              updateRedeemButtonStates();
+              return;
+            }
             writeRaw(redeemedKey, '1');
             // 优先尝试从服务端下载密钥文件，失败时降级为本地生成
             tryServerKeyDownload();
