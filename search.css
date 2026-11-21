@@ -132,6 +132,42 @@ button { font: inherit; color: inherit; cursor: pointer; }
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
+/* 顶栏滑动指示条（与主站同款，配色换成蓝紫霓虹） */
+.topnav { position: relative; }
+.topnav .nav-glider {
+  --ng-accent: var(--blue);
+  --ng-accent-2: var(--violet);
+  position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 0;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(77, 163, 255, 0.18), rgba(139, 92, 246, 0.1));
+  box-shadow: inset 0 0 0 1px rgba(110, 170, 255, 0.3);
+  opacity: 0; pointer-events: none; will-change: transform, width, height;
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), width 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.42s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.2s ease, opacity 0.22s ease;
+}
+.topnav .nav-glider > i {
+  position: absolute; left: 18%; right: 18%; bottom: 3px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
+  box-shadow: 0 0 12px rgba(34, 224, 255, 0.55);
+  opacity: 0.95;
+  transition: opacity 0.2s ease, left 0.2s ease, right 0.2s ease;
+}
+.topnav.has-glider.is-ready .nav-glider,
+.topnav .nav-glider.is-on { opacity: 1; }
+.topnav .nav-glider.is-instant { transition: none !important; }
+.topnav .nav-glider.is-preview { background: rgba(120, 160, 255, 0.08); box-shadow: none; }
+.topnav .nav-glider.is-preview > i { opacity: 0.5; }
+.topnav.has-glider a { position: relative; z-index: 1; }
+.topnav.has-glider a.is-active {
+  color: #dce9ff;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .topnav .nav-glider { transition: none; }
+}
+
 .topbar__status {
   margin-left: auto; display: inline-flex; align-items: center; gap: 8px;
   font-size: 12.5px; color: var(--muted);
