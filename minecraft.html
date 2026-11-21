@@ -31,7 +31,7 @@
       <section class="section">
         <div class="container">
           <h3>我的世界（Minecraft）资源</h3>
-          <p>本页提供“启动器”和“模组/光影/材质包”两个分区，均支持直接下载安装（直装）与搜索筛选。</p>
+          <p>本页提供“启动器”“模组/光影/材质包”“MC 资料搜索”三个分区：前两个支持直接下载安装（直装）与筛选，第三个可在线检索 MC百科、Minecraft Wiki 与 Modrinth 的模组、版本、整合包资料。</p>
           <p>提示：部分直链可能随官方发布变动而变化，如遇下载失败请点击“官网”进入官方发布页。</p>
         </div>
       </section>
@@ -72,6 +72,34 @@
             </div>
             <div class="grid" id="modrinthGrid"><!-- 在线搜索结果 --></div>
           </div>
+        </div>
+      </section>
+
+      <!-- MC 资料聚合搜索：MC百科 / Minecraft Wiki / Modrinth -->
+      <section class="section" id="mcSearch">
+        <div class="container">
+          <h3>MC 资料搜索（模组 / 版本 / 整合包）</h3>
+          <p>直接检索 MC百科、Minecraft Wiki（中文/英文）与 Modrinth 的公开资料，结果按相关性排序并展示在下方；不依赖后端，也不会跳出本站。</p>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+            <input id="mcWebQuery" type="text" placeholder="搜索：sodium / 机械动力 / 1.21 版本 / 整合包" style="flex:1;min-width:260px;" />
+            <select id="mcWebType" style="min-width:150px;">
+              <option value="all">全部内容</option>
+              <option value="mod">模组 Mod</option>
+              <option value="version">游戏版本</option>
+              <option value="pack">整合包 / 实例</option>
+            </select>
+            <button class="btn primary" id="mcWebBtn">搜索</button>
+          </div>
+          <p class="mc-search__links" id="mcWebLinks">
+            直达：
+            <a href="https://search.mcmod.cn/" target="_blank" rel="noopener noreferrer">MC百科搜索</a>
+            <span aria-hidden="true">·</span>
+            <a href="https://zh.minecraft.wiki/" target="_blank" rel="noopener noreferrer">中文 Minecraft Wiki</a>
+            <span aria-hidden="true">·</span>
+            <a href="https://modrinth.com/mods" target="_blank" rel="noopener noreferrer">Modrinth</a>
+          </p>
+          <div class="mc-sources" id="mcWebSources" hidden></div>
+          <div class="grid" id="mcWebGrid"><!-- MC 资料搜索结果 --></div>
         </div>
       </section>
 
@@ -692,6 +720,119 @@
         init();
       })();
     </script>
+  <script src="search-sources.js"></script>
+  <script src="search-web.js"></script>
+  <script>
+    /* 我的世界：MC百科 / MC Wiki / Modrinth 聚合检索 */
+    (function () {
+      'use strict';
+      var input = document.getElementById('mcWebQuery');
+      var typeSel = document.getElementById('mcWebType');
+      var btn = document.getElementById('mcWebBtn');
+      var grid = document.getElementById('mcWebGrid');
+      var sourcesEl = document.getElementById('mcWebSources');
+      if (!input || !grid) return;
+
+      var esc = function (v) {
+        return String(v == null ? '' : v)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      };
+
+      /* 类型 -> 数据源范围 + 查询改写
+         说明：追加词会明显改变站内搜索的相关性，所以只在必要时改写。
+         · 模组：原样检索，靠数据源（MC百科 / Modrinth / Wiki）本身区分
+         · 版本：形如 1.21 → 「Java版 1.21」；否则补「版本」
+         · 整合包：补「整合包」，MC百科的整合包条目多以该词命名 */
+      var TYPE = {
+        all:     { ids: null, rewrite: function (q) { return q; } },
+        mod:     { ids: ['mcmod', 'modrinth', 'mcwiki-zh', 'mcwiki-en'], rewrite: function (q) { return q; } },
+        version: { ids: ['mcwiki-zh', 'mcwiki-en'], rewrite: function (q) {
+          return /^[0-9]/.test(q) ? 'Java版 ' + q : q + ' 版本';
+        } },
+        pack:    { ids: ['mcmod', 'mcwiki-zh'], rewrite: function (q) { return q + ' 整合包'; } }
+      };
+
+      var STATE_LABEL = { ok: '', empty: '无结果', timeout: '超时', error: '失败' };
+
+      function card(r) {
+        var badges = (r.badges || []).slice(0, 2).map(function (b) {
+          return '<span class="chip">' + esc(b) + '</span>';
+        }).join('');
+        var host = '';
+        try { host = new URL(r.url, location.href).hostname.replace(/^www\./, ''); } catch (e) {}
+        return '<div class="card mc-result">' +
+            '<h4><a href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">' + esc(r.title) + '</a></h4>' +
+            '<p class="mc-result__host">' + esc(host) + '</p>' +
+            (r.snippet ? '<p>' + esc(r.snippet) + '</p>' : '') +
+            '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">' +
+              '<span class="chip">来源：' + esc(r.sourceName) + '</span>' +
+              badges +
+              '<a class="btn primary" href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">打开</a>' +
+            '</div>' +
+          '</div>';
+      }
+
+      function renderSources(statuses) {
+        if (!sourcesEl) return;
+        sourcesEl.innerHTML = statuses.map(function (s) {
+          var cls = s.state === 'ok' ? '' : ' is-off';
+          var n = s.state === 'ok' ? s.count + ' 条' : (STATE_LABEL[s.state] || '失败');
+          return '<span class="mc-source' + cls + '">' + esc(s.short || s.name) + '<em>' + esc(n) + '</em></span>';
+        }).join('');
+        sourcesEl.hidden = !statuses.length;
+      }
+
+      function run() {
+        var q = String(input.value || '').trim();
+        if (!q) {
+          grid.innerHTML = '<div class="card"><p>请输入关键词，例如：sodium、机械动力、1.21、整合包。</p></div>';
+          if (sourcesEl) sourcesEl.hidden = true;
+          input.focus();
+          return;
+        }
+        if (!window.NiaoWeb) {
+          grid.innerHTML = '<div class="card"><p>聚合检索引擎未加载，请刷新页面重试。</p></div>';
+          return;
+        }
+
+        var cfg = TYPE[typeSel && TYPE[typeSel.value] ? typeSel.value : 'all'] || TYPE.all;
+        var query = cfg.rewrite ? cfg.rewrite(q) : q;
+
+        btn.disabled = true;
+        btn.textContent = '检索中…';
+        grid.innerHTML = '<div class="card"><p>正在并发检索 MC百科 / Minecraft Wiki / Modrinth…</p></div>';
+        if (sourcesEl) sourcesEl.hidden = true;
+
+        var t0 = Date.now();
+        window.NiaoWeb.search(query, {
+          groups: ['minecraft'],
+          ids: cfg.ids || undefined,
+          deadline: 8000
+        }).then(function (out) {
+          renderSources(out.statuses);
+          if (!out.results.length) {
+            grid.innerHTML = '<div class="card"><p>没有找到与「' + esc(q) + '」相关的资料，可换用英文名（如 Create / Sodium）或减少关键词。</p></div>';
+            return;
+          }
+          var html = out.results.slice(0, 24).map(card).join('');
+          var tail = '<div class="card mc-summary"><p>共 ' + out.results.length + ' 条结果 · 用时 ' +
+            (Date.now() - t0) + 'ms' + (out.removed ? ' · 已合并重复 ' + out.removed + ' 条' : '') +
+            ' · 结果来自各站点公开接口，点击“打开”跳转原站。</p></div>';
+          grid.innerHTML = html + tail;
+        }).catch(function () {
+          grid.innerHTML = '<div class="card"><p>检索失败，请检查网络后重试。</p></div>';
+        }).then(function () {
+          btn.disabled = false;
+          btn.textContent = '搜索';
+        });
+      }
+
+      btn && btn.addEventListener('click', run);
+      input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } });
+      if (typeSel) typeSel.addEventListener('change', function () { if (input.value.trim()) run(); });
+    })();
+  </script>
   <script src="script.js"></script>
   </body>
 </html>

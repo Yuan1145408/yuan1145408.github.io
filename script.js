@@ -409,75 +409,294 @@
   function writeRaw(key, val){ try { localStorage.setItem(key, String(val)); } catch(_){} }
 
   const API_BASE = (window.Niao && window.Niao.config && window.Niao.config.apiBase) || 'http://localhost:5050';
-  const Auth = {
-    async register(u, p){
-      u = String(u||'').trim(); p = String(p||'');
-      if (!u || !p) return false;
-      // 静态模式：将账号信息保存在浏览器本地（LocalStorage）
-      if (isStatic()) {
-        const users = readJSON(KEYS.USERS, {});
-        if (users[u]) return false; // 已存在
-        users[u] = { pass: p };
-        writeJSON(KEYS.USERS, users);
-        return true;
-      }
-      try {
-        const resp = await fetch(API_BASE + '/api/register', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: u, password: p }) });
-        const data = await resp.json(); return !!data.ok;
-      } catch(_) { return false; }
+  /* ===================== 用户系统（本地版） =====================
+     本站是纯静态站点，没有服务端。账号只保存在当前浏览器的 localStorage。
+     密码以 PBKDF2-SHA256（随机盐 + 12 万次迭代）摘要后存储，不保存明文；
+     这只是提高本地查看成本，不等同于服务端认证的安全性。
+     加密不可用时（例如 file:// 非安全上下文）自动降级为弱摘要，并在账号记录中标记。
+  ============================================================ */
+  const ALGO_STRONG = 'PBKDF2-SHA256-120k';
+  const ALGO_WEAK = 'WEAK-FNV';
+  const SESSION_TTL_REMEMBER = 30 * 24 * 3600 * 1000; // 记住我：30 天
+  const SESSION_TTL_DEFAULT = 12 * 3600 * 1000;       // 默认：12 小时
+  const MAX_FAILS = 5;
+  const LOCK_MS = 60 * 1000;
+  const AUTH_EVENT = 'niao:authchange';
+
+  function emitAuth(user){
+    try { window.dispatchEvent(new CustomEvent(AUTH_EVENT, { detail: { user: user || '' } })); } catch(_) {}
+  }
+
+  function randomHex(bytes){
+    const arr = new Uint8Array(bytes);
+    if (window.crypto && crypto.getRandomValues) {
+      crypto.getRandomValues(arr);
+    } else {
+      for (let i = 0; i < arr.length; i++) arr[i] = Math.floor(Math.random() * 256);
+    }
+    return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // 弱摘要仅用于无 WebCrypto 的降级场景
+  function weakDigest(str){
+    let h1 = 0x811c9dc5, h2 = 0x1000193;
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+      h1 = ((h1 ^ c) * 16777619) >>> 0;
+      h2 = ((h2 * 33) ^ c) >>> 0;
+    }
+    return ('00000000' + h1.toString(16)).slice(-8) + ('00000000' + h2.toString(16)).slice(-8);
+  }
+
+  async function digestPassword(password, salt, algo){
+    if (algo === ALGO_WEAK || !(window.crypto && crypto.subtle && crypto.subtle.importKey)) {
+      return { hash: weakDigest(salt + '::' + password), algo: ALGO_WEAK };
+    }
+    try {
+      const enc = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
+      const bits = await crypto.subtle.deriveBits(
+        { name: 'PBKDF2', salt: enc.encode(salt), iterations: 120000, hash: 'SHA-256' },
+        keyMaterial, 256
+      );
+      return {
+        hash: Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2, '0')).join(''),
+        algo: ALGO_STRONG
+      };
+    } catch(_) {
+      return { hash: weakDigest(salt + '::' + password), algo: ALGO_WEAK };
+    }
+  }
+
+  function safeEqual(a, b){
+    a = String(a || ''); b = String(b || '');
+    if (a.length !== b.length) return false;
+    let diff = 0;
+    for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    return diff === 0;
+  }
+
+  const RULES = {
+    username(v){
+      v = String(v || '');
+      if (!v) return '请输入用户名';
+      if (v.length < 2) return '用户名至少 2 个字符';
+      if (v.length > 20) return '用户名不能超过 20 个字符';
+      if (!/^[A-Za-z0-9_\u4e00-\u9fa5]+$/.test(v)) return '用户名只能包含字母、数字、下划线或中文';
+      return '';
     },
-    async login(u, p){
-      u = String(u||'').trim(); p = String(p||'');
-      // 静态模式：本地校验
-      if (isStatic()) {
-        const users = readJSON(KEYS.USERS, {});
-        if (users[u] && String(users[u].pass||'') === p) {
-          writeRaw('niao.auth.token', 'local');
-          writeRaw(KEYS.SESSION, u);
-          return true;
-        }
-        return false;
+    password(v){
+      v = String(v || '');
+      if (!v) return '请输入密码';
+      if (v.length < 6) return '密码至少 6 位';
+      if (v.length > 64) return '密码不能超过 64 位';
+      return '';
+    }
+  };
+
+  function readUsers(){
+    const u = readJSON(KEYS.USERS, {});
+    return (u && typeof u === 'object' && !Array.isArray(u)) ? u : {};
+  }
+  function guardKey(u){ return 'niao.auth.guard.' + String(u || '').toLowerCase(); }
+  function readGuard(u){
+    const g = readJSON(guardKey(u), { fails: 0, until: 0 });
+    return { fails: parseInt(g && g.fails, 10) || 0, until: parseInt(g && g.until, 10) || 0 };
+  }
+  function writeGuard(u, val){ writeJSON(guardKey(u), val); }
+
+  const Auth = {
+    lastError: null,
+
+    /** 读取当前会话对象（内部使用，自动处理过期） */
+    session(){
+      const raw = readRaw(KEYS.SESSION, '');
+      if (!raw) return null;
+      if (raw.charAt(0) === '{') {
+        try { return JSON.parse(raw); } catch(_) { return null; }
       }
+      // 兼容旧版本：键里直接存的是用户名
+      return { u: raw, ts: 0, exp: 0 };
+    },
+
+    getSessionUser(){
+      const s = this.session();
+      if (!s || !s.u) return '';
+      if (s.exp && Date.now() > s.exp) {
+        this.logout({ silent: true, reason: 'expired' });
+        return '';
+      }
+      return String(s.u);
+    },
+
+    /** 是否已登录，并返回剩余有效时长（毫秒） */
+    sessionInfo(){
+      const s = this.session();
+      if (!s || !s.u) return { user: '', expiresIn: 0, remember: false };
+      const left = s.exp ? Math.max(0, s.exp - Date.now()) : 0;
+      return { user: String(s.u), expiresIn: left, remember: !!s.remember };
+    },
+
+    /** 注册：返回 { ok, code, msg } */
+    async registerEx(username, password, confirmPassword){
+      const u = String(username || '').trim();
+      const p = String(password || '');
+      const p2 = confirmPassword == null ? p : String(confirmPassword);
+
+      const errU = RULES.username(u);
+      if (errU) return { ok: false, code: 'INVALID_USERNAME', msg: errU };
+      const errP = RULES.password(p);
+      if (errP) return { ok: false, code: 'INVALID_PASSWORD', msg: errP };
+      if (p !== p2) return { ok: false, code: 'PASSWORD_MISMATCH', msg: '两次输入的密码不一致' };
+
+      if (isStatic()) {
+        const users = readUsers();
+        if (users[u]) return { ok: false, code: 'USER_EXISTS', msg: '该用户名已被注册，请直接登录' };
+        const salt = randomHex(16);
+        const d = await digestPassword(p, salt);
+        users[u] = { v: 2, salt: salt, hash: d.hash, algo: d.algo, createdAt: Date.now() };
+        writeJSON(KEYS.USERS, users);
+        return { ok: true, code: 'OK', msg: '注册成功，正在为你登录…', user: u };
+      }
+
       try {
-        const resp = await fetch(API_BASE + '/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: u, password: p }) });
-        const data = await resp.json();
+        const resp = await fetch(API_BASE + '/api/register', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p })
+        });
+        const data = await resp.json().catch(() => ({}));
+        return data && data.ok
+          ? { ok: true, code: 'OK', msg: '注册成功，请登录' }
+          : { ok: false, code: 'SERVER', msg: (data && data.msg) || '注册失败，请稍后重试' };
+      } catch(_) {
+        return { ok: false, code: 'NETWORK', msg: '网络异常，无法连接服务端' };
+      }
+    },
+
+    /** 登录：返回 { ok, code, msg, user } */
+    async loginEx(username, password, opts){
+      const u = String(username || '').trim();
+      const p = String(password || '');
+      const remember = !!(opts && opts.remember);
+
+      const errU = RULES.username(u);
+      if (errU) return { ok: false, code: 'INVALID_USERNAME', msg: errU };
+      if (!p) return { ok: false, code: 'INVALID_PASSWORD', msg: '请输入密码' };
+
+      const g = readGuard(u);
+      if (g.until > Date.now()) {
+        const left = Math.ceil((g.until - Date.now()) / 1000);
+        return { ok: false, code: 'LOCKED', msg: `尝试次数过多，请 ${left} 秒后再试` };
+      }
+
+      const fail = (code, msg) => {
+        const fails = g.fails + 1;
+        const until = fails >= MAX_FAILS ? Date.now() + LOCK_MS : 0;
+        writeGuard(u, { fails: until ? 0 : fails, until: until });
+        const left = MAX_FAILS - fails;
+        return {
+          ok: false, code: code,
+          msg: until ? `尝试次数过多，已锁定 ${LOCK_MS / 1000} 秒` : (left > 0 ? msg + `（还可尝试 ${left} 次）` : msg)
+        };
+      };
+
+      if (isStatic()) {
+        const users = readUsers();
+        const rec = users[u];
+        if (!rec) return fail('USER_NOT_FOUND', '该用户名尚未注册');
+
+        // 旧版本明文记录：校验通过后自动升级为摘要存储
+        if (rec.pass != null) {
+          if (String(rec.pass) !== p) return fail('BAD_CREDENTIALS', '密码不正确');
+          const salt = randomHex(16);
+          const d = await digestPassword(p, salt);
+          users[u] = { v: 2, salt: salt, hash: d.hash, algo: d.algo, createdAt: rec.createdAt || Date.now() };
+          writeJSON(KEYS.USERS, users);
+        } else {
+          const d = await digestPassword(p, rec.salt || '', rec.algo || ALGO_STRONG);
+          if (!safeEqual(d.hash, rec.hash)) return fail('BAD_CREDENTIALS', '密码不正确');
+        }
+
+        writeGuard(u, { fails: 0, until: 0 });
+        const ttl = remember ? SESSION_TTL_REMEMBER : SESSION_TTL_DEFAULT;
+        writeJSON(KEYS.SESSION, { u: u, ts: Date.now(), exp: Date.now() + ttl, remember: remember });
+        writeRaw('niao.auth.token', 'local');
+        emitAuth(u);
+        return { ok: true, code: 'OK', msg: '登录成功', user: u };
+      }
+
+      try {
+        const resp = await fetch(API_BASE + '/api/login', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p })
+        });
+        const data = await resp.json().catch(() => ({}));
         if (data && data.ok && data.token) {
           writeRaw('niao.auth.token', data.token);
-          writeRaw(KEYS.SESSION, data.username || u);
-          return true;
+          writeJSON(KEYS.SESSION, { u: data.username || u, ts: Date.now(), exp: Date.now() + SESSION_TTL_DEFAULT, remember: remember });
+          writeGuard(u, { fails: 0, until: 0 });
+          emitAuth(data.username || u);
+          return { ok: true, code: 'OK', msg: '登录成功', user: data.username || u };
         }
-        return false;
-      } catch(_) { return false; }
+        return fail('BAD_CREDENTIALS', '用户名或密码错误');
+      } catch(_) {
+        return { ok: false, code: 'NETWORK', msg: '网络异常，无法连接服务端' };
+      }
     },
-    logout(){ writeRaw('niao.auth.token', ''); writeRaw(KEYS.SESSION, ''); },
-    getSessionUser(){ return String(readRaw(KEYS.SESSION, '') || ''); },
+
+    /** 兼容旧调用方：返回布尔值 */
+    async register(u, p){
+      const r = await this.registerEx(u, p);
+      this.lastError = r.ok ? null : r;
+      return !!r.ok;
+    },
+    async login(u, p, opts){
+      const r = await this.loginEx(u, p, opts);
+      this.lastError = r.ok ? null : r;
+      return !!r.ok;
+    },
+
+    logout(opts){
+      const wasLoggedIn = !!this.getSessionUser();
+      writeRaw('niao.auth.token', '');
+      try { localStorage.removeItem(KEYS.SESSION); } catch(_) {}
+      if (!(opts && opts.silent)) emitAuth('');
+      return wasLoggedIn;
+    },
+
     getToken(){ return String(readRaw('niao.auth.token', '') || ''); },
-    isDev(u){ u = String(u||this.getSessionUser()||''); return u === 'Yuan' || u === 'niaoguo'; },
+    isDev(u){ u = String(u || this.getSessionUser() || ''); return u === 'Yuan' || u === 'niaoguo'; },
+
     async getPoints(u){
       if (isStatic()) {
-        const key = KEYS.POINTS_PREFIX + String(u||'');
+        const key = KEYS.POINTS_PREFIX + String(u || '');
         return parseInt(readRaw(key, '0'), 10) || 0;
       }
       const token = this.getToken(); if (!token) return 0;
-      try { const resp = await fetch(API_BASE + '/api/points?token=' + encodeURIComponent(token)); const d = await resp.json(); return d.points || 0; } catch(_) { return 0; }
+      try {
+        const resp = await fetch(API_BASE + '/api/points?token=' + encodeURIComponent(token));
+        const d = await resp.json();
+        return d.points || 0;
+      } catch(_) { return 0; }
     },
+
     async addPoints(u, n, reason){
       if (isStatic()) {
-        u = String(u||'');
+        u = String(u || '');
         const key = KEYS.POINTS_PREFIX + u;
         const cur = parseInt(readRaw(key, '0'), 10) || 0;
-        const next = (cur + (n||0));
+        const next = (cur + (n || 0));
         writeRaw(key, String(Math.max(0, next)));
         return;
       }
       const token = this.getToken(); if (!token) return;
-      try { await fetch(API_BASE + '/api/points/add', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token, amount: n||0, reason: reason||'manual' }) }); } catch(_) {}
+      try { await fetch(API_BASE + '/api/points/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, amount: n || 0, reason: reason || 'manual' }) }); } catch(_) {}
     },
+
     async redeem(rid, cost){
-      rid = String(rid||'');
-      cost = parseInt(cost||0, 10) || 0;
+      rid = String(rid || '');
+      cost = parseInt(cost || 0, 10) || 0;
       if (!rid || cost <= 0) return false;
-      // 静态模式：仅本地扣减与记录，不调用后端
       if (isStatic()) {
         const u = this.getSessionUser();
         if (!u) return false;
@@ -489,22 +708,20 @@
       }
       const token = this.getToken(); if (!token) return false;
       try {
-        const resp = await fetch(API_BASE + '/api/redeem', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token, rid, cost }) });
+        const resp = await fetch(API_BASE + '/api/redeem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, rid, cost }) });
         const data = await resp.json();
         return !!(data && data.ok);
       } catch(_) { return false; }
     },
+
     async redeemCode(code){
-      code = String(code||'').trim();
+      code = String(code || '').trim();
       if (!code) return { ok: false, msg: '请输入兑换码' };
-      // 静态模式暂不支持兑换码（演示环境可在后端模式使用）
-      if (isStatic()) {
-        return { ok: false, msg: '当前为静态模式，暂不支持兑换码' };
-      }
+      if (isStatic()) return { ok: false, msg: '当前为静态模式，暂不支持兑换码' };
       const token = this.getToken();
       if (!token) return { ok: false, msg: '请先登录' };
       try {
-        const resp = await fetch(API_BASE + '/api/redeem-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token, code }) });
+        const resp = await fetch(API_BASE + '/api/redeem-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, code }) });
         const data = await resp.json();
         if (data && data.ok) {
           return { ok: true, msg: data.msg || '兑换成功', pointsAdded: data.pointsAdded || 0, points: data.points, ridGranted: data.ridGranted || '' };
@@ -579,98 +796,304 @@
     }
   };
 
+  /* ===================== 登录 / 注册弹窗 ===================== */
   const Gate = {
     overlayId: 'niao-auth-overlay',
+    mode: 'login',
+    _busy: false,
+
     ensure(){
       if (document.getElementById(this.overlayId)) return;
       const div = document.createElement('div');
       div.id = this.overlayId;
       div.className = 'auth-overlay';
       div.innerHTML = `
-        <div class="panel" role="dialog" aria-modal="true">
-          <div style="text-align:right">
-            <button id="modalCloseBtn" class="btn" aria-label="关闭登录面板">关闭</button>
+        <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+          <button class="auth-close" id="authClose" type="button" aria-label="关闭">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+
+          <div class="auth-head">
+            <span class="auth-logo" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 3.2c3.1 0 5.6 2.4 5.6 5.4 0 2-1 3.7-2.6 4.7l1.6 6.4-4.6-2.6-4.6 2.6 1.6-6.4A5.5 5.5 0 0 1 6.4 8.6C6.4 5.6 8.9 3.2 12 3.2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="9.9" cy="8.3" r=".9" fill="currentColor"/></svg>
+            </span>
+            <h3 class="auth-title" id="authTitle">登录鸟国账号</h3>
+            <p class="auth-sub" id="authSub">登录后可累计积分、记录搜索与任务进度</p>
           </div>
-          <h4>${isStatic() ? '账户（本地演示）' : '登录后使用功能'}</h4>
-          <p style="color:var(--muted)">${isStatic() ? '当前为静态模式：下载与安装无需登录；登录仅用于本地积分演示（保存在浏览器）。' : '请先登录才能使用站内全部功能（包括下载、任务与积分）。'}</p>
-          <div style="margin-top:8px;text-align:left">
-            <label>用户名：<input id="modalLoginUser" type="text" placeholder="请输入用户名" /></label>
-            <label>密码：<input id="modalLoginPass" type="password" placeholder="请输入密码" /></label>
-            <div style="display:flex;gap:10px;margin-top:8px;align-items:center;flex-wrap:wrap;">
-              <button id="modalLoginBtn" class="btn primary">登录</button>
-              <button id="modalLogoutBtn" class="btn">退出登录</button>
-              <span id="modalStatus" class="chip">未登录</span>
-            </div>
-            <p style="margin-top:8px;color:var(--muted);">
-              还没有账号？<a href="#" id="modalToggleRegister" style="color:var(--primary);text-decoration:none;">注册</a>
-            </p>
-            <div id="modalRegisterCard" style="display:none;">
-              <label>用户名：<input id="modalRegUser" type="text" placeholder="设置一个用户名" /></label>
-              <label>密码：<input id="modalRegPass" type="password" placeholder="设置密码" /></label>
-              <label>确认密码：<input id="modalRegPass2" type="password" placeholder="再次输入密码" /></label>
-              <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;">
-                <button id="modalRegBtn" class="btn">注册</button>
-                <button id="modalCancelReg" class="btn">取消</button>
+
+          <div class="auth-tabs" role="tablist" aria-label="登录或注册">
+            <button class="auth-tab is-on" type="button" data-mode="login" role="tab" aria-selected="true">登录</button>
+            <button class="auth-tab" type="button" data-mode="register" role="tab" aria-selected="false">注册</button>
+            <span class="auth-tab__indicator" id="authTabBar" aria-hidden="true"></span>
+          </div>
+
+          <form class="auth-form" id="authForm" novalidate>
+            <label class="field">
+              <span class="field__label">用户名</span>
+              <input class="field__input" id="authUser" name="username" type="text" autocomplete="username"
+                     placeholder="2-20 位，字母 / 数字 / 下划线 / 中文" maxlength="20" />
+            </label>
+
+            <label class="field">
+              <span class="field__label">密码</span>
+              <span class="field__wrap">
+                <input class="field__input" id="authPass" name="password" type="password" autocomplete="current-password"
+                       placeholder="至少 6 位" maxlength="64" />
+                <button class="field__eye" id="authEye" type="button" aria-label="显示密码">显示</button>
+              </span>
+            </label>
+
+            <label class="field" id="authConfirmField" hidden>
+              <span class="field__label">确认密码</span>
+              <input class="field__input" id="authPass2" name="password2" type="password" autocomplete="new-password"
+                     placeholder="再输入一次密码" maxlength="64" />
+            </label>
+
+            <label class="check" id="authRememberRow">
+              <input type="checkbox" id="authRemember" checked />
+              <span>30 天内保持登录</span>
+            </label>
+
+            <p class="auth-err" id="authErr" role="alert" aria-live="assertive" hidden></p>
+
+            <button class="btn primary auth-submit" id="authSubmit" type="submit">
+              <span class="auth-submit__text">登录</span>
+              <span class="auth-submit__spin" aria-hidden="true"></span>
+            </button>
+          </form>
+
+          <div class="auth-account" id="authAccount" hidden>
+            <div class="auth-account__row">
+              <span class="auth-account__avatar" id="authAvatar">U</span>
+              <div class="auth-account__meta">
+                <p class="auth-account__name" id="authAccountName">未登录</p>
+                <p class="auth-account__sub" id="authAccountSub"></p>
               </div>
-              <p id="modalRegStatus" style="margin-top:8px;color:var(--muted);"></p>
+              <span class="auth-account__points" id="authAccountPoints">0<em>积分</em></span>
+            </div>
+            <div class="auth-account__actions">
+              <a class="btn" href="user.html">用户中心</a>
+              <button class="btn" id="authLogout" type="button">退出登录</button>
             </div>
           </div>
+
+          <p class="auth-foot">纯静态站点：账号与积分仅保存在当前浏览器，不会上传到任何服务器。</p>
         </div>`;
       document.body.appendChild(div);
-      // 绑定事件
-      const closeBtn = document.getElementById('modalCloseBtn');
-      const loginUser = document.getElementById('modalLoginUser');
-      const loginPass = document.getElementById('modalLoginPass');
-      const loginBtn = document.getElementById('modalLoginBtn');
-      const logoutBtn = document.getElementById('modalLogoutBtn');
-      const loginStatus = document.getElementById('modalStatus');
-      const toggleRegister = document.getElementById('modalToggleRegister');
-      const registerCard = document.getElementById('modalRegisterCard');
-      const regUser = document.getElementById('modalRegUser');
-      const regPass = document.getElementById('modalRegPass');
-      const regPass2 = document.getElementById('modalRegPass2');
-      const regBtn = document.getElementById('modalRegBtn');
-      const cancelRegBtn = document.getElementById('modalCancelReg');
-      const regStatus = document.getElementById('modalRegStatus');
-      function renderModalSession(){
-        const u = Auth.getSessionUser();
-        loginStatus.textContent = u ? '已登录' : '未登录';
-      }
-      // 关闭面板（按钮 / Esc / 点击空白处）
-      closeBtn && closeBtn.addEventListener('click', () => { Gate.remove(); });
-      div.addEventListener('click', (e) => { if (e.target && e.target.id === Gate.overlayId) { Gate.remove(); } });
-      // Esc 关闭：只绑定一次（原来每次 ensure() 都会往 document 上再加一个监听，反复开关弹窗会泄漏）
+
+      this.bind();
+      this.render();
+    },
+
+    bind(){
+      const q = (id) => document.getElementById(id);
+      const overlay = document.getElementById(this.overlayId);
+      const form = q('authForm');
+      const err = q('authErr');
+      const submit = q('authSubmit');
+      const pass = q('authPass');
+      const pass2 = q('authPass2');
+      const user = q('authUser');
+      const rememberRow = q('authRememberRow');
+      const confirmField = q('authConfirmField');
+
+      q('authClose').addEventListener('click', () => this.remove());
+      overlay.addEventListener('mousedown', (e) => { if (e.target === overlay) this.remove(); });
+
       if (!Gate._escBound) {
         Gate._escBound = true;
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.getElementById(Gate.overlayId)) Gate.remove(); });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && document.getElementById(Gate.overlayId)) Gate.remove();
+        });
       }
-      loginBtn.addEventListener('click', async () => {
-        const u = (loginUser.value||'').trim();
-        const p = loginPass.value||'';
-        const ok = await Auth.login(u,p);
-        loginStatus.textContent = ok ? '登录成功' : '用户名或密码错误';
-        Gate.update();
+
+      overlay.querySelectorAll('.auth-tab').forEach((tab) => {
+        tab.addEventListener('click', () => this.setMode(tab.getAttribute('data-mode')));
       });
-      logoutBtn.addEventListener('click', () => { Auth.logout(); loginStatus.textContent = '已退出登录'; Gate.update(); });
-      toggleRegister.addEventListener('click', (e) => { e.preventDefault(); registerCard.style.display = 'block'; });
-      cancelRegBtn.addEventListener('click', () => { registerCard.style.display = 'none'; });
-      regBtn.addEventListener('click', async () => {
-        const u = (regUser.value||'').trim();
-        const p = regPass.value||'';
-        const p2 = regPass2.value||'';
-        if (!u || !p) { regStatus.textContent = '请输入用户名与密码'; return; }
-        if (p !== p2) { regStatus.textContent = '两次密码不一致'; return; }
-        const ok = await Auth.register(u,p);
-        regStatus.textContent = ok ? '注册成功，请登录' : '该用户已存在或注册失败';
+
+      q('authEye').addEventListener('click', () => {
+        const show = pass.type === 'password';
+        pass.type = show ? 'text' : 'password';
+        q('authEye').textContent = show ? '隐藏' : '显示';
+        q('authEye').setAttribute('aria-label', show ? '隐藏密码' : '显示密码');
       });
-      renderModalSession();
+
+      [user, pass, pass2].forEach((el) => {
+        el.addEventListener('input', () => {
+          err.hidden = true;
+          el.removeAttribute('aria-invalid');
+        });
+      });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.submit();
+      });
+
+      q('authLogout').addEventListener('click', () => {
+        Auth.logout();
+        this.toast('已退出登录');
+        this.render();
+      });
     },
+
+    setMode(mode){
+      this.mode = mode === 'register' ? 'register' : 'login';
+      const isReg = this.mode === 'register';
+      const q = (id) => document.getElementById(id);
+      document.getElementById(this.overlayId).querySelectorAll('.auth-tab').forEach((t) => {
+        const on = t.getAttribute('data-mode') === this.mode;
+        t.classList.toggle('is-on', on);
+        t.setAttribute('aria-selected', String(on));
+      });
+      const bar = q('authTabBar');
+      if (bar) bar.style.transform = isReg ? 'translateX(100%)' : 'translateX(0)';
+      q('authConfirmField').hidden = !isReg;
+      q('authRememberRow').hidden = isReg;
+      q('authTitle').textContent = isReg ? '注册新账号' : '登录鸟国账号';
+      q('authSub').textContent = isReg ? '账号保存在当前浏览器，不会上传到服务器' : '登录后可累计积分、记录搜索与任务进度';
+      q('authSubmit').querySelector('.auth-submit__text').textContent = isReg ? '注册并登录' : '登录';
+      q('authPass').setAttribute('autocomplete', isReg ? 'new-password' : 'current-password');
+      q('authPass').placeholder = isReg ? '设置密码，至少 6 位' : '至少 6 位';
+      q('authErr').hidden = true;
+      const first = q('authUser');
+      if (first) setTimeout(() => first.focus(), 60);
+    },
+
+    showError(msg, fieldId){
+      const err = document.getElementById('authErr');
+      if (!err) return;
+      err.textContent = msg;
+      err.hidden = false;
+      if (fieldId) {
+        const f = document.getElementById(fieldId);
+        if (f) { f.setAttribute('aria-invalid', 'true'); f.focus(); }
+      }
+    },
+
+    setBusy(on){
+      this._busy = on;
+      const btn = document.getElementById('authSubmit');
+      if (!btn) return;
+      btn.disabled = on;
+      btn.classList.toggle('is-loading', on);
+    },
+
+    async submit(){
+      if (this._busy) return;
+      const q = (id) => document.getElementById(id);
+      const u = q('authUser').value.trim();
+      const p = q('authPass').value;
+      const p2 = q('authPass2').value;
+      const remember = q('authRemember').checked;
+
+      // 前端先做一轮校验，避免无意义请求
+      const errU = (u.length < 2) ? '请输入用户名（至少 2 个字符）'
+        : (/^[A-Za-z0-9_\u4e00-\u9fa5]+$/.test(u) ? '' : '用户名只能包含字母、数字、下划线或中文');
+      if (errU) return this.showError(errU, 'authUser');
+      if (!p) return this.showError('请输入密码', 'authPass');
+      if (p.length < 6) return this.showError('密码至少 6 位', 'authPass');
+      if (this.mode === 'register' && p !== p2) return this.showError('两次输入的密码不一致', 'authPass2');
+
+      this.setBusy(true);
+      try {
+        let res;
+        if (this.mode === 'register') {
+          res = await Auth.registerEx(u, p, p2);
+          if (res.ok) {
+            // 注册成功后直接登录，减少一次操作
+            const login = await Auth.loginEx(u, p, { remember: true });
+            res = login;
+            if (login.ok) this.toast('注册成功，已自动登录');
+          }
+        } else {
+          res = await Auth.loginEx(u, p, { remember: remember });
+        }
+
+        if (!res.ok) {
+          const field = res.code === 'INVALID_USERNAME' ? 'authUser'
+            : (res.code === 'INVALID_PASSWORD' || res.code === 'BAD_CREDENTIALS') ? 'authPass' : null;
+          this.showError(res.msg || '操作失败，请重试', field);
+          return;
+        }
+
+        this.toast(res.msg || '登录成功');
+        this.render();
+        setTimeout(() => { if (Auth.getSessionUser()) this.remove(); }, 420);
+      } catch(e) {
+        this.showError('操作失败：' + (e && e.message ? e.message : '未知错误'));
+      } finally {
+        this.setBusy(false);
+      }
+    },
+
+    toast(msg){
+      if (window.Niao && window.Niao.toast) { window.Niao.toast(msg); return; }
+      let el = document.getElementById('niao-toast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'niao-toast';
+        el.className = 'niao-toast';
+        document.body.appendChild(el);
+      }
+      el.textContent = msg;
+      el.classList.add('is-on');
+      clearTimeout(Gate._toastTimer);
+      Gate._toastTimer = setTimeout(() => el.classList.remove('is-on'), 2200);
+    },
+
+    render(){
+      const modal = document.getElementById(this.overlayId);
+      if (!modal) return;
+      const user = Auth.getSessionUser();
+      const form = document.getElementById('authForm');
+      const account = document.getElementById('authAccount');
+      const tabs = modal.querySelector('.auth-tabs');
+
+      if (user) {
+        form.hidden = true;
+        tabs.hidden = true;
+        account.hidden = false;
+        const titleEl = document.getElementById('authTitle');
+        const subEl = document.getElementById('authSub');
+        if (titleEl) titleEl.textContent = '我的账号';
+        if (subEl) subEl.textContent = '登录状态、积分与本地数据都保存在当前浏览器';
+        document.getElementById('authAccountName').textContent = user;
+        const info = Auth.sessionInfo();
+        const hours = info.expiresIn ? Math.max(1, Math.round(info.expiresIn / 3600000)) : 0;
+        document.getElementById('authAccountSub').textContent =
+          info.expiresIn ? `本次登录有效期剩余约 ${hours} 小时${info.remember ? '（已记住登录）' : ''}` : '本地账号';
+        document.getElementById('authAvatar').textContent = user.slice(0, 1).toUpperCase();
+        Auth.getPoints(user).then((p) => {
+          const el = document.getElementById('authAccountPoints');
+          if (el) el.innerHTML = String(p || 0) + '<em>积分</em>';
+        }).catch(() => {});
+      } else {
+        form.hidden = false;
+        tabs.hidden = false;
+        account.hidden = true;
+        this.setMode(this.mode);
+      }
+    },
+
     remove(){ const el = document.getElementById(this.overlayId); if (el) el.remove(); },
-    open(){ this.ensure(); },
+
+    open(mode){
+      this.ensure();
+      if (mode) this.setMode(mode);
+      this.render();
+      const modal = document.querySelector('.auth-modal');
+      if (modal) {
+        modal.classList.remove('is-in');
+        void modal.offsetWidth;
+        modal.classList.add('is-in');
+      }
+      const first = document.getElementById('authUser');
+      if (first && !document.getElementById('authForm').hidden) setTimeout(() => first.focus(), 80);
+    },
+
     update(){
-      const u = Auth.getSessionUser();
-      // 登录时自动关闭面板；未登录时不要自动强制打开，仅在用户操作时打开
-      if (u) { this.remove(); }
+      if (Auth.getSessionUser() && document.getElementById(this.overlayId)) this.render();
     }
   };
   // 顶栏登录按钮接入与动态注入
@@ -736,20 +1159,40 @@
       nav.appendChild(a);
     }
     const navLogin = document.getElementById('navLogin');
+
+    // 顶栏登录态：未登录显示“登录”，已登录显示用户名（点击进入账号面板）
     function updateNavLogin(){
       const u = Auth.getSessionUser();
       if (!navLogin) return;
-      if (u) { navLogin.textContent = '登出'; navLogin.setAttribute('data-mode','logout'); }
-      else { navLogin.textContent = '登录'; navLogin.setAttribute('data-mode','login'); }
+      navLogin.textContent = u || '登录';
+      navLogin.setAttribute('data-mode', u ? 'account' : 'login');
+      navLogin.setAttribute('title', u ? '账号与退出登录' : '登录 / 注册');
+      navLogin.classList.toggle('is-authed', !!u);
+      if (u) navLogin.setAttribute('aria-label', `已登录：${u}，点击查看账号`);
+      else navLogin.removeAttribute('aria-label');
     }
     updateNavLogin();
+
     if (navLogin) navLogin.addEventListener('click', (e) => {
       e.preventDefault();
-      const mode = navLogin.getAttribute('data-mode');
-      if (mode === 'logout') { Auth.logout(); updateNavLogin(); Gate.update(); }
-      else { Gate.open(); }
+      const logged = !!Auth.getSessionUser();
+      Gate.open(logged ? null : 'login');
+      updateNavLogin();
     });
-    window.addEventListener('storage', (e) => { if (e && e.key === 'niao.auth.sessionUser') { updateNavLogin(); updateRedeemButtonStates(); } });
+
+    // 登录状态变化（本页内 / 其它标签页）
+    window.addEventListener('niao:authchange', () => {
+      updateNavLogin();
+      Gate.update();
+      updateRedeemButtonStates();
+    });
+    window.addEventListener('storage', (e) => {
+      if (e && (e.key === 'niao.auth.sessionUser' || !e.key)) {
+        updateNavLogin();
+        Gate.update();
+        updateRedeemButtonStates();
+      }
+    });
 
     // 根据当前积分预先标记付费直装按钮是否可用（静态模式下跳过）
     async function updateRedeemButtonStates(){
@@ -1042,9 +1485,171 @@
   // 默认启用静态模式；如需接入后端可在页面中覆盖为 { static:false, apiBase:'https://your-domain' }
   if (typeof window.Niao.config.static === 'undefined') window.Niao.config.static = true;
   if (typeof window.Niao.config.apiBase === 'undefined') window.Niao.config.apiBase = '';
+  /* 全站统一的轻量反馈：任何页面都可以调用 Niao.toast('已保存','ok') */
+  window.Niao.toast = function (msg, type) {
+    var el = document.getElementById('niao-toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'niao-toast';
+      document.body.appendChild(el);
+    }
+    el.className = 'niao-toast' + (type ? ' niao-toast--' + type : '');
+    el.textContent = String(msg == null ? '' : msg);
+    // 先移除再加类，保证连续提示也能重播过渡
+    el.classList.remove('is-on');
+    void el.offsetWidth;
+    el.classList.add('is-on');
+    clearTimeout(window.Niao._toastTimer);
+    window.Niao._toastTimer = setTimeout(function () { el.classList.remove('is-on'); }, 2400);
+  };
+
+  /* 统一的按钮忙碌态：Niao.ui.busy(btn, true) / Niao.ui.busy(btn, false, '已保存') */
+  window.Niao.ui = {
+    toast: window.Niao.toast,
+    busy: function (btn, on, text) {
+      if (!btn) return;
+      if (on) {
+        if (!btn.dataset.idleText) btn.dataset.idleText = btn.textContent.trim();
+        btn.classList.add('is-loading');
+        btn.disabled = true;
+        if (text) btn.textContent = text;
+      } else {
+        btn.classList.remove('is-loading');
+        btn.disabled = false;
+        if (text) btn.textContent = text;
+        else if (btn.dataset.idleText) btn.textContent = btn.dataset.idleText;
+      }
+    }
+  };
+
   window.Niao.auth = Auth;
   window.Niao.daily = Daily;
   window.Niao.gate = Gate;
   Gate.update();
   Daily.start();
+})();
+
+/* ============================================================
+   全站动效层
+   - 元素入场：IntersectionObserver 增量观察，动态渲染的卡片也能生效
+   - 页面切换：站内 HTML 链接点击时先淡出再跳转
+   - 性能：只用 opacity/transform，元素进入后立即 unobserve
+   - 无障碍：prefers-reduced-motion 下完全跳过
+   ============================================================ */
+;(function(){
+  'use strict';
+
+  var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var SELECTOR = '.card';
+  var io = null;
+  var raf = 0;
+  var queue = [];
+  var revealed = new WeakSet();
+
+  function markVisible(el){
+    if (!el || revealed.has(el)) return;
+    revealed.add(el);
+    el.classList.add('is-visible');
+    if (io) io.unobserve(el);
+  }
+
+  function flush(){
+    raf = 0;
+    var batch = queue.splice(0, queue.length);
+    batch.forEach(function(el, i){
+      if (!el || revealed.has(el)) return;
+      // 同屏元素错峰入场，最多 8 档，避免长延迟
+      el.style.transitionDelay = Math.min(i % 8, 7) * 45 + 'ms';
+      if (io) io.observe(el);
+      else markVisible(el);
+    });
+  }
+
+  function push(el){
+    if (!el || revealed.has(el) || queue.indexOf(el) >= 0) return;
+    if (el.nodeType !== 1) return;
+    queue.push(el);
+    if (!raf) raf = requestAnimationFrame(flush);
+  }
+
+  function collect(root){
+    if (!root || root.nodeType !== 1) return;
+    if (root.matches && root.matches(SELECTOR)) push(root);
+    var nodes = root.querySelectorAll ? root.querySelectorAll(SELECTOR) : [];
+    for (var i = 0; i < nodes.length; i++) push(nodes[i]);
+  }
+
+  function initReveal(){
+    if (reduce) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    document.documentElement.classList.add('js-motion');
+
+    io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        // 延迟归零，避免后续交互（如 hover）被 transition-delay 拖慢
+        setTimeout(function(){ el.style.transitionDelay = ''; }, 600);
+        markVisible(el);
+      });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
+
+    collect(document);
+
+    if ('MutationObserver' in window) {
+      var mo = new MutationObserver(function(records){
+        for (var i = 0; i < records.length; i++) {
+          var added = records[i].addedNodes;
+          for (var j = 0; j < added.length; j++) collect(added[j]);
+        }
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
+    }
+
+    // 兜底：任何原因导致观察未触发时，1.5s 后强制显示，避免内容不可见
+    setTimeout(function(){
+      document.querySelectorAll(SELECTOR).forEach(function(el){
+        if (!revealed.has(el)) markVisible(el);
+      });
+    }, 1500);
+  }
+
+  function initPageTransition(){
+    if (reduce) return;
+    document.addEventListener('click', function(e){
+      if (e.defaultPrevented || e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target && e.target.closest ? e.target.closest('a') : null;
+      if (!a) return;
+      if (a.target && a.target !== '_self') return;
+      if (a.hasAttribute('download')) return;
+
+      var href = a.getAttribute('href') || '';
+      if (!href || href.charAt(0) === '#' || /^(javascript|mailto|tel):/i.test(href)) return;
+      if (!/\.html(\?|#|$)/i.test(href)) return;
+
+      var url;
+      try { url = new URL(href, window.location.href); } catch(_) { return; }
+      if (url.origin !== window.location.origin) return;
+      if (url.pathname === window.location.pathname && url.search === window.location.search) return;
+
+      e.preventDefault();
+      document.documentElement.classList.add('is-leaving');
+      setTimeout(function(){ window.location.href = url.href; }, 150);
+    }, true);
+
+    // 从缓存返回时恢复显示（bfcache）
+    window.addEventListener('pageshow', function(){
+      document.documentElement.classList.remove('is-leaving');
+    });
+  }
+
+  function boot(){
+    initReveal();
+    initPageTransition();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();

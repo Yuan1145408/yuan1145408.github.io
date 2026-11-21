@@ -125,20 +125,48 @@
           currentUserEl.textContent = u || '未登录';
           const pts = u ? (await window.Niao?.auth?.getPoints(u)) : 0;
           currentPointsEl.textContent = String(pts);
-          loginStatus.textContent = u ? '已登录' : '未登录';
+          // 注意：不要在这里覆盖 loginStatus，否则会把刚显示的错误提示冲掉；
+          // 状态文案统一由各操作自行设置（setStatus）。
         }
 
         // 登录/退出
+        function setStatus(el, msg, kind){
+          if (!el) return;
+          el.textContent = msg;
+          el.classList.remove('is-error', 'is-ok');
+          if (kind) el.classList.add(kind === 'ok' ? 'is-ok' : 'is-error');
+        }
+
         loginBtn.addEventListener('click', async () => {
           const u = (loginUser.value || '').trim();
           const p = loginPass.value || '';
-          const ok = await window.Niao?.auth?.login(u, p);
-          loginStatus.textContent = ok ? '登录成功' : '用户名或密码错误';
-          renderSession();
+          if (!u) { setStatus(loginStatus, '请输入用户名', 'error'); loginUser.focus(); return; }
+          if (!p) { setStatus(loginStatus, '请输入密码', 'error'); loginPass.focus(); return; }
+
+          loginBtn.disabled = true;
+          const oldText = loginBtn.textContent;
+          loginBtn.textContent = '登录中…';
+          setStatus(loginStatus, '正在校验…');
+          try {
+            const res = await window.Niao?.auth?.loginEx(u, p, { remember: true });
+            if (res && res.ok) {
+              setStatus(loginStatus, '登录成功', 'ok');
+              loginPass.value = '';
+            } else {
+              setStatus(loginStatus, (res && res.msg) || '登录失败，请重试', 'error');
+            }
+          } catch (_) {
+            setStatus(loginStatus, '登录异常，请稍后重试', 'error');
+          } finally {
+            loginBtn.disabled = false;
+            loginBtn.textContent = oldText;
+            renderSession();
+          }
         });
         logoutBtn.addEventListener('click', () => {
+          const was = !!window.Niao?.auth?.getSessionUser();
           window.Niao?.auth?.logout();
-          loginStatus.textContent = '已退出登录';
+          setStatus(loginStatus, was ? '已退出登录' : '当前未登录', was ? 'ok' : null);
           renderSession();
         });
 
@@ -149,10 +177,34 @@
           const u = (regUser.value || '').trim();
           const p = regPass.value || '';
           const p2 = regPass2.value || '';
-          if (!u || !p) { regStatus.textContent = '请输入用户名与密码'; return; }
-          if (p !== p2) { regStatus.textContent = '两次密码不一致'; return; }
-          const ok = await window.Niao?.auth?.register(u, p);
-          regStatus.textContent = ok ? '注册成功，请登录' : '该用户已存在或注册失败';
+          regBtn.disabled = true;
+          const oldText = regBtn.textContent;
+          regBtn.textContent = '注册中…';
+          try {
+            const res = await window.Niao?.auth?.registerEx(u, p, p2);
+            if (res && res.ok) {
+              setStatus(regStatus, '注册成功，正在登录…', 'ok');
+              const login = await window.Niao?.auth?.loginEx(u, p, { remember: true });
+              if (login && login.ok) {
+                setStatus(regStatus, '注册成功，已自动登录', 'ok');
+                setStatus(loginStatus, '登录成功', 'ok');
+                loginUser.value = u;
+                regPass.value = '';
+                regPass2.value = '';
+                setTimeout(() => { registerCard.style.display = 'none'; }, 900);
+                renderSession();
+              } else {
+                setStatus(regStatus, (login && login.msg) || '注册成功，请手动登录', 'ok');
+              }
+            } else {
+              setStatus(regStatus, (res && res.msg) || '注册失败，请重试', 'error');
+            }
+          } catch (_) {
+            setStatus(regStatus, '注册异常，请稍后重试', 'error');
+          } finally {
+            regBtn.disabled = false;
+            regBtn.textContent = oldText;
+          }
         });
 
         // 兑换码提交
@@ -172,7 +224,18 @@
           }
         });
 
+        // 登录状态变化时刷新界面（含其它标签页登录、会话过期）
+        window.addEventListener('niao:authchange', function(){
+          const u = window.Niao?.auth?.getSessionUser() || '';
+          setStatus(loginStatus, u ? '已登录' : '未登录', u ? 'ok' : null);
+          renderSession();
+        });
+
         // 首次渲染与任务 UI 更新绑定
+        (function initSession(){
+          const u = window.Niao?.auth?.getSessionUser() || '';
+          setStatus(loginStatus, u ? '已登录' : '未登录', u ? 'ok' : null);
+        })();
         renderSession();
         window.Niao?.daily?.bindUI({ barEl: taskProgressBar, textEl: taskStatus, pointsEl: currentPointsEl });
       })();

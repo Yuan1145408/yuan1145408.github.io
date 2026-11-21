@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark" />
   <title>聚合搜索 - 鸟国网站</title>
-  <meta name="description" content="鸟国聚合搜索：多线程并发检索、多源覆盖、纯净无广告的资源搜索与导航工具。" />
+  <meta name="description" content="鸟国聚合搜索：站内索引 + 全网 15 个公开数据源并发检索，统一去重并按相关性排序，结果直接展示在站内。" />
   <link rel="stylesheet" href="search.css" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 </head>
@@ -44,35 +44,36 @@
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero__eyebrow">
         <span class="chip chip--glow">多线程并发</span>
-        <span class="hero__eyebrow-text">12 个数据源 · 平均 0.8s 返回</span>
+        <span class="hero__eyebrow-text" id="indexStats">索引准备中…</span>
       </div>
       <h1 class="hero__title" id="heroTitle">
         一次输入，<span class="grad-text">全域命中</span>
       </h1>
-      <p class="hero__sub">聚合检索 · 无广告 · 不依赖第三方站点框架，本地与线上同一套体验。</p>
+      <p class="hero__sub">站内索引 + 全网公开数据源聚合：百科、代码托管、问答社区、学术库与 Minecraft 专题，统一去重并按相关性排序，结果直接展示在站内。</p>
 
       <form class="searchbar" id="searchForm" autocomplete="off" role="search">
         <span class="searchbar__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.6" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
         </span>
         <label class="sr-only" for="q">搜索关键词</label>
-        <input class="searchbar__input" id="q" name="q" type="search" placeholder="搜索软件、教程、镜像、游戏…  按 / 快速聚焦" />
+        <input class="searchbar__input" id="q" name="q" type="search" placeholder="搜索全网内容：软件、教程、文档、论文、模组…  / 或 Ctrl+K 聚焦"
+               role="combobox" aria-expanded="false" aria-controls="suggestPanel" aria-autocomplete="list" aria-label="搜索关键词" />
+        <div class="suggest-panel" id="suggestPanel" role="listbox" aria-label="搜索建议" hidden></div>
         <div class="searchbar__divider" aria-hidden="true"></div>
         <div class="select-wrap">
           <span class="select-wrap__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.4" stroke="currentColor" stroke-width="1.5"/><path d="M3.6 12h16.8M12 3.6c2.2 2.4 3.3 5.3 3.3 8.4S14.2 18 12 20.4C9.8 18 8.7 15.1 8.7 12s1.1-6 3.3-8.4Z" stroke="currentColor" stroke-width="1.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5h16M7 12h10M10 17.5h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
           </span>
-          <label class="sr-only" for="region">地区</label>
-          <select class="select" id="region" name="region">
-            <option value="global">全球</option>
-            <option value="cn">中国大陆</option>
-            <option value="hk">中国香港</option>
-            <option value="tw">中国台湾</option>
-            <option value="jp">日本</option>
-            <option value="kr">韩国</option>
-            <option value="sg">新加坡</option>
-            <option value="us">美国</option>
-            <option value="eu">欧洲</option>
+          <label class="sr-only" for="category">分类</label>
+          <select class="select" id="category" name="category">
+            <option value="all">全部分类</option>
+            <option value="software">软件</option>
+            <option value="tutorial">教程</option>
+            <option value="game">游戏</option>
+            <option value="os">系统镜像</option>
+            <option value="vm">虚拟机</option>
+            <option value="android">安卓应用</option>
+            <option value="page">站内页面</option>
           </select>
           <span class="select-wrap__caret" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none"><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -85,12 +86,27 @@
         </button>
       </form>
 
-      <div class="suggest" id="suggest">
-        <span class="suggest__label">试试：</span>
-        <button class="chip chip--soft" type="button" data-kw="python 教程">python 教程</button>
+      <div class="scopebar" id="scopeBar" role="tablist" aria-label="搜索范围">
+        <button class="scope-btn is-on" type="button" role="tab" aria-selected="true" data-scope="all">全部</button>
+        <button class="scope-btn" type="button" role="tab" aria-selected="false" data-scope="site">站内</button>
+        <button class="scope-btn" type="button" role="tab" aria-selected="false" data-scope="web">全网</button>
+        <span class="scopebar__hint" id="scopeHint">站内索引 + 全网公开数据源，统一去重排序</span>
+      </div>
+
+      <div class="suggest" id="hotKeywords">
+        <span class="suggest__label">热门：</span>
+        <button class="chip chip--soft" type="button" data-kw="python">python</button>
         <button class="chip chip--soft" type="button" data-kw="虚拟机">虚拟机</button>
         <button class="chip chip--soft" type="button" data-kw="linux 镜像">linux 镜像</button>
-        <button class="chip chip--soft" type="button" data-kw="开源 IDE">开源 IDE</button>
+        <button class="chip chip--soft" type="button" data-kw="编辑器">编辑器</button>
+        <button class="chip chip--soft" type="button" data-kw="我的世界">我的世界</button>
+        <button class="chip chip--soft" type="button" data-kw="sodium 模组">sodium 模组</button>
+        <button class="chip chip--soft" type="button" data-kw="react">react</button>
+      </div>
+      <div class="suggest suggest--recent" id="recentWrap" hidden>
+        <span class="suggest__label">最近：</span>
+        <span class="recent-list" id="recentList"></span>
+        <button class="suggest__clear" id="clearRecent" type="button">清空</button>
       </div>
     </section>
 
@@ -100,7 +116,7 @@
         <div class="card card--glass side__card">
           <div class="side__head">
             <h2 class="side__title">核心特性</h2>
-            <span class="side__badge">v2.1</span>
+            <span class="side__badge">v3.0</span>
           </div>
           <ul class="features">
             <li class="feature">
@@ -162,7 +178,7 @@
 
         <div class="card card--glass side__metric">
           <div class="metric">
-            <span class="metric__value" id="metricSources">12</span>
+            <span class="metric__value" id="metricSources">—</span>
             <span class="metric__label">数据源</span>
           </div>
           <div class="metric__sep" aria-hidden="true"></div>
@@ -172,7 +188,7 @@
           </div>
           <div class="metric__sep" aria-hidden="true"></div>
           <div class="metric">
-            <span class="metric__value" id="metricLatency">0.8<em>s</em></span>
+            <span class="metric__value" id="metricLatency">—</span>
             <span class="metric__label">平均耗时</span>
           </div>
         </div>
@@ -198,8 +214,8 @@
         <div class="card card--glass scanning" id="scanning" hidden>
           <div class="scanning__row">
             <span class="scanning__spinner" aria-hidden="true"></span>
-            <span class="scanning__text" id="scanningText">正在并发查询数据源…</span>
-            <span class="scanning__count" id="scanningCount">0/12</span>
+            <span class="scanning__text" id="scanningText">正在检索站内索引…</span>
+            <span class="scanning__count" id="scanningCount">0%</span>
           </div>
           <div class="scanning__bar"><span id="scanningFill"></span></div>
         </div>
@@ -212,9 +228,33 @@
             </h2>
             <div class="results__meta" id="resultMeta"></div>
           </div>
-          <div class="results__list" id="resultList"></div>
+
+          <div class="sources" id="sourceChips" role="group" aria-label="按来源筛选" hidden></div>
+
+          <div class="filters" id="filterChips" role="tablist" aria-label="按分类筛选"></div>
+
+          <div class="results__list" id="resultList" role="list"></div>
+
+          <div class="results__more" id="loadMoreWrap" hidden>
+            <button class="act act--more" id="loadMoreBtn" type="button">加载更多结果</button>
+          </div>
+
           <div class="results__empty" id="resultEmpty" hidden>
-            <p>站内索引暂无匹配资源，下面已为你列出该地区的全部外部检索入口。</p>
+            <div class="empty__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.6" stroke="currentColor" stroke-width="1.6"/><path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8.6 11h4.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <p class="empty__title">没有找到匹配的站内资源</p>
+            <p class="empty__desc" id="emptyDesc">换个关键词，或减少关键词数量再试一次。</p>
+            <div class="empty__chips" id="emptyChips"></div>
+          </div>
+
+          <!-- 继续搜索：把同一关键词交给通用搜索引擎 -->
+          <div class="external" id="externalWrap" hidden>
+            <div class="external__head">
+              <span class="external__title">继续搜索</span>
+              <span class="external__hint">把同一关键词交给通用搜索引擎（新标签页打开）</span>
+            </div>
+            <div class="external__list" id="externalList"></div>
           </div>
         </div>
       </section>
@@ -252,6 +292,8 @@
     </div>
   </footer>
 
+  <script src="search-sources.js"></script>
+  <script src="search-web.js"></script>
   <script src="search.js"></script>
 </body>
 </html>

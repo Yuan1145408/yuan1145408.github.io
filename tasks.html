@@ -391,7 +391,7 @@
           html += `<button class="btn" id="runCodeBtn" ${ (lang==='python'||lang==='js'||lang==='java'||lang==='c')?'' : 'disabled' }>运行代码</button>`;
           html += `<span id="runStatus" style="color:var(--muted)"></span>`;
           html += `</div>`;
-          html += `<pre id="codeOutput" style="background:#f6f8fa;padding:8px;border-radius:6px;max-height:180px;overflow:auto;margin-top:6px;white-space:pre-wrap;"></pre>`;
+          html += `<pre id="codeOutput" class="code-output"></pre>`;
           html += `<div style="margin-top:8px;"><label><input type="checkbox" id="codeDoneChk" /> 我已完成并自测通过</label></div>`;
           html += `</div>`;
           quizArea.innerHTML = html;
