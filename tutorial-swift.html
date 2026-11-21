@@ -39,12 +39,12 @@
     <h1>Swift 入门</h1>
     <p class="muted">语法基础、简单 UI 与网络请求（需 macOS + Xcode）。</p>
 
-    <h2>Hello, Swift</h2>
+    <h2 id="sec-1">Hello, Swift</h2>
     <pre><code>// main.swift
 print("Hello, Swift")
     </code></pre>
 
-    <h2>网络请求（URLSession）</h2>
+    <h2 id="sec-2">网络请求（URLSession）</h2>
     <pre><code>import Foundation
 let url = URL(string: "https://httpbin.org/json")!
 let task = URLSession.shared.dataTask(with: url){ data, _, _ in
@@ -55,7 +55,7 @@ task.resume()
 RunLoop.main.run()
     </code></pre>
 
-    <h2>下一步</h2>
+    <h2 id="sec-3">下一步</h2>
     <ul>
       <li>官方文档：<a href="https://www.swift.org/documentation/" target="_blank" rel="noopener">Swift Docs</a></li>
       <li>UI：SwiftUI；包管理：Swift Package Manager。</li>

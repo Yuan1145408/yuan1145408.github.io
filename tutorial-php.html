@@ -40,12 +40,12 @@
       <img src="icon-project.svg" alt="项目" />
       <img src="icon-debug.svg" alt="调试" />
     </div>
-    <h2>安装与环境</h2>
+    <h2 id="sec-1">安装与环境</h2>
     <ul>
       <li>安装：使用官方包或安装 <code>php</code> + <code>composer</code>。</li>
       <li>内置服务：<code>php -S localhost:8080</code>。</li>
     </ul>
-    <h2>基础语法</h2>
+    <h2 id="sec-2">基础语法</h2>
     <pre><code>&lt;?php
 // 数组与关联数组
 $arr = [1, 2, 3]; $map = ['a' =&gt; 1, 'b' =&gt; 2];
@@ -56,59 +56,59 @@ namespace Demo; class User { public function __construct(public string $name){} 
 // Composer 自动加载
 // composer init &amp;&amp; composer require psr/log
 </code></pre>
-    <h2>给完全新手：第一步怎么做</h2>
+    <h2 id="sec-3">给完全新手：第一步怎么做</h2>
     <ol>
       <li>安装 PHP 和 Composer：确保 <code>php -v</code>、<code>composer -V</code> 正常。</li>
       <li>创建项目文件夹，初始化 <code>composer init</code>。</li>
       <li>新建 <code>index.php</code> 输出 Hello，启动内置服务器 <code>php -S localhost:8080</code>。</li>
       <li>添加自动加载与一个简单路由，访问不同路径返回不同内容。</li>
     </ol>
-    <h2>项目实战（入门）</h2>
+    <h2 id="sec-4">项目实战（入门）</h2>
     <ol>
       <li>表单处理：提交、校验、保存为 CSV。</li>
       <li>REST API：返回 JSON 列表与分页。</li>
       <li>文件上传：保存到指定目录并记录日志。</li>
     </ol>
-    <h2>常见坑</h2>
+    <h2 id="sec-5">常见坑</h2>
     <ul>
       <li>全等比较：使用 <code>===</code>，避免隐式类型转换。</li>
       <li>错误处理：启用错误显示与日志，使用异常。</li>
       <li>安全：输入过滤、参数化查询，避免 SQL 注入。</li>
     </ul>
-    <h2>练习题</h2>
+    <h2 id="sec-6">练习题</h2>
     <ol>
       <li>实现一个简单路由器，返回不同页面。</li>
       <li>编写一个表单提交与校验流程。</li>
       <li>实现一个文件上传与保存功能。</li>
     </ol>
-    <h2>中间插图</h2>
+    <h2 id="sec-7">中间插图</h2>
     <img class="hero-img" src="diagram-architecture.svg" alt="架构示意图" />
     <img class="hero-img" src="illustration-code.svg" alt="代码示意图" />
-    <h2>进阶内容</h2>
+    <h2 id="sec-8">进阶内容</h2>
     <ul>
       <li>依赖管理与自动加载：PSR-4、Composer 脚本与发布。</li>
       <li>Web 框架：路由、中间件与控制器（Slim/Laravel）。</li>
       <li>安全与合规：输入过滤、CSRF、预处理语句与密码哈希。</li>
     </ul>
-    <h2>更多练习</h2>
+    <h2 id="sec-9">更多练习</h2>
     <ol>
       <li>实现一个分页列表与搜索接口，返回 JSON。</li>
       <li>编写一个中间件：记录请求日志与耗时。</li>
       <li>做一个上传服务：限制文件类型与大小并记录。</li>
     </ol>
-    <h2>参考资源</h2>
+    <h2 id="sec-10">参考资源</h2>
     <ul>
       <li><a href="https://www.php.net/docs.php" target="_blank" rel="noopener">PHP 官方文档</a></li>
       <li><a href="https://getcomposer.org/doc/" target="_blank" rel="noopener">Composer 文档</a></li>
       <li><a href="https://laravel.com/docs" target="_blank" rel="noopener">Laravel 文档</a></li>
     </ul>
-    <h2>系统化学习路径</h2>
+    <h2 id="sec-11">系统化学习路径</h2>
     <ol>
       <li>语言与实战：语法、PSR 标准、错误与异常、测试。</li>
       <li>工作流：Composer、自动加载、CI/CD、日志与配置。</li>
       <li>Web 与安全：路由与中间件、ORM、认证授权、输入输出安全。</li>
     </ol>
-    <h2>进阶项目</h2>
+    <h2 id="sec-12">进阶项目</h2>
     <ol>
       <li>REST 服务：分页与过滤、统一错误、统计与限速。</li>
       <li>上传与处理：分块上传、校验、图片/文档转换与预览。</li>

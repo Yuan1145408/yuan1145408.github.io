@@ -39,13 +39,13 @@
     <h1>Spring Boot 入门</h1>
     <p class="muted">使用 Spring Initializr 创建项目，编写 REST 控制器并联通数据。</p>
 
-    <h2>创建项目</h2>
+    <h2 id="sec-1">创建项目</h2>
     <ul>
       <li>访问 <a href="https://start.spring.io" target="_blank" rel="noopener">start.spring.io</a> 生成项目（依赖：Spring Web）。</li>
       <li>解压后用 IDEA 打开，等待依赖下载完成。</li>
     </ul>
 
-    <h2>控制器</h2>
+    <h2 id="sec-2">控制器</h2>
     <pre><code>// src/main/java/com/example/demo/HelloController.java
 package com.example.demo;
 import org.springframework.web.bind.annotation.*;
@@ -58,11 +58,11 @@ public class HelloController {
 }
     </code></pre>
 
-    <h2>运行</h2>
+    <h2 id="sec-3">运行</h2>
     <pre><code>// DemoApplication 的 main 方法运行，默认端口 8080
     </code></pre>
 
-    <h2>下一步</h2>
+    <h2 id="sec-4">下一步</h2>
     <ul>
       <li>官方文档：<a href="https://spring.io/projects/spring-boot" target="_blank" rel="noopener">Spring Boot</a></li>
       <li>数据访问：Spring Data JPA / MyBatis；配置文件：<code>application.yml</code>。</li>

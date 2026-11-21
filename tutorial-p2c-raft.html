@@ -33,13 +33,13 @@
     <h1>Paper-to-Code: Raft 共识算法</h1>
     <p>依据 Raft 论文实现领导者选举、日志复制与心跳，附仿真。</p>
     <hr/>
-    <h2>1. 摘要与关键点</h2>
+    <h2 id="sec-1">1. 摘要与关键点</h2>
 <ul>
   <li>领导者选举（随机超时 + 心跳）</li>
   <li>日志复制与提交</li>
   <li>成员变更与持久化</li>
 </ul>
-<h2>2. 代码骨架（Go/Python）</h2>
+<h2 id="sec-2">2. 代码骨架（Go/Python）</h2>
 <pre>
 # Python 伪代码结构
 class Node:
@@ -52,7 +52,7 @@ class Node:
     def append_entries(self):
         pass
 </pre>
-<h2>3. 集群仿真与故障注入</h2>
+<h2 id="sec-3">3. 集群仿真与故障注入</h2>
 <pre>
 # 编写模拟器：丢包、延迟、节点重启，观测一致性与可用性
 </pre>

@@ -39,13 +39,13 @@
     <h1>Node.js 入门</h1>
     <p class="muted">npm 包管理、模块系统、文件与网络。</p>
 
-    <h2>安装</h2>
+    <h2 id="sec-1">安装</h2>
     <ul>
       <li>到 <a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a> 安装 LTS。</li>
       <li>检查版本：<code>node -v</code>、<code>npm -v</code>。</li>
     </ul>
 
-    <h2>Hello, HTTP</h2>
+    <h2 id="sec-2">Hello, HTTP</h2>
     <pre><code>// server.js
 const http = require('http')
 const server = http.createServer((req,res)=>{
@@ -55,7 +55,7 @@ const server = http.createServer((req,res)=>{
 server.listen(3000, ()=>console.log('http://localhost:3000'))
     </code></pre>
 
-    <h2>npm 与模块</h2>
+    <h2 id="sec-3">npm 与模块</h2>
     <pre><code>npm init -y
 npm i axios
 // index.js
@@ -67,14 +67,14 @@ async function main(){
 main()
     </code></pre>
 
-    <h2>文件与路径</h2>
+    <h2 id="sec-4">文件与路径</h2>
     <pre><code>const fs = require('fs')
 const path = require('path')
 fs.writeFileSync(path.join(__dirname,'a.txt'),'hello')
 console.log(fs.readFileSync(path.join(__dirname,'a.txt'),'utf8'))
     </code></pre>
 
-    <h2>下一步</h2>
+    <h2 id="sec-5">下一步</h2>
     <ul>
       <li>官方文档：<a href="https://nodejs.org/docs" target="_blank" rel="noopener">Node.js Docs</a></li>
       <li>现代后端框架：Express、Koa、NestJS。</li>

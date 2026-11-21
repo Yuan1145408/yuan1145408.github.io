@@ -40,13 +40,13 @@
       <img src="icon-project.svg" alt="项目" />
       <img src="icon-debug.svg" alt="调试" />
     </div>
-    <h2>安装与环境</h2>
+    <h2 id="sec-1">安装与环境</h2>
     <ul>
       <li>Node.js：推荐 LTS，使用 <code>nvm-windows</code> 管理版本。</li>
       <li>包管理：<code>npm</code> / <code>pnpm</code> / <code>yarn</code>，推荐 <code>pnpm</code>。</li>
       <li>浏览器：使用 DevTools 的 Console 与 Network 面板调试。</li>
     </ul>
-    <h2>完整新手路径：第一步怎么做</h2>
+    <h2 id="sec-2">完整新手路径：第一步怎么做</h2>
     <ol>
       <li>安装 Node.js（LTS），推荐 <code>nvm-windows</code> 管理版本。</li>
       <li>VS Code 安装官方 JS/TS 扩展，熟悉终端与调试面板。</li>
@@ -55,7 +55,7 @@
       <li>用浏览器 Console 试验：按 F12 打开 DevTools，输入 JS 表达式。</li>
     </ol>
 
-    <h2>基础语法</h2>
+    <h2 id="sec-3">基础语法</h2>
     <pre><code>// 变量与常量
 let a = 1; const b = 2;
 // 模板字符串
@@ -71,64 +71,64 @@ async function fetchJSON(url){
   return res.json();
 }
 </code></pre>
-    <h2>如何运行与调试</h2>
+    <h2 id="sec-4">如何运行与调试</h2>
     <ul>
       <li>Node.js：<code>node your_script.js</code>；部分工具支持 <code>--watch</code> 自动重载。</li>
       <li>浏览器：使用 Console、Network、Sources 面板断点调试。</li>
       <li>模块化：在 Node 中用 <code>import/export</code> 需设置 <code>"type":"module"</code> 或使用 <code>require</code>。</li>
     </ul>
 
-    <h2>常见坑</h2>
+    <h2 id="sec-5">常见坑</h2>
     <ul>
       <li>隐式类型转换：尽量用全等 <code>===</code>，避免松散比较引发问题。</li>
       <li>异步错误：在 <code>async</code> 中使用 <code>try/catch</code> 或 <code>.catch()</code>。</li>
       <li>作用域与循环：<code>for(let i...)</code>；避免 <code>var</code> 带来的函数作用域陷阱。</li>
     </ul>
-    <h2>项目入门</h2>
+    <h2 id="sec-6">项目入门</h2>
     <ol>
       <li>命令行工具：读取一个文本文件，统计词频并输出前 20。</li>
       <li>网页抓取：请求一个新闻站点，提取标题列表并保存为 CSV。</li>
       <li>小型前端页面：待办事项，支持新增/完成/删除，数据保存到 <code>localStorage</code>。</li>
     </ol>
-    <h2>配图</h2>
+    <h2 id="sec-7">配图</h2>
     <img class="hero-img" src="diagram-flow.svg" alt="流程示意图" />
     <img class="hero-img" src="illustration-code.svg" alt="代码示意图" />
 
-    <h2>扩展内容</h2>
+    <h2 id="sec-8">扩展内容</h2>
     <ul>
       <li>工具链：ESLint/Prettier/Vitest 与 CI 集成。</li>
       <li>性能：避免长任务；使用 Web Workers 与懒加载。</li>
       <li>工程化：Monorepo（npm workspace）与发布流程。</li>
     </ul>
-    <h2>练习题</h2>
+    <h2 id="sec-9">练习题</h2>
     <ol>
       <li>编写一个请求重试函数，支持次数与退避策略。</li>
       <li>实现一个简单的事件总线 <code>on/emit/off</code>。</li>
       <li>写一个并发控制器，限制同时进行的任务数量。</li>
     </ol>
 
-    <h2>国内网络建议</h2>
+    <h2 id="sec-10">国内网络建议</h2>
     <ul>
       <li>使用国内镜像源（如 <code>npmmirror.com</code>）：<code>npm config set registry https://registry.npmmirror.com/</code></li>
       <li>遇到网络受限，优先使用本地“国内模式”和代理下载（本站提供）。</li>
       <li>图片/脚本加载失败时，打开 DevTools 查看具体错误与失败 URL。</li>
     </ul>
 
-    <h2>参考资源</h2>
+    <h2 id="sec-11">参考资源</h2>
     <ul>
       <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript" target="_blank" rel="noopener">MDN JavaScript 指南</a>（语法与运行时）</li>
       <li><a href="https://nodejs.org/en/docs" target="_blank" rel="noopener">Node.js 官方文档</a>（API 与实践）</li>
       <li><a href="https://tc39.es/" target="_blank" rel="noopener">TC39 提案</a>（理解新语法演进）</li>
     </ul>
 
-    <h2>系统化学习路径</h2>
+    <h2 id="sec-12">系统化学习路径</h2>
     <ol>
       <li>语言能力：JS 基础、ES6+、异步与模块、TypeScript（可选）。</li>
       <li>浏览器开发：DOM/事件、存储、网络、性能与可访问性。</li>
       <li>工程与全栈：打包构建、测试、CI/CD、Node.js 服务与数据库。</li>
     </ol>
 
-    <h2>进阶项目</h2>
+    <h2 id="sec-13">进阶项目</h2>
     <ol>
       <li>可测试、可观察的前端组件框架（路由、状态、覆盖率）。</li>
       <li>Serverless 全栈板：前端 + API 网关 + 云函数 + 存储。</li>
@@ -137,14 +137,14 @@ async function fetchJSON(url){
 
     <hr/>
     <section id="theory-index">
-      <h2>理论与论文到代码索引（JavaScript）</h2>
+      <h2 id="sec-14">理论与论文到代码索引（JavaScript）</h2>
       <ul>
         <li><a href="./tutorial-p2c-mapreduce.html">MapReduce（概念）</a>；前端可用于数据处理与可视化演示。</li>
       </ul>
     </section>
   </main>
   <section style="max-width:920px;margin:0 auto;padding:0 16px;">
-    <h2>模块系统详解</h2>
+    <h2 id="sec-15">模块系统详解</h2>
     <p>现代 JS 推荐使用 ES Modules（<code>import/export</code>）。在 Node.js 使用需设置 <code>package.json</code> 中的 <code>"type":"module"</code>，或将文件扩展名设为 <code>.mjs</code>；在浏览器中则通过 <code>&lt;script type="module"&gt;</code> 引入。</p>
     <pre><code>// math.js
 export function add(a,b){ return a+b }
@@ -153,7 +153,7 @@ import { add } from './math.js'
 console.log(add(1,2))
     </code></pre>
 
-    <h2>异步进阶：Promise、async/await、并发控制</h2>
+    <h2 id="sec-16">异步进阶：Promise、async/await、并发控制</h2>
     <pre><code>// 封装请求：失败重试与指数退避
 async function fetchRetry(url, times=3, baseDelay=300){
   for(let i=0;i&lt;times;i++){
@@ -187,7 +187,7 @@ async function withLimit(tasks, limit=3){
 }
     </code></pre>
 
-    <h2>TypeScript 快速上手</h2>
+    <h2 id="sec-17">TypeScript 快速上手</h2>
     <pre><code>// tsconfig.json 基本配置
 {
   "compilerOptions": {
@@ -204,7 +204,7 @@ interface User { id: number; name: string; admin?: boolean }
 function greet(u: User){ return `Hi ${u.name}` }
     </code></pre>
 
-    <h2>测试与工具链</h2>
+    <h2 id="sec-18">测试与工具链</h2>
     <ul>
       <li>ESLint + Prettier：统一风格与语法检查。</li>
       <li>Vitest/Jest：单元测试，建议覆盖核心逻辑。</li>
@@ -212,14 +212,14 @@ function greet(u: User){ return `Hi ${u.name}` }
       <li>CI/发布：GitHub Actions + npm registry（企业可用私有仓库）。</li>
     </ul>
 
-    <h2>项目实战：前后端一体</h2>
+    <h2 id="sec-19">项目实战：前后端一体</h2>
     <ol>
       <li>后端：用 Node.js + Express/Koa/Fastify 写一个 REST 接口，返回分页列表。</li>
       <li>前端：用原生或框架（Vue/React/Svelte）构建表格页，调用接口并做筛选。</li>
       <li>工程：增加 ESLint/Vitest、环境变量与部署脚本（Dockerfile）。</li>
     </ol>
 
-    <h2>练习扩展（10 题）</h2>
+    <h2 id="sec-20">练习扩展（10 题）</h2>
     <ol>
       <li>封装 <code>fetchJSON</code> 支持超时、中断（AbortController）、重试。</li>
       <li>实现一个 <code>memoize</code>（带过期与最大容量）。</li>

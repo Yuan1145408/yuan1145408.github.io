@@ -39,7 +39,7 @@
     <h1>Julia 入门</h1>
     <p class="muted">高性能与易用兼备，适合数值计算与科学工程。</p>
 
-    <h2>包管理与示例</h2>
+    <h2 id="sec-1">包管理与示例</h2>
     <pre><code># 包环境：Pkg
 using Pkg
 Pkg.add("DataFrames")
@@ -51,7 +51,7 @@ df = DataFrame(city = ["BJ","SH"], score = [70, 80])
 bar(df.city, df.score)
     </code></pre>
 
-    <h2>下一步</h2>
+    <h2 id="sec-2">下一步</h2>
     <ul>
       <li>官方文档：<a href="https://docs.julialang.org/" target="_blank" rel="noopener">Julia Docs</a></li>
       <li>科学计算生态：Flux.jl（深度学习）、DifferentialEquations.jl（微分方程）。</li>

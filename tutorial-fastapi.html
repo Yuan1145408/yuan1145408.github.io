@@ -39,7 +39,7 @@
     <h1>FastAPI 入门</h1>
     <p class="muted">借助类型提示快速构建高性能 API。</p>
 
-    <h2>安装与运行</h2>
+    <h2 id="sec-1">安装与运行</h2>
     <pre><code>python -m pip install fastapi uvicorn pydantic
 # main.py
 from fastapi import FastAPI
@@ -63,7 +63,7 @@ def create_item(it: Item):
 # uvicorn main:app --reload --port 5050
     </code></pre>
 
-    <h2>下一步</h2>
+    <h2 id="sec-2">下一步</h2>
     <ul>
       <li>官方文档：<a href="https://fastapi.tiangolo.com/" target="_blank" rel="noopener">FastAPI Docs</a></li>
       <li>数据库：SQLModel / SQLAlchemy；部署：Uvicorn + Gunicorn。</li>

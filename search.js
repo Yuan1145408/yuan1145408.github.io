@@ -54,7 +54,7 @@
     statuses: [],         // 每个源的返回状态
     results: [],          // 合并后的最终列表
     relaxed: false, deduped: 0, webMs: 0,
-    activeIdx: -1, treeKeys: [], lastElapsed: 0
+    activeIdx: -1, treeKeys: [], lastElapsed: 0, expanded: '', seq: 0
   };
 
   /* ---------------- 工具 ---------------- */
@@ -147,11 +147,15 @@
       kind: item.kind || 'page',
       kindLabel: item.kindLabel || '站内页面',
       category: item.category || '',
+      section: item.section || '',
       tags: tags,
       _title: String(item.title || '').toLowerCase(),
       _desc: String(item.desc || '').toLowerCase(),
       _tags: (tags.join(' ') + ' ' + String(item.category || '') + ' ' + String(item.kindLabel || '')).toLowerCase(),
-      _kw: String(item.keywords || '').toLowerCase()
+      _kw: String(item.keywords || '').toLowerCase(),
+      _flat: (function (v) {
+        return String(v).toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '');
+      })([item.title, item.desc, tags.join(' '), item.category, item.keywords].join(' '))
     };
   }
 
@@ -183,6 +187,11 @@
       if (item._tags.indexOf(t) >= 0) s += 9;
       if (item._desc.indexOf(t) >= 0) s += 7;
       if (item._kw.indexOf(t) >= 0) s += 5;
+      // “7-Zip” 这类带符号的名字：把符号抹掉后再比一次，避免搜 7zip 搜不到
+      if (!s) {
+        var flat = t.replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '');
+        if (flat.length >= 2 && item._flat.indexOf(flat) >= 0) s += 18;
+      }
       if (s > 0) { score += s; matched++; }
     }
     return { score: score, matched: matched };
@@ -216,7 +225,7 @@
     var it = entry.item;
     return {
       title: it.title,
-      snippet: it.desc,
+      snippet: it.section ? '《' + it.section + '》 ' + it.desc : it.desc,
       url: absUrl(it.url),
       sourceId: 'site',
       sourceName: '站内',
@@ -224,7 +233,8 @@
       sourceBadge: '站',
       group: it.kind,
       host: hostOf(it.url) || location.hostname,
-      badges: [it.kindLabel].concat(it.category ? [it.category] : []).concat(it.tags.slice(0, 1)),
+      badges: [it.kindLabel].concat(it.category ? [it.category] : []).concat(it.tags.slice(0, 1))
+        .filter(function (v, i, a) { return v && a.indexOf(v) === i; }).slice(0, 3),
       // 站内条目经过人工整理，给一个固定加成，避免被同名噪声压过
       score: entry.score + 12 + Math.max(0, 10 - idx),
       origin: 'site'
@@ -345,7 +355,7 @@
     }).join('');
   }
 
-  var STATE_LABEL = { ok: '正常', empty: '无结果', timeout: '超时', error: '失败' };
+  var STATE_LABEL = { ok: '正常', empty: '无结果', timeout: '需代理', error: '不可用' };
 
   function renderSourceChips() {
     var wrap = $('sourceChips');
@@ -368,7 +378,9 @@
         esc(s.short || s.name) + '<span class="source-chip__n">' + s.count + '</span></button>');
     });
     bad.forEach(function (s) {
-      var tip = s.name + '：' + (STATE_LABEL[s.state] || '不可用') + (s.error ? '（' + s.error + '）' : '');
+      var tip = s.name + '：' + (STATE_LABEL[s.state] || '不可用') +
+        (s.state === 'timeout' || s.state === 'error' ? '（当前网络无法直连，可换网络或开启代理后重试）' : '') +
+        (s.error ? ' · ' + s.error : '');
       if (s.fallback) {
         // 源不可用时给出官网搜索直达，避免用户无路可走
         chips.push('<a class="source-chip source-chip--bad" href="' + esc(s.fallback) +
@@ -412,9 +424,9 @@
       var src = (state.statuses || []).filter(function (s) { return s.id === state.sourceFilter; })[0];
       meta.push('来源：' + (state.sourceFilter === 'site' ? '站内' : (src ? src.name : state.sourceFilter)));
     }
+    if (state.expanded) meta.push('已自动扩展为「' + state.expanded + '」');
     if (state.webMs) meta.push('全网 ' + state.webResults.length + ' 条 / ' + state.webMs + 'ms');
     if (state.deduped) meta.push('已合并重复 ' + state.deduped + ' 条');
-    if (state.relaxed) meta.push('已放宽为部分匹配');
     if ($('resultMeta')) $('resultMeta').textContent = meta.join(' · ');
 
     var empty = $('resultEmpty');
@@ -844,11 +856,15 @@
       return;
     }
 
+    var seq = ++state.seq;   // 每次搜索一个序号，慢的旧请求不再覆盖新结果
     state.q = q;
     state.cat = CATS.some(function (c) { return c.key === cat; }) ? cat : 'all';
     state.page = 0;
     state.sourceFilter = 'all';
     state.webResults = [];
+    state.expanded = '';
+    state.webMs = 0;
+    state.deduped = 0;
     state.statuses = [];
     state.webMs = 0;
     state.deduped = 0;
@@ -909,11 +925,14 @@
       .filter(function (src) { return disabled.indexOf(src.id) < 0; })
       .map(function (src) { return src.id; });
 
+    var live = [], liveTimer = 0;
     window.NiaoWeb.search(q, {
       groups: ['all'],
       ids: enabledIds,
+      deadline: 7000,
       noProxy: SETTINGS['search.proxy'] === false,
       onSource: function (st) {
+        if (seq !== state.seq) return;
         done++;
         if (st.state === 'ok') okCount++;
         if (fill) fill.style.width = Math.min(96, 6 + Math.round((done / total) * 90)) + '%';
@@ -922,8 +941,24 @@
           textEl.textContent = '已完成 ' + done + '/' + total + ' 个源 · 命中 ' + okCount + ' 个' +
             (st.state === 'ok' ? ' · 最新：' + st.name + ' ' + st.count + ' 条' : '');
         }
+        // 先到的结果先渲染一版，避免一直白屏等最慢的源
+        if (st.results && st.results.length) live = live.concat(st.results);
+        if (!liveTimer && live.length) {
+          liveTimer = setTimeout(function () {
+            liveTimer = 0;
+            state.webResults = live.slice();
+            state.results = mergeAll();
+            state.page = 0;
+            var panel = $('results');
+            if (panel) panel.hidden = false;
+            paintResults();
+          }, 320);
+        }
       }
     }).then(function (out) {
+      if (liveTimer) { clearTimeout(liveTimer); liveTimer = 0; }
+      if (seq !== state.seq) return;   // 已被更新的一次搜索取代
+      state.expanded = out.expanded || '';
       state.webResults = out.results;
       state.statuses = out.statuses;
       state.webMs = out.ms;
@@ -934,6 +969,7 @@
       finishSearch(t0);
       hideBusyUI();
     }).catch(function (err) {
+      if (seq !== state.seq) return;
       console.warn('[search] 全网检索失败：', err);
       toast('全网检索失败，已保留站内结果');
       state.statuses = [];

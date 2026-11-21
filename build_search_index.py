@@ -167,7 +167,56 @@ def build_pages():
             }
         )
         merged_targets.add(name)
+
+        # 章节级索引：让“装饰器”“闭包”这类具体问题也能命中对应小节
+        items.extend(build_sections(name, src, title, label, kind))
     return items, merged_targets
+
+
+SEC_RE = re.compile(r"<h([23])\b([^>]*)>([\s\S]*?)</h\1>", re.I)
+SKIP_HEAD = {
+    "首页", "返回", "登录", "注册", "鸟国网站", "目录", "相关推荐", "参考链接",
+    # 通用收尾小节：标题本身没有检索价值，留着只会占满建议列表
+    "下一步", "参考资源", "延伸阅读", "扩展阅读", "相关资源", "小结", "总结",
+    "常见问题", "写在最后", "前言", "简介", "概述", "示例", "代码示例",
+}
+
+
+def build_sections(name, src, page_title, label, kind):
+    """把 h2/h3 拆成独立条目：标题 + 该小节正文摘要，url 带锚点。"""
+    heads = list(SEC_RE.finditer(src))
+    out = []
+    for i, m in enumerate(heads):
+        idm = re.search(r'id="([^"]+)"', m.group(2))
+        if not idm:
+            continue
+        text = clean(m.group(3), 60)
+        if not text or len(text) < 2 or text in SKIP_HEAD or text == page_title:
+            continue
+        start = m.end()
+        end = heads[i + 1].start() if i + 1 < len(heads) else len(src)
+        body = src[start:end]
+        body = re.sub(r"<(script|style)[\s\S]*?</\1>", " ", body, flags=re.I)
+        body = re.sub(r"</(p|li|pre|div|tr|h[1-6])>", " ", body, flags=re.I)
+        body = re.sub(r"<[^>]+>", " ", body)
+        body = re.sub(r"\s+", " ", html.unescape(body)).strip()
+        if len(body) < 12:
+            continue
+        out.append(
+            {
+                "id": f"sec:{name}#{idm.group(1)}",
+                "url": f"{name}#{idm.group(1)}",
+                "title": text,
+                "desc": body[:120].rstrip() + ("…" if len(body) > 120 else ""),
+                "kind": kind,
+                "kindLabel": KIND_LABEL[kind],
+                "category": label,
+                "tags": [page_title],
+                "keywords": "",
+                "section": page_title,
+            }
+        )
+    return out
 
 
 def build_resources(page_urls):

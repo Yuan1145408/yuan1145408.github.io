@@ -40,13 +40,13 @@
       <img src="icon-project.svg" alt="项目" />
       <img src="icon-debug.svg" alt="调试" />
     </div>
-    <h2>安装与环境</h2>
+    <h2 id="sec-1">安装与环境</h2>
     <ul>
       <li>安装：<code>npm i -D typescript</code>，初始化 <code>tsc --init</code></li>
       <li>运行：Node.js + <code>ts-node</code> 或编译后运行</li>
       <li>前端：Vite/Webpack，配置 <code>tsconfig.json</code> 与路径别名</li>
     </ul>
-    <h2>基础语法</h2>
+    <h2 id="sec-2">基础语法</h2>
     <pre><code>// 类型与接口
 type Id = number | string
 interface User { id: Id; name: string; age?: number }
@@ -59,29 +59,29 @@ function len(x: string | string[]){ return Array.isArray(x) ? x.length : x.lengt
 // 模块与导入导出
 export function add(a:number,b:number){ return a+b }
 </code></pre>
-    <h2>常见坑</h2>
+    <h2 id="sec-3">常见坑</h2>
     <ul>
       <li><code>any</code> 谨慎使用；优先 <code>unknown</code> 并配合类型收窄</li>
       <li>类型断言：建议节制使用 <code>as</code>，避免掩盖真实问题</li>
       <li>this 上下文：用箭头函数避免 <code>this</code> 绑定丢失</li>
     </ul>
-    <h2>练习题（基础）</h2>
+    <h2 id="sec-4">练习题（基础）</h2>
     <ol>
       <li>实现一个 <code>Result&lt;T,E&gt;</code> 类型并编写配套工具函数（<code>ok</code>/<code>err</code>/<code>isOk</code>）。</li>
       <li>实现一个类型安全的事件总线。</li>
       <li>为 REST 响应建模，包含分页与错误类型。</li>
     </ol>
-    <h2>中段插图</h2>
+    <h2 id="sec-5">中段插图</h2>
     <img class="hero-img" src="diagram-architecture.svg" alt="架构示意图" />
     <img class="hero-img" src="illustration-code.svg" alt="代码示意图" />
 
-    <h2>扩展内容</h2>
+    <h2 id="sec-6">扩展内容</h2>
     <ul>
       <li>高级类型：条件类型、映射类型与类型编程。</li>
       <li>库设计：API 设计与 <code>tsup</code>/<code>vite</code> 打包。</li>
       <li>前端工程：<code>eslint</code>/<code>prettier</code>/<code>vitest</code> 集成。</li>
     </ul>
-    <h2>更多练习</h2>
+    <h2 id="sec-7">更多练习</h2>
     <ol>
       <li>实现一个类型安全的 <code>fetch</code> 封装，支持分页与错误。</li>
       <li>编写一个表单校验库，类型安全、可扩展。</li>
@@ -89,26 +89,26 @@ export function add(a:number,b:number){ return a+b }
     </ol>
   <hr/>
 <section id="theory-index">
-  <h2>理论与论文到代码索引（TypeScript）</h2>
+  <h2 id="sec-8">理论与论文到代码索引（TypeScript）</h2>
   <ul>
     <li><a href="./tutorial-p2c-mapreduce.html">MapReduce（概念）</a>；前端可用于数据处理与可视化演示。</li>
   </ul>
 </section>
  </main>
   <section style="max-width:920px;margin:0 auto;padding:0 16px;">
-    <h2>参考资源</h2>
+    <h2 id="sec-9">参考资源</h2>
     <ul>
       <li><a href="https://www.typescriptlang.org/docs/" target="_blank" rel="noopener">TypeScript 官方文档</a>（类型系统与编译器）</li>
       <li><a href="https://www.typescriptlang.org/tsconfig" target="_blank" rel="noopener">TSConfig 参考</a>（项目配置详解）</li>
       <li><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html" target="_blank" rel="noopener">Utility Types</a>（常用内置工具类型）</li>
   </ul>
-  <h2>系统学习路径</h2>
+  <h2 id="sec-10">系统学习路径</h2>
     <ol>
       <li>类型基础：联合/交叉、泛型、条件类型与映射类型。</li>
       <li>工程化：配置与编译、Lint 与格式化、测试与类型测试。</li>
       <li>前后端协作：前端框架 TS 化、后端类型协作、API 类型管理。</li>
     </ol>
-    <h2>进阶项目</h2>
+    <h2 id="sec-11">进阶项目</h2>
     <ol>
       <li>类型安全的前端状态与接口层（错误边界/重试/缓存）。</li>
       <li>Monorepo 类型共享：包内类型统一、发布流程与验证。</li>
@@ -116,10 +116,10 @@ export function add(a:number,b:number){ return a+b }
     </ol>
   </section>
   <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
-    <h2>加长版：工程化与进阶（TypeScript）</h2>
+    <h2 id="sec-12">加长版：工程化与进阶（TypeScript）</h2>
     <p>面向能落地项目的 TS 指南：类型系统进阶、工具类型、类型缩小、tsconfig 配置、测试与工具链、后端/前端快速上手，以及 10 道练习题。</p>
 
-    <h3>类型系统进阶与工具类型</h3>
+    <h3 id="sec-13">类型系统进阶与工具类型</h3>
     <pre><code>// 联合/交叉/字面量/可辨识联合
 type Id = number | string
 type WithMeta&lt;T> = T & { createdAt: Date }
@@ -135,7 +135,7 @@ type Dict = Record&lt;string, number>
     </code></pre>
     <p>建议：优先用类型表达业务约束（可辨识联合 + 类型缩小），减少运行时分支错误。</p>
 
-    <h3>类型缩小与守卫</h3>
+    <h3 id="sec-14">类型缩小与守卫</h3>
     <pre><code>function len(x: string | string[]) {
   if (Array.isArray(x)) return x.length; // 缩小到 string[]
   return x.length; // string
@@ -147,14 +147,14 @@ function handle(u: User | null) {
 }
     </code></pre>
 
-    <h3>泛型与约束</h3>
+    <h3 id="sec-15">泛型与约束</h3>
     <pre><code>function wrap&lt;T>(value: T) { return { value } }
 function top&lt;T extends { score: number }>(arr: T[]) {
   return [...arr].sort((a,b)=>b.score-a.score)[0]
 }
     </code></pre>
 
-    <h3>模块与 tsconfig（严格模式强烈推荐）</h3>
+    <h3 id="sec-16">模块与 tsconfig（严格模式强烈推荐）</h3>
     <pre><code>{
   "compilerOptions": {
     "target": "ES2020",
@@ -172,7 +172,7 @@ function top&lt;T extends { score: number }>(arr: T[]) {
     </code></pre>
     <p>使用严格模式能提前发现大量类型/可空性问题，减少线上错误。</p>
 
-    <h3>测试与工具链</h3>
+    <h3 id="sec-17">测试与工具链</h3>
     <pre><code>// 安装：npm i -D jest ts-jest @types/jest
 // 初始化：npx ts-jest config:init
 // 示例：src/add.ts 与 tests/add.test.ts
@@ -187,7 +187,7 @@ test('add', () => {
 // 打包：tsup/vite/esbuild（小型库推荐 tsup）
     </code></pre>
 
-    <h3>后端：Node + Express + TS 快速起步</h3>
+    <h3 id="sec-18">后端：Node + Express + TS 快速起步</h3>
     <pre><code>// 安装：npm i express && npm i -D @types/express ts-node-dev
 import express, { Request, Response } from 'express'
 const app = express()
@@ -201,7 +201,7 @@ app.listen(3000)
 // 开发运行：ts-node-dev src/index.ts
     </code></pre>
 
-    <h3>前端：React + TS 快速起步</h3>
+    <h3 id="sec-19">前端：React + TS 快速起步</h3>
     <pre><code>// 使用 Vite：npm create vite@latest my-app -- --template react-ts
 // 组件示例
 type ButtonProps = { text: string; onClick?: ()=>void }
@@ -210,7 +210,7 @@ export function Button({text,onClick}: ButtonProps){
 }
     </code></pre>
 
-    <h3>练习题（10 题）</h3>
+    <h3 id="sec-20">练习题（10 题）</h3>
     <ol>
       <li>实现 <code>Result&lt;T,E&gt;</code> 类型与配套工具函数 <code>ok/err/isOk</code>。</li>
       <li>编写 <code>fetchJSON(url)</code>，返回 <code>Promise&lt;Result&lt;unknown,Error&gt;&gt;</code>。</li>

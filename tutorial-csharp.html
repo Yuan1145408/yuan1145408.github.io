@@ -33,7 +33,7 @@
   <main style="max-width:920px;margin:0 auto;padding:24px 16px;">
     <h1>C# 上手指南（.NET）</h1>
     <p>基础语法、项目结构、异步与 LINQ、常见问题与实践。跟着本文从入门到能做项目。</p>
-    <h2>给完全新手：第一步怎么做</h2>
+    <h2 id="sec-1">给完全新手：第一步怎么做</h2>
     <ol>
       <li>安装 .NET SDK，运行 <code>dotnet --info</code> 查看版本。</li>
       <li>新建控制台项目：<code>dotnet new console -n HelloApp</code>。</li>
@@ -41,12 +41,12 @@
       <li>用 VS Code 或 VS 开启断点，观察变量变化。</li>
       <li>理解 <code>dotnet run</code> 与 <code>dotnet build</code> 的区别。</li>
     </ol>
-    <h2>安装与环境</h2>
+    <h2 id="sec-2">安装与环境</h2>
     <ul>
       <li>.NET SDK：使用 <code>dotnet</code> 命令，新建项目 <code>dotnet new console</code>。</li>
       <li>IDE：VS Code + C# 扩展 或 Visual Studio Community。</li>
     </ul>
-    <h2>基础语法</h2>
+    <h2 id="sec-3">基础语法</h2>
     <pre><code>// 记录与不可变
 public record User(string Name, int Age);
 // 模式匹配
@@ -61,59 +61,59 @@ static async Task&lt;string&gt; FetchAsync(string url){
   return await http.GetStringAsync(url);
 }
 </code></pre>
-    <h2>常见坑</h2>
+    <h2 id="sec-4">常见坑</h2>
     <ul>
       <li>异步死锁：UI 环境避免 <code>.Result</code>/<code>.Wait()</code>，使用 <code>await</code>。</li>
       <li>可空用法：启用 <code>nullable</code>，合理使用 <code>?</code> 与 <code>!</code>。</li>
       <li>资源释放：优先 <code>using</code> 与 <code>IAsyncDisposable</code>。</li>
     </ul>
-    <h2>练习题（基础）</h2>
+    <h2 id="sec-5">练习题（基础）</h2>
     <ol>
       <li>实现一个 CLI 下载器，支持断点续传与取消。</li>
       <li>编写一个 LINQ 查询管道，对对象列表做聚合。</li>
       <li>创建一个 ASP.NET Minimal API，返回 JSON 列表。</li>
     </ol>
-    <h2>项目实战（入门）</h2>
+    <h2 id="sec-6">项目实战（入门）</h2>
     <ol>
       <li>命令行工具：读取文本统计词频，支持参数与帮助。</li>
       <li>Web API：最小 API 返回 <code>/ping</code>，用 <code>HttpClient</code> 调用。</li>
       <li>文件处理：遍历目录、重命名、日志记录，支持回滚。</li>
     </ol>
-    <h2>中段插图</h2>
+    <h2 id="sec-7">中段插图</h2>
     <img class="hero-img" src="diagram-network.svg" alt="网络示意图" />
     <img class="hero-img" src="illustration-debug.svg" alt="调试示意图" />
 
-    <h2>扩展内容</h2>
+    <h2 id="sec-8">扩展内容</h2>
     <ul>
       <li>并发与异步：<code>Task</code>/<code>ValueTask</code>，通道与数据流。</li>
       <li>工程化：<code>StyleCop</code>/<code>FxCop</code>、<code>BenchmarkDotNet</code> 与 CI。</li>
       <li>Web 框架：ASP.NET 路由、中间件与依赖注入。</li>
     </ul>
-    <h2>更多练习</h2>
+    <h2 id="sec-9">更多练习</h2>
     <ol>
       <li>实现一个带限流与重试的 <code>HttpClient</code> 封装。</li>
       <li>写一个结构化日志器，支持 JSON 输出与按时间切割。</li>
       <li>搭建一个分页查询的 REST API，包含错误处理。</li>
     </ol>
-    <h2>国内网络建议</h2>
+    <h2 id="sec-10">国内网络建议</h2>
     <ul>
       <li>NuGet 国内镜像：<code>dotnet nuget add source</code> 添加镜像源。</li>
       <li>遇到网络受限：优先使用本地“国内模式”与代理下载。</li>
       <li>部署：使用 <code>dotnet publish -r win-x64 --self-contained</code> 生成可执行文件分发。</li>
     </ul>
-    <h2>参考资源</h2>
+    <h2 id="sec-11">参考资源</h2>
     <ul>
       <li><a href="https://learn.microsoft.com/dotnet/csharp/" target="_blank" rel="noopener">C# 官方文档</a>（语言与库参考）。</li>
       <li><a href="https://learn.microsoft.com/dotnet/core/" target="_blank" rel="noopener">.NET 官方文档</a>（运行时、SDK 与生态）。</li>
       <li><a href="https://learn.microsoft.com/aspnet/core/" target="_blank" rel="noopener">ASP.NET Core 文档</a>（Web/服务端框架）。</li>
     </ul>
-    <h2>系统学习路径</h2>
+    <h2 id="sec-12">系统学习路径</h2>
     <ol>
       <li>语言基础与面向对象：类型系统、泛型、LINQ、异步与内存模型。</li>
       <li>工程与测试：项目结构、DI、xUnit/NUnit、日志与配置管理。</li>
       <li>Web 与持久化：ASP.NET Core、EF Core、容器化与部署流水线。</li>
     </ol>
-    <h2>进阶项目</h2>
+    <h2 id="sec-13">进阶项目</h2>
     <ol>
       <li>模块化后端：分层/DDD、Repository、统一异常与响应格式。</li>
       <li>高并发 API：异步 I/O、连接池与缓存、指标与可观测性。</li>
@@ -121,7 +121,7 @@ static async Task&lt;string&gt; FetchAsync(string url){
     </ol>
   <hr/>
 <section id="theory-index">
-  <h2>理论与论文到代码索引（C#/.NET）</h2>
+  <h2 id="sec-14">理论与论文到代码索引（C#/.NET）</h2>
   <ul>
     <li><a href="./tutorial-p2c-raft.html">Raft（概念）</a>；.NET 可实现集群模拟与日志复制。</li>
     <li><a href="./tutorial-p2c-lsm.html">LSM-Tree（概念）</a>；可使用 .NET 的 I/O 库进行工程实现。</li>

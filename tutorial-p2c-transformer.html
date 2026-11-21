@@ -33,13 +33,13 @@
     <h1>Paper-to-Code: Transformer 从零实现</h1>
     <p>依据 Attention is All You Need 复现核心模块，含最小训练示例。</p>
     <hr/>
-    <h2>1. 摘要与关键点</h2>
+    <h2 id="sec-1">1. 摘要与关键点</h2>
 <ul>
   <li>多头自注意力（Scaled Dot-Product Attention）</li>
   <li>位置编码（Positional Encoding）</li>
   <li>残差连接与层归一化</li>
 </ul>
-<h2>2. 从零实现（PyTorch）</h2>
+<h2 id="sec-2">2. 从零实现（PyTorch）</h2>
 <pre>
 import torch, math
 class PositionalEncoding(torch.nn.Module):
@@ -54,7 +54,7 @@ class PositionalEncoding(torch.nn.Module):
     def forward(self, x):
         return x + self.pe[:, :x.size(1)]
 </pre>
-<h2>3. 训练小数据集示例</h2>
+<h2 id="sec-3">3. 训练小数据集示例</h2>
 <pre>
 # 构造小语料与训练循环（略），建议使用 torchtext 或自制 DataLoader
 </pre>

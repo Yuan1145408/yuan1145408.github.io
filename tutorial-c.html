@@ -42,7 +42,7 @@
       <img src="icon-debug.svg" alt="调试" />
     </div>
 
-    <h2>完整新手路径：第一步怎么做</h2>
+    <h2 id="sec-1">完整新手路径：第一步怎么做</h2>
     <ol>
       <li>安装编译器（MSVC 或 MinGW-w64），确认 <code>gcc --version</code> / <code>cl</code> 可用。</li>
       <li>创建 <code>main.c</code> 写 Hello World，先跑起来再逐步优化。</li>
@@ -50,13 +50,13 @@
       <li>安装 <code>gdb</code> 或使用 VS 的断点调试。</li>
     </ol>
 
-    <h2>编译环境</h2>
+    <h2 id="sec-2">编译环境</h2>
     <ul>
       <li>MSVC：安装 Visual Studio Build Tools，使用 <code>cl</code> 编译。</li>
       <li>MinGW-w64：安装后使用 <code>gcc</code> 与 <code>gdb</code>。</li>
     </ul>
 
-    <h2>Hello, World</h2>
+    <h2 id="sec-3">Hello, World</h2>
     <pre><code>#include &lt;stdio.h>
 int main(){
     printf("Hello, C!\n");
@@ -64,7 +64,7 @@ int main(){
 }
     </code></pre>
 
-    <h2>基础语法</h2>
+    <h2 id="sec-4">基础语法</h2>
     <pre><code>// 变量与类型
 int a = 10; double pi = 3.14; char c = 'x';
 
@@ -84,7 +84,7 @@ struct User { char name[16]; int age; };
 struct User u = {"Bob", 20};
     </code></pre>
 
-    <h2>标准库</h2>
+    <h2 id="sec-5">标准库</h2>
     <pre><code>#include &lt;stdio.h>
 #include &lt;stdlib.h>
 #include &lt;string.h>
@@ -96,7 +96,7 @@ printf("sqrt=%f\n", sqrt(9.0));
 printf("time=%ld\n", time(NULL));
     </code></pre>
 
-    <h2>编译与运行</h2>
+    <h2 id="sec-6">编译与运行</h2>
     <pre><code>// gcc
 gcc main.c -o main
 ./main
@@ -105,66 +105,66 @@ gcc main.c -o main
 cl /EHsc main.c && main.exe
     </code></pre>
 
-    <h2>如何调试</h2>
+    <h2 id="sec-7">如何调试</h2>
     <ul>
       <li>使用 <code>gdb</code> 设置断点、单步、查看变量。</li>
       <li>内存：用 <code>valgrind</code> 检查内存泄漏（在支持的平台）。</li>
       <li>测试：为核心函数编写小测试，先小后大逐步构建。</li>
     </ul>
 
-    <h2>项目入门</h2>
+    <h2 id="sec-8">项目入门</h2>
     <ol>
       <li>命令行词频统计：读取文本输出 Top-N。</li>
       <li>CSV 解析器：解析数据并按列统计。</li>
       <li>简单 HTTP 客户端：用 <code>libcurl</code> 请求并打印响应。</li>
     </ol>
 
-    <h2>下一步</h2>
+    <h2 id="sec-9">下一步</h2>
     <ul>
       <li>头文件与多文件编辑、Make/CMake 构建系统。</li>
       <li>内存管理与避免泄漏、错误处理与统一日志接口。</li>
       <li>区分 Debug/Release，开启优化与编译选项。</li>
     </ul>
 
-    <h2>配图</h2>
+    <h2 id="sec-10">配图</h2>
     <img class="hero-img" src="diagram-flow.svg" alt="流程示意图" />
     <img class="hero-img" src="illustration-debug.svg" alt="调试示意图" />
 
-    <h2>常见坑</h2>
+    <h2 id="sec-11">常见坑</h2>
     <ul>
       <li>缓冲区越界：严格检查数组下标与长度。</li>
       <li>未初始化：全局变量与指针使用前必须初始化。</li>
       <li>资源释放：每次 <code>malloc</code> 都应有对应 <code>free</code>。</li>
     </ul>
 
-    <h2>练习题</h2>
+    <h2 id="sec-12">练习题</h2>
     <ol>
       <li>实现一个命令行参数解析并统计出现次数的程序。</li>
       <li>用链表实现简单队列并支持出入队操作。</li>
       <li>读取文本文件，统计每行字符数并输出统计报告。</li>
     </ol>
 
-    <h2>国内网络建议</h2>
+    <h2 id="sec-13">国内网络建议</h2>
     <ul>
       <li>使用国内镜像安装工具链与依赖。</li>
       <li>遇到网络受限，优先使用本地“国内模式”和代理下载。</li>
     </ul>
 
-    <h2>参考资源</h2>
+    <h2 id="sec-14">参考资源</h2>
     <ul>
       <li><a href="https://en.cppreference.com/w/c" target="_blank" rel="noopener">cppreference C 参考</a>（标准库详解）</li>
       <li><a href="https://www.gnu.org/software/gnu-c-manual/" target="_blank" rel="noopener">GNU C Manual</a>（语言与编译器说明）</li>
       <li><a href="https://www.cprogramming.com/tutorial/c-tutorial.html" target="_blank" rel="noopener">C Programming Tutorial</a>（系统学习）</li>
     </ul>
 
-    <h2>系统化学习路径</h2>
+    <h2 id="sec-15">系统化学习路径</h2>
     <ol>
       <li>语言与内存：指针与数组、结构体与文件 IO、错误处理。</li>
       <li>工程化：多文件与构建、测试与调试。</li>
       <li>网络与扩展：libcurl/SQLite 等库、跨平台构建与分发。</li>
     </ol>
 
-    <h2>进阶项目</h2>
+    <h2 id="sec-16">进阶项目</h2>
     <ol>
       <li>文件处理平台：异常处理、日志与错误、配置与部署。</li>
       <li>HTTP/CLI 工具集：请求、解析与输出，支持并发与压测。</li>
@@ -172,7 +172,7 @@ cl /EHsc main.c && main.exe
     </ol>
   </main>
   <section style="max-width:920px;margin:0 auto;padding:0 16px;">
-    <h2>语法速查</h2>
+    <h2 id="sec-17">语法速查</h2>
     <ul>
       <li>字符串：<code>char s[32]; strcpy(s, "abc");</code></li>
       <li>动态分配：<code>int *p = malloc(n*sizeof(int)); free(p);</code></li>

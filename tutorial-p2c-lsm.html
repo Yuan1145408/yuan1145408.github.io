@@ -33,18 +33,18 @@
     <h1>Paper-to-Code: LSM-Tree 键值存储</h1>
     <p>从零实现 KV 存储内核，覆盖写入、读取、合并与压测。</p>
     <hr/>
-    <h2>1. 设计要点</h2>
+    <h2 id="sec-1">1. 设计要点</h2>
 <ul>
   <li>MemTable（跳表/红黑树） + WAL</li>
   <li>SSTable（顺序写） + 归并压缩</li>
   <li>布隆过滤器与读放大控制</li>
 </ul>
-<h2>2. 代码骨架（Go/Python）</h2>
+<h2 id="sec-2">2. 代码骨架（Go/Python）</h2>
 <pre>
 # 写入：先写 WAL，再写入 MemTable；MemTable 达阈值 flush 为 SSTable
 # 读取：SSTable 自上而下查找 + Bloom 过滤
 </pre>
-<h2>3. 压测与对比</h2>
+<h2 id="sec-3">3. 压测与对比</h2>
 <pre>
 # 随机写/读 QPS、延迟、文件大小、合并开销
 </pre>

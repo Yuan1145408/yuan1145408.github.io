@@ -33,7 +33,7 @@
     <main>
       <section class="section">
         <div class="container">
-          <h3>我的世界（Minecraft）资源</h3>
+          <h3 id="sec-1">我的世界（Minecraft）资源</h3>
           <p>本页提供“启动器”“模组/光影/材质包”“MC 资料搜索”三个分区：前两个支持直接下载安装（直装）与筛选，第三个可在线检索 MC百科、Minecraft Wiki 与 Modrinth 的模组、版本、整合包资料。</p>
           <p>提示：部分直链可能随官方发布变动而变化，如遇下载失败请点击“官网”进入官方发布页。</p>
         </div>
@@ -42,7 +42,7 @@
       <!-- 启动器分区 -->
       <section class="section">
         <div class="container">
-          <h3>启动器</h3>
+          <h3 id="sec-2">启动器</h3>
           <div class="grid" id="mcLaunchersGrid"><!-- 动态渲染区域 --></div>
         </div>
       </section>
@@ -50,7 +50,7 @@
       <!-- 模组分区（含搜索） -->
       <section class="section">
         <div class="container">
-          <h3>模组 / 光影 / 材质包</h3>
+          <h3 id="sec-3">模组 / 光影 / 材质包</h3>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
             <input id="modSearchInput" type="text" placeholder="搜索：模组/光影/材质关键字，如 背包 / 幸运方块 / 动态光源" style="flex:1;min-width:260px;" />
             <select id="modPlatformSelect" style="min-width:140px;">
@@ -81,7 +81,7 @@
       <!-- MC 资料聚合搜索：MC百科 / Minecraft Wiki / Modrinth -->
       <section class="section" id="mcSearch">
         <div class="container">
-          <h3>MC 资料搜索（模组 / 版本 / 整合包）</h3>
+          <h3 id="sec-4">MC 资料搜索（模组 / 版本 / 整合包）</h3>
           <p>直接检索 MC百科、Minecraft Wiki（中文/英文）与 Modrinth 的公开资料，结果按相关性排序并展示在下方；不依赖后端，也不会跳出本站。</p>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
             <input id="mcWebQuery" type="text" placeholder="搜索：sodium / 机械动力 / 1.21 版本 / 整合包" style="flex:1;min-width:260px;" />
@@ -109,7 +109,7 @@
       <!-- 基岩版专区（Windows） -->
       <section class="section">
         <div class="container">
-          <h3>基岩版专区（Windows）</h3>
+          <h3 id="sec-5">基岩版专区（Windows）</h3>
           <p>基岩版通过微软商店分发（Minecraft for Windows）。Windows 平台的基岩版使用 RenderDragon 渲染管线，对第三方着色器支持有限；推荐使用“行为包/资源包”扩展玩法。</p>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
             <input id="bedrockQuery" type="text" placeholder="搜索 MCPEDL：如 vein miner / backpack / tree capitator" style="flex:1;min-width:260px;" />

@@ -39,7 +39,7 @@
       <img src="icon-project.svg" alt="项目" />
       <img src="icon-debug.svg" alt="调试" />
     </div>
-    <h2>基础语法</h2>
+    <h2 id="sec-1">基础语法</h2>
     <pre><code>-- 建表
 CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT NOT NULL, age INT);
 -- 查询
@@ -49,42 +49,42 @@ SELECT u.name, o.amount FROM users u JOIN orders o ON u.id=o.user_id;
 -- 聚合
 SELECT COUNT(*) AS cnt, AVG(age) AS avg_age FROM users;
 </code></pre>
-    <h2>常见坑</h2>
+    <h2 id="sec-2">常见坑</h2>
     <ul>
       <li>索引：根据查询模式创建合适索引，避免全表扫描。</li>
       <li>N+1：合理使用连接或聚合，避免重复请求。</li>
       <li>事务与隔离：关键操作使用事务，理解隔离级别。</li>
     </ul>
-    <h2>练习题</h2>
+    <h2 id="sec-3">练习题</h2>
     <ol>
       <li>设计一个“用户-订单”的数据库，并编写统计查询。</li>
       <li>为常用查询添加索引并对比性能变化。</li>
       <li>实现一条分页查询与总量统计的 SQL。</li>
     </ol>
-    <h2>给完全新手：第一步怎么做</h2>
+    <h2 id="sec-4">给完全新手：第一步怎么做</h2>
     <ol>
       <li>安装 SQLite 或使用 MySQL/PostgreSQL，确认客户端可连接。</li>
       <li>创建数据库与表，插入若干行示例数据。</li>
       <li>编写几条查询与更新语句，理解事务与回滚。</li>
       <li>添加索引并比较查询性能。</li>
     </ol>
-    <h2>项目实战（入门）</h2>
+    <h2 id="sec-5">项目实战（入门）</h2>
     <ol>
       <li>用户与订单：设计表结构与关联，编写统计查询。</li>
       <li>分页与总量：实现分页查询与总量统计。</li>
       <li>报表生成：导出为 CSV 或可视化图表。</li>
     </ol>
-    <h2>中间插图</h2>
+    <h2 id="sec-6">中间插图</h2>
     <img class="hero-img" src="diagram-architecture.svg" alt="架构示意图" />
     <img class="hero-img" src="illustration-code.svg" alt="代码示意图" />
 
-    <h2>进阶内容</h2>
+    <h2 id="sec-7">进阶内容</h2>
     <ul>
       <li>索引策略：覆盖索引、组合索引与选择性。</li>
       <li>查询优化：合理设计、避免隐式类型转换。</li>
       <li>事务：规划边界，减少锁争用。</li>
     </ul>
-    <h2>更多练习</h2>
+    <h2 id="sec-8">更多练习</h2>
     <ol>
       <li>在电商场景设计订单、仓储与优先级相关的表与查询。</li>
       <li>对关键查询进行索引与语法优化。</li>
@@ -92,19 +92,19 @@ SELECT COUNT(*) AS cnt, AVG(age) AS avg_age FROM users;
     </ol>
   </main>
   <section style="max-width:920px;margin:0 auto;padding:0 16px;">
-    <h2>参考资源</h2>
+    <h2 id="sec-9">参考资源</h2>
     <ul>
       <li><a href="https://www.postgresql.org/docs/" target="_blank" rel="noopener">PostgreSQL 文档</a>；<a href="https://dev.mysql.com/doc/" target="_blank" rel="noopener">MySQL 文档</a></li>
       <li><a href="https://www.sqlite.org/docs.html" target="_blank" rel="noopener">SQLite 文档</a>（嵌入式与便携方式）</li>
       <li><a href="https://www.sqlstyle.guide/" target="_blank" rel="noopener">SQL Style Guide</a>（命名与规范）</li>
     </ul>
-    <h2>系统化学习路径</h2>
+    <h2 id="sec-10">系统化学习路径</h2>
     <ol>
       <li>建模与语法：表与约束、连接与聚合、视图与存储过程。</li>
       <li>索引与优化：规划策略、索引选择性、避免 N+1 与隐式转换。</li>
       <li>事务与运维：隔离等级、锁与并发、监控与审计。</li>
     </ol>
-    <h2>进阶项目</h2>
+    <h2 id="sec-11">进阶项目</h2>
     <ol>
       <li>多维报表系统：分区与滚动、做聚合与缓存、按需生成报表。</li>
       <li>权限与合规：变更记录、数据脱敏、权限模型与多租户。</li>

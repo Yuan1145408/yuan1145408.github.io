@@ -40,7 +40,7 @@
       <img src="icon-project.svg" alt="项目" />
       <img src="icon-debug.svg" alt="调试" />
     </div>
-    <h2>基础语法</h2>
+    <h2 id="sec-1">基础语法</h2>
     <pre><code>#!/usr/bin/env bash
 set -euo pipefail
 # 变量与参数
@@ -53,42 +53,42 @@ for f in *.log; do echo "$f"; done
 # 函数
 log(){ printf "[%s] %s\n" "$(date)" "$*"; }
 </code></pre>
-    <h2>常见坑</h2>
+    <h2 id="sec-2">常见坑</h2>
     <ul>
       <li>空格与引号：用双引号包裹变量展开，避免拆词错误。</li>
       <li>管道错误：启用 <code>set -o pipefail</code> 获取失败。</li>
       <li>可移植性：避免依赖非标准工具或选项。</li>
     </ul>
-    <h2>练习题</h2>
+    <h2 id="sec-3">练习题</h2>
     <ol>
       <li>写一个“日志轮转”脚本，按大小或日期切分。</li>
       <li>实现一个并发下载器，限制最大并发与重试次数。</li>
       <li>写一个“文件去重”脚本，输出重复文件路径。</li>
     </ol>
-    <h2>给完全新手：第一步怎么做</h2>
+    <h2 id="sec-4">给完全新手：第一步怎么做</h2>
     <ol>
       <li>安装 Git Bash 或 WSL；确认 <code>bash --version</code> 正常。</li>
       <li>在工作目录创建 <code>hello.sh</code>，运行：<code>bash hello.sh</code>。</li>
       <li>练习编写一个带参数的脚本，并打印日志。</li>
       <li>学习 <code>set -euo pipefail</code> 与 <code>set -x</code>。</li>
     </ol>
-    <h2>项目实战（入门）</h2>
+    <h2 id="sec-5">项目实战（入门）</h2>
     <ol>
       <li>日志转储：按大小或日期切分。</li>
       <li>并发下载：<code>xargs -P</code> 或后台任务并发执行。</li>
       <li>文件去重：比对校验和，输出重复文件列表。</li>
     </ol>
-    <h2>中间插图</h2>
+    <h2 id="sec-6">中间插图</h2>
     <img class="hero-img" src="diagram-flow.svg" alt="流程示意图" />
     <img class="hero-img" src="illustration-debug.svg" alt="调试示意图" />
 
-    <h2>进阶内容</h2>
+    <h2 id="sec-7">进阶内容</h2>
     <ul>
       <li>trap 与清理：捕获信号并清理临时文件。</li>
       <li>可测试性：将核心逻辑封装为函数，便于单测。</li>
       <li>性能：避免大量 <code>fork</code>，优先内置与管线。</li>
     </ul>
-    <h2>更多练习</h2>
+    <h2 id="sec-8">更多练习</h2>
     <ol>
       <li>实现一个并发任务调度器，记录耗时与失败重试。</li>
       <li>写一个“日志收集器”，按关键字提取并输出概览。</li>
@@ -96,10 +96,10 @@ log(){ printf "[%s] %s\n" "$(date)" "$*"; }
     </ol>
   </main>
   <section style="max-width:920px;margin:0 auto;padding:24px 16px;">
-    <h2>加长版：工程化与进阶（Shell）</h2>
+    <h2 id="sec-9">加长版：工程化与进阶（Shell）</h2>
     <p>专注写“稳健”的 Bash 脚本：严格模式、引用规则、数组/关联数组、trap 信号处理、常用文本工具（grep/sed/awk）、并发下载、日志与质量保障（shellcheck/bats），以及 10 道练习题。</p>
 
-    <h3>严格模式与引用</h3>
+    <h3 id="sec-10">严格模式与引用</h3>
     <pre><code>#!/usr/bin/env bash
 set -euo pipefail
 IFS=$'\n\t'   # 更安全的 IFS
@@ -110,7 +110,7 @@ echo "hello ${name}"   # 始终使用双引号避免空格/通配符问题
     </code></pre>
     <p>建议：启用 <code>set -euo pipefail</code>；为数组/字符串统一加引号；避免未定义变量。</p>
 
-    <h3>数组与关联数组</h3>
+    <h3 id="sec-11">数组与关联数组</h3>
     <pre><code>declare -a files=(a.log b.log)
 declare -A conf=([host]=localhost [port]=8080)
 
@@ -118,7 +118,7 @@ for f in "${files[@]}"; do echo "$f"; done
 echo "host=${conf[host]}"
     </code></pre>
 
-    <h3>trap 与清理</h3>
+    <h3 id="sec-12">trap 与清理</h3>
     <pre><code>tmp=$(mktemp)
 cleanup(){ rm -f "$tmp"; }
 trap cleanup EXIT INT TERM
@@ -126,18 +126,18 @@ echo "work" > "$tmp"
 # 程序结束或收到信号时自动清理临时文件
     </code></pre>
 
-    <h3>文本与管线：grep/sed/awk/xargs</h3>
+    <h3 id="sec-13">文本与管线：grep/sed/awk/xargs</h3>
     <pre><code>grep -i "error" app.log | sed 's/ERROR/ERR/g' | awk '{print NR ":" $0}'
 find images -name '*.jpg' -print0 | xargs -0 -I{} -P 4 cp {} backup/
     </code></pre>
     <p><code>xargs -P</code> 用于并行处理；<code>-0</code> 搭配 <code>-print0</code> 处理含空格的文件名。</p>
 
-    <h3>日志与调试</h3>
+    <h3 id="sec-14">日志与调试</h3>
     <pre><code>log(){ printf "[%s] %s\n" "$(date '+%F %T')" "$*"; }
 set -x   # 追踪执行的每条命令（调试时开启）
     </code></pre>
 
-    <h3>质量保障：shellcheck 与 bats</h3>
+    <h3 id="sec-15">质量保障：shellcheck 与 bats</h3>
     <pre><code># 安装与使用：
 shellcheck script.sh
 
@@ -149,7 +149,7 @@ shellcheck script.sh
 }
     </code></pre>
 
-    <h3>练习题（10 题）</h3>
+    <h3 id="sec-16">练习题（10 题）</h3>
     <ol>
       <li>实现日志轮转脚本：超过 10MB 自动切分并保留最近 N 份。</li>
       <li>并发下载器：读取 URL 列表，用 <code>xargs -P</code> 或后台任务并发下载。</li>
@@ -164,19 +164,19 @@ shellcheck script.sh
     </ol>
   </section>
   <section style="max-width:920px;margin:0 auto;padding:24px 16px;">
-    <h2>参考资源</h2>
+    <h2 id="sec-17">参考资源</h2>
     <ul>
       <li><a href="https://www.gnu.org/software/bash/manual/" target="_blank" rel="noopener">GNU Bash Manual</a></li>
       <li><a href="https://pubs.opengroup.org/onlinepubs/9699919799/" target="_blank" rel="noopener">POSIX Shell & Utilities</a></li>
       <li><a href="https://man7.org/linux/man-pages/" target="_blank" rel="noopener">Linux man-pages</a></li>
     </ul>
-    <h2>系统化学习路径</h2>
+    <h2 id="sec-18">系统化学习路径</h2>
     <ol>
       <li>Shell 基础：变量与控制流、函数与管线、文本与文件操作。</li>
       <li>可维护性与可测试性：trap、规范模式、单元测试与持续集成。</li>
       <li>自动化与工程化：包管理、流程与任务、日志与监控、部署与回滚。</li>
     </ol>
-    <h2>进阶项目</h2>
+    <h2 id="sec-19">进阶项目</h2>
     <ol>
       <li>可复用的 DevOps 工具集：安装、配置、健康检查与回滚。</li>
       <li>日志与指标采集：结构化输出、转换与汇总、告警与看板。</li>

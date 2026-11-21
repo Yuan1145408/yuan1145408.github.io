@@ -57,6 +57,7 @@
       weight: cfg.weight,
       home: cfg.home,
       proxyable: !!cfg.proxyable,
+      directTimeout: cfg.directTimeout || 0,
       note: cfg.note || '',
       build: function (q) {
         return cfg.api + '?action=query&list=search&srsearch=' + enc(q) +
@@ -91,25 +92,25 @@
     mediawikiSource({
       id: 'wikipedia-zh', name: '维基百科（中文）', short: '维基', badge: 'W', weight: 1.25,
       api: 'https://zh.wikipedia.org/w/api.php', wiki: 'https://zh.wikipedia.org/wiki/',
-      home: 'https://zh.wikipedia.org', proxyable: true, limit: 8,
+      home: 'https://zh.wikipedia.org', proxyable: true, limit: 8, directTimeout: 1800,
       note: '国内网络需代理，失败会自动换线路'
     }),
     mediawikiSource({
       id: 'wikipedia-en', name: 'Wikipedia（English）', short: 'EN', badge: 'W', weight: 1.2,
       api: 'https://en.wikipedia.org/w/api.php', wiki: 'https://en.wikipedia.org/wiki/',
-      home: 'https://en.wikipedia.org', proxyable: true, limit: 6
+      home: 'https://en.wikipedia.org', proxyable: true, limit: 6, directTimeout: 1800
     }),
     mediawikiSource({
       id: 'mcwiki-zh', name: 'Minecraft Wiki（中文）', short: 'MCWiki', badge: 'W', weight: 1.05,
       group: 'minecraft',
       api: 'https://zh.minecraft.wiki/api.php', wiki: 'https://zh.minecraft.wiki/w/',
-      home: 'https://zh.minecraft.wiki', proxyable: true, limit: 8
+      home: 'https://zh.minecraft.wiki', proxyable: true, limit: 8, directTimeout: 1500
     }),
     mediawikiSource({
       id: 'mcwiki-en', name: 'Minecraft Wiki（English）', short: 'MCW', badge: 'W', weight: 1.0,
       group: 'minecraft',
       api: 'https://minecraft.wiki/api.php', wiki: 'https://minecraft.wiki/w/',
-      home: 'https://minecraft.wiki', proxyable: true, limit: 6
+      home: 'https://minecraft.wiki', proxyable: true, limit: 6, directTimeout: 1500
     }),
 
     /* ---------------- 我的世界：MC百科（HTML 解析） ---------------- */
@@ -136,6 +137,36 @@
             snippet: clamp(cleanMcmod(stripTags(body ? body.innerHTML : '')), 200),
             url: href,
             badges: short && short !== title ? [short] : []
+          });
+        }
+        return out;
+      }
+    },
+
+    /* ---------------- 中文内容（国内可直连） ---------------- */
+    {
+      id: 'csdn', name: 'CSDN', short: 'CSDN', badge: 'CS', group: 'cn', weight: 1.1,
+      home: 'https://www.csdn.net', retry: 1,
+      note: '中文技术文章与教程，国内可直连',
+      build: function (q) {
+        return 'https://so.csdn.net/api/v3/search?q=' + enc(q) + '&t=all&p=1';
+      },
+      parse: function (d) {
+        var list = (d && d.result_vos) || [];
+        var out = [];
+        for (var i = 0; i < list.length && out.length < 9; i++) {
+          var it = list[i];
+          var type = String(it.type || '').toLowerCase();
+          if (type === 'download' || type === 'ad' || type === 'live') continue;
+          var url = String(it.url || '').split('?')[0];
+          if (!/^https?:\/\/[^/]*csdn\.net\/./i.test(url)) continue;
+          var title = stripTags(it.title || '');
+          if (!title) continue;
+          out.push({
+            title: title,
+            snippet: clamp(stripTags(it.description || it.digest || ''), 220),
+            url: url,
+            badges: ['CSDN', type === 'ask' ? '问答' : '博客']
           });
         }
         return out;
@@ -177,6 +208,57 @@
             snippet: clamp(p.description || '（无描述）', 200),
             url: (p.links && (p.links.npm || p.links.homepage)) || ('https://www.npmjs.com/package/' + p.name),
             badges: ['npm'].concat((p.keywords || []).slice(0, 2))
+          };
+        });
+      }
+    },
+    {
+      id: 'crates', name: 'crates.io（Rust）', short: 'crates', badge: 'CR', group: 'code', weight: 0.95,
+      home: 'https://crates.io',
+      build: function (q) {
+        return 'https://crates.io/api/v1/crates?q=' + enc(q) + '&per_page=4';
+      },
+      parse: function (d) {
+        return ((d && d.crates) || []).map(function (c) {
+          return {
+            title: c.name + (c.max_version ? ' @' + c.max_version : ''),
+            snippet: clamp(c.description || '（无描述）', 200),
+            url: 'https://crates.io/crates/' + c.name,
+            badges: ['Rust'].concat(c.downloads ? ['↓ ' + Math.round(c.downloads / 1000) + 'k'] : [])
+          };
+        });
+      }
+    },
+    {
+      id: 'packagist', name: 'Packagist（PHP）', short: 'Packagist', badge: 'PK', group: 'code', weight: 0.9,
+      home: 'https://packagist.org',
+      build: function (q) {
+        return 'https://packagist.org/search.json?q=' + enc(q) + '&per_page=4';
+      },
+      parse: function (d) {
+        return ((d && d.results) || []).map(function (p) {
+          return {
+            title: p.name,
+            snippet: clamp(p.description || '（无描述）', 200),
+            url: p.url || ('https://packagist.org/packages/' + p.name),
+            badges: ['PHP'].concat(p.downloads ? ['↓ ' + Math.round(p.downloads / 1000) + 'k'] : [])
+          };
+        });
+      }
+    },
+    {
+      id: 'gitlab', name: 'GitLab 仓库', short: 'GitLab', badge: 'GL', group: 'code', weight: 0.9,
+      home: 'https://gitlab.com',
+      build: function (q) {
+        return 'https://gitlab.com/api/v4/projects?search=' + enc(q) + '&per_page=4&order_by=star_count&sort=desc';
+      },
+      parse: function (d) {
+        return (Array.isArray(d) ? d : []).map(function (p) {
+          return {
+            title: p.path_with_namespace || p.name,
+            snippet: clamp(p.description || '（该仓库没有填写简介）', 200),
+            url: p.web_url,
+            badges: ['GitLab'].concat(p.star_count ? ['★ ' + p.star_count] : [])
           };
         });
       }
@@ -353,7 +435,7 @@
     /* ---------------- 图书（被墙，走代理） ---------------- */
     {
       id: 'openlibrary', name: 'Open Library 图书', short: '图书', badge: 'B', group: 'book', weight: 0.9,
-      home: 'https://openlibrary.org', proxyable: true,
+      home: 'https://openlibrary.org', proxyable: true, directTimeout: 1800,
       build: function (q) { return 'https://openlibrary.org/search.json?q=' + enc(q) + '&limit=5'; },
       parse: function (d) {
         return ((d && d.docs) || []).map(function (b) {
@@ -372,6 +454,7 @@
 
   var GROUPS = [
     { key: 'all', label: '全部' },
+    { key: 'cn', label: '中文内容' },
     { key: 'wiki', label: '百科' },
     { key: 'code', label: '代码 / 包' },
     { key: 'qa', label: '问答' },

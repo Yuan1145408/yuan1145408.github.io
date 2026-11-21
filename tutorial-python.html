@@ -41,14 +41,14 @@
     <p>这是一份简明但覆盖全面的 Python 教程。按步骤练习，确保能跑起来、能做项目，再逐步迈向“工程化”。</p>
     <img class="hero-img" src="hero-dev.svg" alt="开发与学习插画" />
 
-    <h2>安装与环境</h2>
+    <h2 id="sec-1">安装与环境</h2>
     <ul>
       <li>Windows：到 <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org</a> 下载并勾选 “Add Python to PATH”。</li>
       <li>创建虚拟环境：<code>python -m venv .venv</code>，激活：<code>.venv\\Scripts\\activate</code>。</li>
       <li>安装包：<code>pip install requests</code>，升级 pip：<code>python -m pip install --upgrade pip</code>。</li>
     </ul>
 
-    <h2>完整新手路径：第一步怎么做</h2>
+    <h2 id="sec-2">完整新手路径：第一步怎么做</h2>
     <ol>
       <li>安装 Python 后，打开 VS Code（或任何你熟悉的编辑器）。</li>
       <li>在工作目录创建文件夹，例如 <code>learn-python</code>，用 VS Code 打开。</li>
@@ -58,12 +58,12 @@
     </ol>
     <p>缩进非常重要：Python 用空格表示层级（如 <code>if</code> 或函数体内的内容需要缩进 4 个空格），缩进错误会报 <code>IndentationError</code>。</p>
 
-    <h2>Hello, World</h2>
+    <h2 id="sec-3">Hello, World</h2>
     <pre><code>print("Hello, World")
     </code></pre>
     <p>这一行代码调用内置的 <code>print</code> 函数，将字符串输出到屏幕。保存后即可直接运行。</p>
 
-    <h2>基础语法</h2>
+    <h2 id="sec-4">基础语法</h2>
     <pre><code># 变量与类型
 name = "Alice"      # str
 age = 18             # int
@@ -96,7 +96,7 @@ print(math.sqrt(9))
       <li>函数用 <code>def</code> 定义，<code>b=0</code> 是默认参数；导入模块后可使用其提供的函数。</li>
     </ul>
 
-    <h2>如何运行与调试（尽量不“调试=遇到问题就停工”）</h2>
+    <h2 id="sec-5">如何运行与调试（尽量不“调试=遇到问题就停工”）</h2>
     <ul>
       <li>交互模式：在终端输入 <code>python</code> 进入 REPL，尝试语法与函数。</li>
       <li>脚本模式：运行 <code>python your_script.py</code>，适合编写完整程序。</li>
@@ -104,8 +104,8 @@ print(math.sqrt(9))
       <li>调试技巧：使用 <code>print()</code> 输出变量值；出错时先阅读错误末尾几行，含文件名、行号与错误类型。</li>
     </ul>
 
-    <h2>基础语法详解（拓展，跟着练就能独立做东西）</h2>
-    <h3>字符串与切片</h3>
+    <h2 id="sec-6">基础语法详解（拓展，跟着练就能独立做东西）</h2>
+    <h3 id="sec-7">字符串与切片</h3>
     <pre><code>s = "hello"
 print(s.upper())       # HELLO
 print(s[1:4])          # ell （切片：结束不含右端）
@@ -113,7 +113,7 @@ print(s.replace("l","L"))  # heLLo
     </code></pre>
     <p>切片语法 <code>s[start:end:step]</code> 可灵活选择；常规操作有大小写转换、查找与替换等。</p>
 
-    <h3>列表/字典/集合常用操作</h3>
+    <h3 id="sec-8">列表/字典/集合常用操作</h3>
     <pre><code>nums = [3,1,2]
 nums.append(4); nums.sort()     # [1,2,3,4]
 
@@ -126,20 +126,20 @@ uniq.add(5); uniq.discard(2)
     </code></pre>
     <p>列表有增删改查与排序；字典的 <code>get</code> 可设置默认值；集合适合去重与集合运算（并交差）。</p>
 
-    <h3>元组与不可变性</h3>
+    <h3 id="sec-9">元组与不可变性</h3>
     <pre><code>pt = (10, 20)
 x, y = pt     # 解包：x=10, y=20
     </code></pre>
     <p>元组不可修改，适合作为字典键或表示不可变的坐标/设置。</p>
 
-    <h3>条件表达式与推导式</h3>
+    <h3 id="sec-10">条件表达式与推导式</h3>
     <pre><code>status = "adult" if age >= 18 else "minor"
 evens = [x for x in range(10) if x % 2 == 0]
 mapping = {x: x*x for x in range(5)}
     </code></pre>
     <p>推导式能将“循环+条件+构造”合并为一行，适合数据转换。</p>
 
-    <h3>函数进阶：可变参数、关键字参数、闭包</h3>
+    <h3 id="sec-11">函数进阶：可变参数、关键字参数、闭包</h3>
     <pre><code>def demo(a, *args, **kwargs):
     return a, args, kwargs
 
@@ -153,7 +153,7 @@ print(add5(10))  # 15
     </code></pre>
     <p>当需要可扩展的函数签名时使用 <code>*args</code> 与 <code>**kwargs</code>；闭包用于生成带“记忆”的函数。</p>
 
-    <h3>模块与包、相对导入</h3>
+    <h3 id="sec-12">模块与包、相对导入</h3>
     <pre><code># project/
 #   src/
 #     app/
@@ -165,14 +165,14 @@ from .util import helper
     </code></pre>
     <p>存在 <code>__init__.py</code> 的文件夹就是包；相对导入有助于模块化组织。</p>
 
-    <h3>类型注解（可选）</h3>
+    <h3 id="sec-13">类型注解（可选）</h3>
     <pre><code>from typing import List
 def top_n(nums: List[int], n: int) -> List[int]:
     return sorted(nums, reverse=True)[:n]
     </code></pre>
     <p>类型注解能提升可读性与工具提示，但不会改变运行时行为。</p>
 
-    <h3>面向对象基础</h3>
+    <h3 id="sec-14">面向对象基础</h3>
     <pre><code>class User:
     def __init__(self, name: str, age: int):
         self.name = name; self.age = age
@@ -185,7 +185,7 @@ class Admin(User):
     </code></pre>
     <p>类封装数据与行为；继承与 <code>super()</code> 可复用与扩展父类方法。</p>
 
-    <h2>文件与路径（做项目一定会用到）</h2>
+    <h2 id="sec-15">文件与路径（做项目一定会用到）</h2>
     <pre><code>from pathlib import Path
 p = Path("data.txt")
 p.write_text("hello")
@@ -193,7 +193,7 @@ print(p.read_text())
     </code></pre>
     <p><code>Path</code> 是标准库中处理文件路径的首选方式，更通用也更健壮（兼容不同操作系统与编码问题）。</p>
 
-    <h2>JSON 与网络（写工具和数据采集必备）</h2>
+    <h2 id="sec-16">JSON 与网络（写工具和数据采集必备）</h2>
     <pre><code>import json, requests
 data = {"a": 1, "b": 2}
 text = json.dumps(data)
@@ -204,7 +204,7 @@ print(r.status_code, r.json().get("slideshow", {}))
     </code></pre>
     <p>说明：用 <code>json</code> 将字典转换为字符串（或反过来）；<code>requests</code> 是常用的第三方库，负责网络请求。第一次使用需要 <code>pip install requests</code>。</p>
 
-    <h2>正则与时间（文本处理与日志常用）</h2>
+    <h2 id="sec-17">正则与时间（文本处理与日志常用）</h2>
     <pre><code>import re, datetime
 m = re.search(r"(\\d+)", "item42")
 print(m.group(1))
@@ -212,7 +212,7 @@ print(datetime.datetime.now().isoformat())
     </code></pre>
     <p>正则用于查找或提取文本中的模式，<code>\\d+</code> 表示“一个或多个数字”；<code>datetime</code> 提供日期与时间相关功能。</p>
 
-    <h2>日志与异常（定位问题的放大镜）</h2>
+    <h2 id="sec-18">日志与异常（定位问题的放大镜）</h2>
     <pre><code>import logging
 logging.basicConfig(level=logging.INFO)
 try:
@@ -222,7 +222,7 @@ except ZeroDivisionError as e:
     </code></pre>
     <p>当程序发生异常（如“除以零”）时，<code>try/except</code> 可处理并记录错误。日志能让你在出现问题时更容易定位原因。</p>
 
-    <h2>术语小词典（看不懂报错就先查这个）</h2>
+    <h2 id="sec-19">术语小词典（看不懂报错就先查这个）</h2>
     <ul>
       <li><b>解释器</b>：执行 Python 代码的程序，电脑安装的 <code>python.exe</code> 就是。</li>
       <li><b>虚拟环境</b>：项目隔离的 Python 环境，避免不同项目的依赖相互干扰。</li>
@@ -233,7 +233,7 @@ except ZeroDivisionError as e:
       <li><b>运行时错误</b>：语法没错，但执行时出问题（如除以零），报 <code>ZeroDivisionError</code>、<code>TypeError</code> 等。</li>
     </ul>
 
-    <h2>常用库与示例清单（可复制，能立刻做事）</h2>
+    <h2 id="sec-20">常用库与示例清单（可复制，能立刻做事）</h2>
     <pre><code># 安装：pip install numpy pandas matplotlib seaborn scikit-learn requests beautifulsoup4 lxml fastapi uvicorn[standard] sqlalchemy pydantic pytest loguru rich typer
 
 import numpy as np
@@ -273,7 +273,7 @@ def hello(name: str): print(f'hi {name}')
 # 运行：python cli.py hello Alice
     </code></pre>
 
-    <h2>常见错误与快速排查</h2>
+    <h2 id="sec-21">常见错误与快速排查</h2>
     <ul>
       <li><b>IndentationError</b>：缩进不一致。统一用 4 个空格缩进，避免 Tab 与空格混用。</li>
       <li><b>NameError</b>：变量未定义。是否拼写错误？是否在使用前赋值？</li>
@@ -283,14 +283,14 @@ def hello(name: str): print(f'hi {name}')
       <li><b>PermissionError</b>：没有写文件权限。改到自己的目录（如桌面）或以管理员身份运行。</li>
     </ul>
 
-    <h2>下一步</h2>
+    <h2 id="sec-22">下一步</h2>
     <ul>
       <li>官方文档：<a href="https://docs.python.org/3/" target="_blank" rel="noopener">docs.python.org</a></li>
       <li>依赖与管理：<code>pip-tools</code>、<code>poetry</code>、<code>pipenv</code></li>
       <li>打包与发布：<code>setuptools</code>、<code>build</code>、<code>twine</code></li>
     </ul>
 
-    <h2>学习路径建议：10～20 小时</h2>
+    <h2 id="sec-23">学习路径建议：10～20 小时</h2>
     <ol>
       <li>第 1～2 天：安装与运行、变量与容器、条件与循环。</li>
       <li>第 3～4 天：函数与模块、文件与路径、异常与日志。</li>
@@ -299,21 +299,21 @@ def hello(name: str): print(f'hi {name}')
       <li>进阶方向：数据处理（Pandas）、Web（Flask/FastAPI/Django）、自动化脚本等。</li>
     </ol>
 
-    <h2>配图</h2>
+    <h2 id="sec-24">配图</h2>
     <img class="hero-img" src="diagram-flow.svg" alt="流程示意图" />
     <img class="hero-img" src="illustration-code.svg" alt="代码示意图" />
 
-    <h2>扩展内容</h2>
+    <h2 id="sec-25">扩展内容</h2>
     <ul>
       <li>并发模型：线程/进程与 <code>asyncio</code> 的场景选择。</li>
       <li>工程化：Poetry/pytest/ruff 等工具链的组合实践。</li>
       <li>性能：<code>cProfile</code> 与向量化（NumPy/Pandas）。</li>
     </ul>
 
-    <h2>加长版：工程化与进阶</h2>
+    <h2 id="sec-26">加长版：工程化与进阶</h2>
     <p>下面的章节聚焦“能做项目且可维护”的能力，包括类型系统、装饰器/上下文管理器、生成器、并发与异步、打包与发布、测试与质量、CLI 与 Web 快速上手等。</p>
 
-    <h3>类型系统与数据类（dataclass）</h3>
+    <h3 id="sec-27">类型系统与数据类（dataclass）</h3>
     <pre><code>from dataclasses import dataclass, field
 from typing import List, Optional
 
@@ -336,7 +336,7 @@ print(o.total())  # 20.5
     </code></pre>
     <p><code>dataclass</code> 自动生成 <code>__init__</code> / <code>__repr__</code> 等，配合类型注解可提升可读性与 IDE 提示。</p>
 
-    <h3>装饰器与上下文管理器</h3>
+    <h3 id="sec-28">装饰器与上下文管理器</h3>
     <pre><code>import time
 from contextlib import contextmanager
 
@@ -367,7 +367,7 @@ work()
     </code></pre>
     <p>装饰器用于横切关注点（如计时/鉴权），上下文管理器用于资源的获取与释放（文件/锁/连接等）。</p>
 
-    <h3>生成器与迭代器</h3>
+    <h3 id="sec-29">生成器与迭代器</h3>
     <pre><code>def read_lines(path, chunk=1024):
     with open(path, 'r', encoding='utf-8') as f:
         buf = ''
@@ -384,7 +384,7 @@ for line in read_lines('tmp.txt'):
     </code></pre>
     <p>生成器（<code>yield</code>）可以按需产生数据，适合处理大文件或无限序列。</p>
 
-    <h3>并发与异步：线程/进程/asyncio</h3>
+    <h3 id="sec-30">并发与异步：线程/进程/asyncio</h3>
     <pre><code># 线程池：适合 IO 密集型（网络/磁盘）
 from concurrent.futures import ThreadPoolExecutor
 import requests
@@ -422,7 +422,7 @@ async def main():
     <p>选择建议：
       <br/>CPU 密集型 → 进程（<code>multiprocessing</code>）；IO 密集型 → 线程/协程；若使用异步库（如 <code>aiohttp</code>）可用 <code>asyncio</code> 获得更好的扩展性。</p>
 
-    <h3>打包与发布（pyproject.toml + Poetry）</h3>
+    <h3 id="sec-31">打包与发布（pyproject.toml + Poetry）</h3>
     <pre><code># 安装 Poetry：
 pip install poetry
 
@@ -441,7 +441,7 @@ poetry publish -u &lt;username&gt; -p &lt;password&gt;
     </code></pre>
     <p>使用 <code>pyproject.toml</code> 统一声明项目信息与依赖；Poetry 管理依赖与虚拟环境，简化构建与发布。</p>
 
-    <h3>测试与质量（pytest + ruff + black）</h3>
+    <h3 id="sec-32">测试与质量（pytest + ruff + black）</h3>
     <pre><code># 安装：pip install pytest pytest-cov ruff black
 
 # 测试用例 tests/test_demo.py
@@ -456,7 +456,7 @@ def test_add():
     </code></pre>
     <p>先保证正确性（测试），再统一风格（格式化），最后使用静态检查（ruff）提升稳健性。</p>
 
-    <h3>CLI 与 Web 快速上手</h3>
+    <h3 id="sec-33">CLI 与 Web 快速上手</h3>
     <pre><code># Typer：优雅的 CLI
 import typer
 
@@ -488,7 +488,7 @@ def create_user(u: UserIn):
     </code></pre>
     <p>CLI 适合任务编排与自动化；FastAPI 适合快速构建 JSON API，与 Pydantic 搭配保证入参与出参的类型安全。</p>
 
-    <h3>练习题（10 题）</h3>
+    <h3 id="sec-34">练习题（10 题）</h3>
     <ol>
       <li>编写 <code>top_k_words(path, k)</code>：统计文本文件中出现频率最高的 K 个词，忽略大小写与标点。</li>
       <li>实现装饰器 <code>@retry(n=3)</code>：当函数抛出异常时自动重试。</li>
@@ -545,7 +545,7 @@ def batched(it, size):
       </code></pre>
     </details>
 
-    <h2>理论与论文到代码索引（Python）</h2>
+    <h2 id="sec-35">理论与论文到代码索引（Python）</h2>
     <ul>
       <li><a href="./tutorial-p2c-transformer.html">Transformer 从零实现（Attention/位置编码/残差）</a></li>
       <li><a href="./tutorial-p2c-resnet.html">ResNet 训练实战（残差块与训练理论）</a></li>
@@ -556,7 +556,7 @@ def batched(it, size):
     <p>阅读建议：先理论概念，再看代码骨架，最后根据本章的 Python 工程实践延伸。</p>
   </main>
   <section style="max-width:920px;margin:0 auto;padding:0 16px;">
-    <h2>语法速查</h2>
+    <h2 id="sec-36">语法速查</h2>
     <ul>
       <li>字符串：<code>"abc".upper()</code>、<code>"abc"[1:]</code>、<code>"a-b".split("-")</code></li>
       <li>列表：<code>append</code>、<code>sort</code>、<code>list(range(5))</code></li>

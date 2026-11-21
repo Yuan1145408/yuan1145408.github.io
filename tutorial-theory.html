@@ -33,7 +33,7 @@
     <h1>计算机科学理论手册（简明版）</h1>
     <p>本手册以“像一本书一样的结构，系统性覆盖算法与数据结构、复杂度与证明、分布式一致性与存储、深度学习理论、并发与内存模型、编译原理与计算机网络等核心理论。每章提供关键概念、结论与阅读参考。</p>
     <hr/>
-    <h2>目录</h2>
+    <h2 id="sec-1">目录</h2>
     <ol>
       <li><a href="#math">数学基础</a></li>
       <li><a href="#algo">算法设计思想</a></li>
@@ -47,7 +47,7 @@
     </ol>
     <hr/>
     <section id="math">
-      <h2>1. 数学基础</h2>
+      <h2 id="sec-2">1. 数学基础</h2>
       <ul>
         <li>离散数学：集合与函数、逻辑、图论（树、连通性、最短路）</li>
         <li>概率统计：大数定律、中心极限定理、马尔可夫过程（简述）</li>
@@ -56,7 +56,7 @@
       <p>参考：MIT 6.042J（离散）、概率论教材、线性代数教材。</p>
     </section>
     <section id="algo">
-      <h2>2. 算法设计思想</h2>
+      <h2 id="sec-3">2. 算法设计思想</h2>
       <ul>
         <li>分治：主定理、递归树法。</li>
         <li>动态规划：状态设计、转移与无后效性；优化技巧（四边形不等式等）。</li>
@@ -67,7 +67,7 @@
       <p>参考：CLRS《算法导论》、Kleinberg《算法设计》。</p>
     </section>
     <section id="ds">
-      <h2>3. 数据结构内核</h2>
+      <h2 id="sec-4">3. 数据结构内核</h2>
       <ul>
         <li>基础：数组、链表、栈、队列、哈希表（开放定址/拉链）、堆。</li>
         <li>树结构：平衡二叉树（AVL、红黑树）、B树/B+树、Trie、Segment Tree、Fenwick（BIT）。</li>
@@ -77,7 +77,7 @@
       <p>参考：Sedgewick《算法（4e）》、LevelDB/LSM 相关论文。</p>
     </section>
     <section id="complexity">
-      <h2>4. 复杂度与证明</h2>
+      <h2 id="sec-5">4. 复杂度与证明</h2>
       <ul>
         <li>时间/空间复杂度：渐进符号（O/Ω/Θ）、摊还分析（势能法）。</li>
         <li>正确性证明：循环不变式、归纳法、交换论证。</li>
@@ -86,7 +86,7 @@
       <p>参考：Sipser《计算理论导引》、CLRS相关章节。</p>
     </section>
     <section id="distributed">
-      <h2>5. 分布式与一致性</h2>
+      <h2 id="sec-6">5. 分布式与一致性</h2>
       <ul>
         <li>一致性模型：线性一致性、顺序一致性、最终一致性。</li>
         <li>CAP 与 PACELC：一致性/可用性/分区容错与延迟/一致性权衡。</li>
@@ -96,7 +96,7 @@
       <p>参考：Raft/Paxos 原始论文、Bigtable、Spanner 论文。</p>
     </section>
     <section id="dl">
-      <h2>6. 深度学习理论</h2>
+      <h2 id="sec-7">6. 深度学习理论</h2>
       <ul>
         <li>优化与泛化：损失、过拟合/欠拟合、正则化与早停。</li>
         <li>梯度消失/爆炸：初始化、归一化（BatchNorm/LayerNorm）。</li>
@@ -106,7 +106,7 @@
       <p>参考：Goodfellow《深度学习》、Attention/ResNet 论文。</p>
     </section>
     <section id="concurrency">
-      <h2>7. 并发与内存模型</h2>
+      <h2 id="sec-8">7. 并发与内存模型</h2>
       <ul>
         <li>线程与锁：互斥/死锁/饥饿；条件变量。</li>
         <li>内存模型：顺序一致性、happens-before、指令重排。</li>
@@ -115,7 +115,7 @@
       <p>参考：Java 内存模型、C++ 内存模型文档。</p>
     </section>
     <section id="compiler">
-      <h2>8. 编译原理（简明）</h2>
+      <h2 id="sec-9">8. 编译原理（简明）</h2>
       <ul>
         <li>词法/语法/语义分析：正则与上下文无关文法。</li>
         <li>中间表示（IR）与优化：SSA、常量传播、循环优化。</li>
@@ -124,7 +124,7 @@
       <p>参考：龙书（Aho）与现代编译课程。</p>
     </section>
     <section id="network">
-      <h2>9. 计算机网络（简明）</h2>
+      <h2 id="sec-10">9. 计算机网络（简明）</h2>
       <ul>
         <li>五层模型：链路/网络/传输/应用层。</li>
         <li>可靠传输与拥塞控制：TCP/QUIC。</li>

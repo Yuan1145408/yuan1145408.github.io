@@ -39,7 +39,7 @@
     <h1>Scala 入门</h1>
     <p class="muted">JVM 上的函数式编程；集合操作与并发模型。</p>
 
-    <h2>示例</h2>
+    <h2 id="sec-1">示例</h2>
     <pre><code>// build.sbt 中添加：scalaVersion := "2.13.12"
 object Hello extends App {
   val nums = List(1,2,3,4).map(_ * 2).filter(_ > 4)
@@ -47,11 +47,11 @@ object Hello extends App {
 }
     </code></pre>
 
-    <h2>Akka（并发与分布式）</h2>
+    <h2 id="sec-2">Akka（并发与分布式）</h2>
     <pre><code>// 略：Actor 模型、消息传递。
     </code></pre>
 
-    <h2>下一步</h2>
+    <h2 id="sec-3">下一步</h2>
     <ul>
       <li>官方文档：<a href="https://docs.scala-lang.org/" target="_blank" rel="noopener">Scala Docs</a></li>
       <li>生态：Akka、Play Framework、Spark（大数据）。</li>

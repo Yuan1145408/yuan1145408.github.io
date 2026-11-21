@@ -40,7 +40,7 @@
       <img src="icon-debug.svg" alt="调试" />
     </div>
 
-    <h2>第二步：怎么做</h2>
+    <h2 id="sec-1">第二步：怎么做</h2>
     <ol>
       <li>准备编译器（g++ 或 MSVC），确保 <code>g++ --version</code> / <code>cl</code> 可用</li>
       <li>写 <code>main.cpp</code> 的 Hello World 并成功运行</li>
@@ -48,7 +48,7 @@
       <li>使用断点与调试器查看变量与调用栈</li>
     </ol>
 
-    <h2>基础语法</h2>
+    <h2 id="sec-2">基础语法</h2>
     <pre><code>// g++
 g++ -std=c++17 main.cpp -o app
 ./app
@@ -57,49 +57,49 @@ g++ -std=c++17 main.cpp -o app
 cl /EHsc /std:c++17 main.cpp &amp;&amp; app.exe
     </code></pre>
 
-    <h2>项目实战（入门）</h2>
+    <h2 id="sec-3">项目实战（入门）</h2>
     <ol>
       <li>JSON 解析：使用 <code>nlohmann/json</code> 读取并处理数据</li>
       <li>并发下载：<code>std::thread</code> + 限流 + 合并结果</li>
       <li>文件工具：<code>std::filesystem</code> 遍历并生成报告</li>
     </ol>
-    <h2>下一步</h2>
+    <h2 id="sec-4">下一步</h2>
     <ul>
       <li>CMake/Ninja 构建与单元测试</li>
       <li>STL 容器与算法的进阶用法</li>
       <li>异常、安全与性能优化</li>
     </ul>
-    <h2>语法速览</h2>
+    <h2 id="sec-5">语法速览</h2>
     <ul>
       <li>范围 for：<code>for (auto &x : v) { ... }</code></li>
       <li>结构化绑定：<code>auto [k, v] = pair;</code></li>
       <li>字符串拼接：<code>std::string s = a + b;</code></li>
       <li>格式化：<code>std::format("{} {}", a, b)</code> (C++20)</li>
     </ul>
-    <h2>常见坑</h2>
+    <h2 id="sec-6">常见坑</h2>
     <ul>
       <li>空悬引用/指针：确保对象生命周期与所有权清晰</li>
       <li>异常安全：使用 RAII，防止资源泄漏</li>
       <li>拷贝 vs 移动：优先使用移动构造与 <code>std::move</code></li>
     </ul>
-    <h2>练习题</h2>
+    <h2 id="sec-7">练习题</h2>
     <ul>
       <li>实现一个 <code>LRU</code> 缓存（map+list 或 unordered_map+list）</li>
       <li>用 <code>std::thread</code> 实现并发下载并合并结果</li>
       <li>用 <code>std::filesystem</code> 遍历目录，生成文件树 JSON</li>
     </ul>
-    <h2>国内网络建议</h2>
+    <h2 id="sec-8">国内网络建议</h2>
     <ul>
       <li>使用国内镜像安装依赖与编译工具</li>
       <li>遇到网络受限，优先使用本地“国内模式”与代理下载</li>
     </ul>
-    <h2>参考资源</h2>
+    <h2 id="sec-9">参考资源</h2>
     <ul>
       <li><a href="https://en.cppreference.com/w/" target="_blank" rel="noopener">cppreference</a>（标准库与语言要点）</li>
       <li><a href="https://isocpp.org/" target="_blank" rel="noopener">isocpp.org</a>（社区与标准动向）</li>
       <li><a href="https://cmake.org/cmake/help/latest/" target="_blank" rel="noopener">CMake 文档</a>（现代构建系统）</li>
     </ul>
-    <h2>系统学习路径</h2>
+    <h2 id="sec-10">系统学习路径</h2>
     <ol>
       <li>语法与 STL：基础语法、移动语义、容器与算法、异常与 RAII</li>
       <li>工程化：现代 CMake、单元测试（Catch2/GTest）、类型与格式化</li>

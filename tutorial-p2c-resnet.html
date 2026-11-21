@@ -33,12 +33,12 @@
     <h1>Paper-to-Code: ResNet 训练实战</h1>
     <p>复现残差块并在 CIFAR-10 训练。</p>
     <hr/>
-    <h2>1. 关键点</h2>
+    <h2 id="sec-1">1. 关键点</h2>
 <ul>
   <li>残差块（identity/conv shortcuts）</li>
   <li>BatchNorm + ReLU</li>
 </ul>
-<h2>2. PyTorch 最小实现</h2>
+<h2 id="sec-2">2. PyTorch 最小实现</h2>
 <pre>
 import torch.nn as nn
 class BasicBlock(nn.Module):
@@ -56,7 +56,7 @@ class BasicBlock(nn.Module):
         out += self.shortcut(x)
         return self.relu(out)
 </pre>
-<h2>3. 训练脚本与指标</h2>
+<h2 id="sec-3">3. 训练脚本与指标</h2>
 <pre>
 # 训练/验证循环，保存 best 模型与曲线
 </pre>
