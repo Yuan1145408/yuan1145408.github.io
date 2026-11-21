@@ -1,0 +1,30 @@
+# 本地环境与临时产物
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 二进制 / 反编译产物（站点无需、且会显著增大仓库与发布体积）
+*.dll
+*.exe
+*.msi
+disasm.txt
+analysis-exe.txt
+report.txt
+
+# 运行日志
+*.log
+latest.log
+mojibake_fix.log
+
+# 账号与会话数据（仅本地演示用，切勿提交）
+users.json
+sessions.json
+points.json
+keys.json
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

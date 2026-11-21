@@ -1,9 +1,40 @@
 (function(){
   'use strict';
-  // 静态模式辅助：从全局配置读取
+
+  // ---- 公共配置与工具（全站唯一实现，避免各渲染函数重复定义） ----
   const isStatic = () => {
     try { return !!(window.Niao && window.Niao.config && window.Niao.config.static); } catch(_) { return true; }
   };
+  // HTML 文本转义：数据文件中的名称/描述可能含 < > &，直接拼进 innerHTML 会破坏结构
+  function esc(v){
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  // URL 清洗：去掉反引号与首尾空白，作为属性值使用时再转义
+  function sanitizeUrl(u){
+    try { return String(u || '').replace(/`/g, '').trim(); } catch(_) { return ''; }
+  }
+  // 属性值统一出口：清洗 + 转义
+  function attrUrl(u){ return esc(sanitizeUrl(u)); }
+
+  // ---- 统一 JSON 加载：同一文件只请求一次，页面初始化并发执行 ----
+  const jsonCache = new Map();
+  function loadJSON(path){
+    if (!jsonCache.has(path)) {
+      const p = fetch(path, { cache: 'no-cache' })
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .catch(e => { console.error('load failed:', path, e); return null; });
+      jsonCache.set(path, p);
+    }
+    return jsonCache.get(path);
+  }
+  async function loadList(path, key){
+    const data = await loadJSON(path);
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data[key])) return data[key];
+    return [];
+  }
 
   // 渲染镜像入口（仅 Netlify 主入口）
   const mirrorsContainer = document.getElementById('mirrorsContainer');
@@ -23,39 +54,23 @@
     return (base + ext) || 'download';
   }
   async function loadMirrors() {
-    try {
-      const resp = await fetch('./mirrors.json', { cache: 'no-cache' });
-      const data = await resp.json();
-      return Array.isArray(data.mirrors) ? data.mirrors : [];
-    } catch (e) {
-      console.error('loadMirrors failed', e);
-      return [];
-    }
+    const list = await loadList('./mirrors.json', 'mirrors');
+    return list.map(m => ({ name: m.name || 'Netlify 主入口', url: sanitizeUrl(m.url) })).filter(m => m.url);
   }
-  async function renderMirrors() {
+  function renderMirrorsList(list) {
     if (!mirrorsContainer) return;
-    const list = await loadMirrors();
     if (!list.length) {
       mirrorsContainer.innerHTML = '<p>暂无镜像数据或加载失败</p>';
       return;
     }
-    const html = list.map(m => `<a class="btn" href="${m.url}" target="_blank" rel="noopener noreferrer">${m.name || 'Netlify 主入口'}</a>`).join('');
+    const html = list.map(m => `<a class="btn" href="${attrUrl(m.url)}" target="_blank" rel="noopener noreferrer">${esc(m.name)}</a>`).join('');
     mirrorsContainer.innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap;">${html}</div>`;
   }
 
   // 教程专区：加载 tutorials-extra.json 并渲染
   const tutorialGrid = document.getElementById('tutorialGrid');
   async function loadExtraTutorials() {
-    try {
-      const resp = await fetch('./tutorials-extra.json', { cache: 'no-cache' });
-      const data = await resp.json();
-      if (Array.isArray(data)) return data;
-      if (data && Array.isArray(data.tutorials)) return data.tutorials;
-      return [];
-    } catch (e) {
-      console.error('loadExtraTutorials failed', e);
-      return [];
-    }
+    return loadList('./tutorials-extra.json', 'tutorials');
   }
   function renderTutorials(items) {
     if (!tutorialGrid) return;
@@ -63,14 +78,16 @@
     items.forEach(d => {
       const el = document.createElement('div');
       el.className = 'card';
-      const websiteBtn = d.website ? `<a class="btn" href="${d.website}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
-      const localBtn = d.local ? `<a class="btn primary" href="${encodeURI(d.local)}" target="_blank" rel="noopener noreferrer">本地教程</a>` : '';
-      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${t}</span>`).join('') : '';
+      const website = sanitizeUrl(d.website);
+      const local = sanitizeUrl(d.local);
+      const websiteBtn = website ? `<a class="btn" href="${attrUrl(website)}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
+      const localBtn = local ? `<a class="btn primary" href="${attrUrl(local)}" target="_blank" rel="noopener noreferrer">本地教程</a>` : '';
+      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('') : '';
       el.innerHTML = `
-        <h4>${d.name || '未命名教程'}</h4>
-        <p>${d.desc || ''}</p>
+        <h4>${esc(d.name || '未命名教程')}</h4>
+        <p>${esc(d.desc || '')}</p>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <span class="chip">${d.category || 'docs'}</span>
+          <span class="chip">${esc(d.category || 'docs')}</span>
           ${websiteBtn}
           ${localBtn}
           ${tagsChips}
@@ -80,28 +97,16 @@
     });
   }
 
-  // 官方站点快捷跳转：从 mirrors.json 取主入口
+  // 官方站点快捷跳转：复用 mirrors.json 的同一份数据（不再重复请求）
   const officialGrid = document.getElementById('officialGrid');
-  async function loadOfficial() {
-    try {
-      const resp = await fetch('./mirrors.json', { cache: 'no-cache' });
-      const data = await resp.json();
-      const mirrors = Array.isArray(data.mirrors) ? data.mirrors : [];
-      return mirrors.map(m => ({ name: m.name || 'Netlify 主入口', url: m.url }));
-    } catch (e) {
-      console.error('loadOfficial failed', e);
-      return [];
-    }
-  }
-  async function renderOfficial() {
+  function renderOfficialList(items) {
     if (!officialGrid) return;
-    const items = await loadOfficial();
     officialGrid.innerHTML = '';
     if (!items.length) {
       officialGrid.innerHTML = '<p>暂无官方链接</p>';
       return;
     }
-    const html = items.map(d => `<a class="btn" href="${d.url}" target="_blank" rel="noopener noreferrer">${d.name}</a>`).join('');
+    const html = items.map(d => `<a class="btn" href="${attrUrl(d.url)}" target="_blank" rel="noopener noreferrer">${esc(d.name)}</a>`).join('');
     officialGrid.innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap;">${html}</div>`;
   }
 
@@ -112,19 +117,7 @@
   const tagSelect = document.getElementById('tagSelect');
   const searchInput = document.getElementById('searchInput');
   async function loadExtraSoftware() {
-    try {
-      const resp = await fetch('./softwares-extra.json', { cache: 'no-cache' });
-      const data = await resp.json();
-      if (Array.isArray(data)) return data;
-      if (data && Array.isArray(data.software)) return data.software;
-      return [];
-    } catch (e) {
-      console.error('loadExtraSoftware failed', e);
-      return [];
-    }
-  }
-  function sanitizeUrl(u){
-    try { return String(u || '').replace(/`/g, '').trim(); } catch(_) { return ''; }
+    return loadList('./softwares-extra.json', 'software');
   }
   function renderDownloadCards(items){
     if (!downloadGrid) return;
@@ -138,7 +131,7 @@
       el.className = 'card';
       const website = sanitizeUrl(d.website);
       const direct = sanitizeUrl(d.direct);
-      const websiteBtn = website ? `<a class="btn" href="${website}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
+      const websiteBtn = website ? `<a class="btn" href="${attrUrl(website)}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
       // 付费软件支持兑换与密钥文件下载（静态模式下不启用兑换）
       const isPaid = ((d.category || '').toLowerCase() === 'paid');
       const costVal = isPaid ? (parseInt(d.cost || 500, 10) || 500) : (parseInt(d.cost || 0, 10) || 0);
@@ -148,13 +141,13 @@
       const bonusFilename = String(d.bonusFilename || '').replace(/`/g,'');
       const bonusContent = String(d.bonusContent || '');
       if (!isStatic() && (isPaid || d.cost)) {
-        redeemAttrs = ` data-action="redeem" data-redeem-id="${rid}" data-redeem-cost="${String(costVal || d.cost || 500)}" data-bonus-filename="${bonusFilename}" data-bonus-content="${bonusContent}"`;
+        redeemAttrs = ` data-action="redeem" data-redeem-id="${esc(rid)}" data-redeem-cost="${String(costVal || d.cost || 500)}" data-bonus-filename="${esc(bonusFilename)}" data-bonus-content="${esc(bonusContent)}"`;
       }
-      const directBtn = direct ? `<a class="btn primary ${isStatic()?'':'requires-auth'}" href="${direct}" ${(!isPaid && isStatic() && isLikelyFileUrl(direct)) ? `download="${suggestFileNameFrom(d, direct)}"` : ''} rel="noopener noreferrer"${redeemAttrs}>${(!isPaid && isLikelyFileUrl(direct))?'直接下载':'直接安装'}</a>` : '';
-      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${t}</span>`).join('') : '';
+      const directBtn = direct ? `<a class="btn primary ${isStatic()?'':'requires-auth'}" href="${attrUrl(direct)}" ${(!isPaid && isStatic() && isLikelyFileUrl(direct)) ? `download="${esc(suggestFileNameFrom(d, direct))}"` : ''} rel="noopener noreferrer"${redeemAttrs}>${(!isPaid && isLikelyFileUrl(direct))?'直接下载':'直接安装'}</a>` : '';
+      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('') : '';
       el.innerHTML = `
-        <h4>${d.name || '未命名软件'}</h4>
-        <p>${d.desc || ''}</p>
+        <h4>${esc(d.name || '未命名软件')}</h4>
+        <p>${esc(d.desc || '')}</p>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           ${websiteBtn}
           ${directBtn}
@@ -177,12 +170,12 @@
       el.className = 'card';
       const website = sanitizeUrl(d.website);
       const direct = sanitizeUrl(d.direct);
-      const websiteBtn = website ? `<a class="btn" href="${website}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
-      const directBtn = direct ? `<a class="btn primary ${isStatic()?'':'requires-auth'}" href="${direct}" ${ (isStatic() && isLikelyFileUrl(direct)) ? `download="${suggestFileNameFrom(d, direct)}"` : '' } rel="noopener noreferrer">${isLikelyFileUrl(direct)?'直接下载':'直接安装'}</a>` : '';
-      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${t}</span>`).join('') : '';
+      const websiteBtn = website ? `<a class="btn" href="${attrUrl(website)}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
+      const directBtn = direct ? `<a class="btn primary ${isStatic()?'':'requires-auth'}" href="${attrUrl(direct)}" ${ (isStatic() && isLikelyFileUrl(direct)) ? `download="${esc(suggestFileNameFrom(d, direct))}"` : '' } rel="noopener noreferrer">${isLikelyFileUrl(direct)?'直接下载':'直接安装'}</a>` : '';
+      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('') : '';
       el.innerHTML = `
-        <h4>${d.name || '未命名软件'}</h4>
-        <p>${d.desc || ''}</p>
+        <h4>${esc(d.name || '未命名软件')}</h4>
+        <p>${esc(d.desc || '')}</p>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           ${websiteBtn}
           ${directBtn}
@@ -196,10 +189,10 @@
     if (!filterSelect || !tagSelect || !searchInput) return;
     // 分类下拉（按 category 汇总，排除 browser 类目，浏览器单独分区显示）
     const cats = Array.from(new Set(list.filter(x => (x.category || 'software') !== 'browser').map(x => x.category || 'software')));
-    filterSelect.innerHTML = '<option value="all">全部</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
+    filterSelect.innerHTML = '<option value="all">全部</option>' + cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
     // 标签下拉
     const tags = Array.from(new Set(list.filter(x => (x.category || 'software') !== 'browser').flatMap(x => Array.isArray(x.tags) ? x.tags : [])));
-    tagSelect.innerHTML = '<option value="all">全部</option>' + tags.map(t => `<option value="${t}">${t}</option>`).join('');
+    tagSelect.innerHTML = '<option value="all">全部</option>' + tags.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
   }
   function applyDownloadFilters(list){
     if (!downloadGrid) return;
@@ -217,11 +210,10 @@
   }
   function wireDownloadControls(list){
     if (!filterSelect || !tagSelect || !searchInput) return;
-    ['change','input'].forEach(ev => {
-      filterSelect.addEventListener(ev, () => applyDownloadFilters(list));
-      tagSelect.addEventListener(ev, () => applyDownloadFilters(list));
-      searchInput.addEventListener(ev, () => applyDownloadFilters(list));
-    });
+    // 下拉框只需要 change；搜索框才需要逐次 input（原来对三个控件同时绑定两种事件，多出 3 个无效监听）
+    filterSelect.addEventListener('change', () => applyDownloadFilters(list));
+    tagSelect.addEventListener('change', () => applyDownloadFilters(list));
+    searchInput.addEventListener('input', () => applyDownloadFilters(list));
   }
 
   // 游戏专区：加载 games-extra.json 并按类别渲染
@@ -233,16 +225,7 @@
   const gameGridSandbox = document.getElementById('gameGridSandbox');
   const gameGridMini = document.getElementById('gameGridMini');
   async function loadExtraGames() {
-    try {
-      const resp = await fetch('./games-extra.json', { cache: 'no-cache' });
-      const data = await resp.json();
-      if (Array.isArray(data)) return data;
-      if (data && Array.isArray(data.games)) return data.games;
-      return [];
-    } catch (e) {
-      console.error('loadExtraGames failed', e);
-      return [];
-    }
+    return loadList('./games-extra.json', 'games');
   }
   function inferGenre(d) {
     if (d.genre) return d.genre;
@@ -260,23 +243,16 @@
       gridEl.innerHTML = '<p>暂无该类别的游戏</p>';
       return;
     }
-    // 为防止数据中包含反引号或多余空格，清洗 URL
-    const sanitizeUrl = (u) => {
-      try {
-        return String(u || '').replace(/`/g, '').trim();
-      } catch (_) {
-        return '';
-      }
-    };
+    // 数据中的 URL 统一走公共 sanitizeUrl / attrUrl，不再重复定义局部函数
     items.forEach(d => {
       const el = document.createElement('div');
       el.className = 'card';
       const website = sanitizeUrl(d.website);
       const direct = sanitizeUrl(d.direct);
       const playUrl = sanitizeUrl(d.play);
-      const websiteBtn = website ? `<a class="btn" href="${website}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
+      const websiteBtn = website ? `<a class="btn" href="${attrUrl(website)}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
       const local = sanitizeUrl(d.local);
-      const localBtn = local ? `<a class="btn primary" href="${local}" target="_blank" rel="noopener noreferrer">本网资源</a>` : '';
+      const localBtn = local ? `<a class="btn primary" href="${attrUrl(local)}" target="_blank" rel="noopener noreferrer">本网资源</a>` : '';
       const effectivePlay = sanitizeUrl(d.embedUrl) || playUrl;
       let cloudLabel = '云玩';
       try {
@@ -285,7 +261,7 @@
         if ((d.embed || d.embedUrl) && sameOrigin) cloudLabel = '本站游玩';
         else if ((d.embed || d.embedUrl)) cloudLabel = '云玩';
       } catch (_) {}
-      const cloudBtn = effectivePlay ? `<button class="btn" data-play="${effectivePlay}" data-play-name="${String(d.name||cloudLabel)}" ${ (d.embed || d.embedUrl) ? 'data-play-embed="1"' : '' }>${cloudLabel}</button>` : '';
+      const cloudBtn = effectivePlay ? `<button class="btn" data-play="${attrUrl(effectivePlay)}" data-play-name="${esc(d.name||cloudLabel)}" ${ (d.embed || d.embedUrl) ? 'data-play-embed="1"' : '' }>${cloudLabel}</button>` : '';
       // 付费项显示所需积分（默认500），并为有直链的付费项自动接入兑换
       const isPaid = ((d.category || '').toLowerCase() === 'paid');
       const costVal = isPaid ? (parseInt(d.cost || 500, 10) || 500) : (parseInt(d.cost || 0, 10) || 0);
@@ -296,14 +272,14 @@
         const bonusFilename = d.bonusFilename || (d.id === 'rdr2' ? '荒野大镖客-密钥215448.txt' : '兑换密钥.txt');
         const bonusContent = d.bonusContent || (d.id === 'rdr2' ? '密钥215448' : '');
         if (!isStatic() && (isPaid || d.cost)) {
-          redeemAttrs = ` data-action="redeem" data-redeem-id="${rid}" data-redeem-cost="${String(costVal || d.cost || 500)}" data-bonus-filename="${bonusFilename}" data-bonus-content="${bonusContent}"`;
+          redeemAttrs = ` data-action="redeem" data-redeem-id="${esc(rid)}" data-redeem-cost="${String(costVal || d.cost || 500)}" data-bonus-filename="${esc(bonusFilename)}" data-bonus-content="${esc(bonusContent)}"`;
         }
       }
-      const directBtn = direct ? `<a class="btn primary ${isStatic()?'':'requires-auth'}" href="${direct}" rel="noopener noreferrer"${redeemAttrs}>直接安装</a>` : '';
-      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${t}</span>`).join('') : '';
+      const directBtn = direct ? `<a class="btn primary ${isStatic()?'':'requires-auth'}" href="${attrUrl(direct)}" rel="noopener noreferrer"${redeemAttrs}>直接安装</a>` : '';
+      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('') : '';
       el.innerHTML = `
-        <h4>${d.name || '未命名游戏'}</h4>
-        <p>${d.desc || ''}</p>
+        <h4>${esc(d.name || '未命名游戏')}</h4>
+        <p>${esc(d.desc || '')}</p>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           ${costChip}
           ${websiteBtn}
@@ -337,86 +313,66 @@
   const vmGrid = document.getElementById('vmGrid');
   const osGrid = document.getElementById('osGrid');
   async function loadDownloadsExtra() {
-    try {
-      const resp = await fetch('./downloads-extra.json', { cache: 'no-cache' });
-      const data = await resp.json();
-      if (Array.isArray(data)) {
-        return { vm: data.filter(x => x.category === 'vm'), os: data.filter(x => x.category === 'os') };
-      }
-      return { vm: Array.isArray(data.vm) ? data.vm : [], os: Array.isArray(data.os) ? data.os : [] };
-    } catch (e) {
-      console.error('loadDownloadsExtra failed', e);
-      return { vm: [], os: [] };
+    const data = await loadJSON('./downloads-extra.json');
+    if (Array.isArray(data)) {
+      return { vm: data.filter(x => x.category === 'vm'), os: data.filter(x => x.category === 'os') };
     }
+    return { vm: data && Array.isArray(data.vm) ? data.vm : [], os: data && Array.isArray(data.os) ? data.os : [] };
   }
-  function renderVMZone(items) {
-    if (!vmGrid) return;
-    vmGrid.innerHTML = '';
+  // 虚拟机 / 系统镜像两个区块结构完全一致，合并为一个渲染函数
+  function renderZone(gridEl, items, emptyText) {
+    if (!gridEl) return;
+    gridEl.innerHTML = '';
     if (!items || !items.length) {
-      vmGrid.innerHTML = '<p>暂无虚拟机数据</p>';
+      gridEl.innerHTML = `<p>${esc(emptyText)}</p>`;
       return;
     }
     items.forEach(d => {
       const el = document.createElement('div');
       el.className = 'card';
-      const websiteBtn = d.website ? `<a class="btn" href="${d.website}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
-      const directBtn = d.direct ? `<a class="btn ${isStatic()?'':'requires-auth'}" href="${d.direct}" ${ (isStatic() && isLikelyFileUrl(d.direct)) ? `download="${suggestFileNameFrom(d, d.direct)}"` : '' } rel="noopener noreferrer">${isLikelyFileUrl(d.direct)?'直接下载':'直接安装'}</a>` : '';
-      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${t}</span>`).join('') : '';
+      const website = sanitizeUrl(d.website);
+      const direct = sanitizeUrl(d.direct);
+      const websiteBtn = website ? `<a class="btn" href="${attrUrl(website)}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
+      const directBtn = direct ? `<a class="btn ${isStatic()?'':'requires-auth'}" href="${attrUrl(direct)}" ${ (isStatic() && isLikelyFileUrl(direct)) ? `download="${esc(suggestFileNameFrom(d, direct))}"` : '' } rel="noopener noreferrer">${isLikelyFileUrl(direct)?'直接下载':'直接安装'}</a>` : '';
+      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('') : '';
       el.innerHTML = `
-        <h4>${d.name || '未命名'}</h4>
-        <p>${d.desc || ''}</p>
+        <h4>${esc(d.name || '未命名')}</h4>
+        <p>${esc(d.desc || '')}</p>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           ${websiteBtn}
           ${directBtn}
           ${tagsChips}
         </div>
       `;
-      vmGrid.appendChild(el);
+      gridEl.appendChild(el);
     });
   }
-  function renderOSZone(items) {
-    if (!osGrid) return;
-    osGrid.innerHTML = '';
-    if (!items || !items.length) {
-      osGrid.innerHTML = '<p>暂无系统镜像数据</p>';
-      return;
-    }
-    items.forEach(d => {
-      const el = document.createElement('div');
-      el.className = 'card';
-      const websiteBtn = d.website ? `<a class="btn" href="${d.website}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
-      const directBtn = d.direct ? `<a class="btn ${isStatic()?'':'requires-auth'}" href="${d.direct}" ${ (isStatic() && isLikelyFileUrl(d.direct)) ? `download="${suggestFileNameFrom(d, d.direct)}"` : '' } rel="noopener noreferrer">${isLikelyFileUrl(d.direct)?'直接下载':'直接安装'}</a>` : '';
-      const tagsChips = Array.isArray(d.tags) ? d.tags.map(t => `<span class="chip">${t}</span>`).join('') : '';
-      el.innerHTML = `
-        <h4>${d.name || '未命名'}</h4>
-        <p>${d.desc || ''}</p>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          ${websiteBtn}
-          ${directBtn}
-          ${tagsChips}
-        </div>
-      `;
-      osGrid.appendChild(el);
-    });
-  }
+  function renderVMZone(items) { renderZone(vmGrid, items, '暂无虚拟机数据'); }
+  function renderOSZone(items) { renderZone(osGrid, items, '暂无系统镜像数据'); }
 
-  // 初始化：按模块依次恢复
+  // 初始化：所有数据源并发请求（原来 6 次串行 await，首屏会明显变慢）
   (async function init(){
-    await renderMirrors();
-    const tutorials = await loadExtraTutorials();
+    const [mirrorList, tutorials, software, games, dl] = await Promise.all([
+      loadMirrors(),
+      loadExtraTutorials(),
+      loadExtraSoftware(),
+      loadExtraGames(),
+      loadDownloadsExtra()
+    ]);
+
+    renderMirrorsList(mirrorList);
     renderTutorials(tutorials);
-    await renderOfficial();
+    renderOfficialList(mirrorList);
+
     // 软件下载（仅在 downloads.html 存在容器时生效）
-    const software = await loadExtraSoftware();
     const browsers = software.filter(x => (x.category || 'software') === 'browser');
     const others = software.filter(x => (x.category || 'software') !== 'browser');
     setupDownloadFilters(others);
     wireDownloadControls(others);
     applyDownloadFilters(others);
     renderBrowserCards(browsers);
-    const games = await loadExtraGames();
+
     renderGames(games);
-    const dl = await loadDownloadsExtra();
     renderVMZone(dl.vm);
     renderOSZone(dl.os);
   })();
@@ -430,7 +386,13 @@
   const isStatic = () => {
     try { return !!(window.Niao && window.Niao.config && window.Niao.config.static); } catch(_) { return true; }
   };
-  const dayKey = () => new Date().toISOString().slice(0,10); // UTC 日期，简单可靠
+  // 本地日期（YYYY-MM-DD）。原来用 toISOString() 取的是 UTC 日期，
+  // 在东八区会导致每日任务直到早上 8 点才重置，与“今天”的直觉不符。
+  const dayKey = () => {
+    const d = new Date();
+    const p = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  };
   const KEYS = {
     USERS: 'niao.auth.users',
     SESSION: 'niao.auth.sessionUser',
@@ -562,23 +524,23 @@
       this.ui = { barEl: barEl || null, textEl: textEl || null, pointsEl: pointsEl || null };
       this.updateUI();
     },
-    getProgressSec(){ return parseInt(readRaw(KEYS.DAILY_PROGRESS_PREFIX + dayKey(), '0'), 10) || 0; },
-    setProgressSec(sec){ writeRaw(KEYS.DAILY_PROGRESS_PREFIX + dayKey(), String(sec)); },
+    // 进度按“用户 + 天”记录：同一浏览器切换账号时不会互相占用当天的 5 积分
+    progressKey(){ const u = Auth.getSessionUser(); return u ? (KEYS.DAILY_PROGRESS_PREFIX + u + '.' + dayKey()) : (KEYS.DAILY_PROGRESS_PREFIX + dayKey()); },
+    getProgressSec(){ return parseInt(readRaw(this.progressKey(), '0'), 10) || 0; },
+    setProgressSec(sec){ writeRaw(this.progressKey(), String(sec)); },
     isCompletedFor(user){ user = String(user||''); if (!user) return false; return readRaw(KEYS.DAILY_COMPLETED_PREFIX + user + '.' + dayKey(), '') === '1'; },
     markCompleted(user){ user = String(user||''); if (!user) return; writeRaw(KEYS.DAILY_COMPLETED_PREFIX + user + '.' + dayKey(), '1'); },
     tick(){
-      const sec = this.getProgressSec();
-      if (sec >= this.DURATION_SEC) {
-        const u = Auth.getSessionUser();
-        if (u && !this.isCompletedFor(u)) { this.markCompleted(u); Auth.addPoints(u, 5, 'daily5min'); }
-        this.updateUI();
-        return;
-      }
-      const next = sec + 1;
-      this.setProgressSec(next);
       const u = Auth.getSessionUser();
-      if (next >= this.DURATION_SEC && u) {
-        if (!this.isCompletedFor(u)) { this.markCompleted(u); Auth.addPoints(u, 5, 'daily5min'); }
+      // 未登录不计时：原来会先把时长累计进去，任何新账号登录后立刻白拿 5 积分
+      if (!u) { this.updateUI(); return; }
+      const sec = this.getProgressSec();
+      if (sec >= this.DURATION_SEC) { this.updateUI(); return; }
+      const next = Math.min(this.DURATION_SEC, sec + 1);
+      this.setProgressSec(next);
+      if (next >= this.DURATION_SEC && !this.isCompletedFor(u)) {
+        this.markCompleted(u);
+        Auth.addPoints(u, 5, 'daily5min');
       }
       this.updateUI();
     },
@@ -677,7 +639,11 @@
       // 关闭面板（按钮 / Esc / 点击空白处）
       closeBtn && closeBtn.addEventListener('click', () => { Gate.remove(); });
       div.addEventListener('click', (e) => { if (e.target && e.target.id === Gate.overlayId) { Gate.remove(); } });
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.getElementById(Gate.overlayId)) Gate.remove(); });
+      // Esc 关闭：只绑定一次（原来每次 ensure() 都会往 document 上再加一个监听，反复开关弹窗会泄漏）
+      if (!Gate._escBound) {
+        Gate._escBound = true;
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.getElementById(Gate.overlayId)) Gate.remove(); });
+      }
       loginBtn.addEventListener('click', async () => {
         const u = (loginUser.value||'').trim();
         const p = loginPass.value||'';

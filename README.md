@@ -8,6 +8,15 @@
 - 分享地址生成规则：兼容主站与子路径（GitHub 项目站点）
 ---
 
+## 聚合搜索页（search.html）
+深色科技风的聚合检索入口，零外部依赖（不使用 CDN，本地与线上渲染一致）：
+- `search.html` / `search.css` / `search.js`，不依赖 `script.js`，可单独打开
+- 站内索引：读取 `tutorials-extra.json`、`softwares-extra.json`、`games-extra.json`、`downloads-extra.json`
+- 外部检索：按地区（9 个区域）切换 12 个数据源，结果为可复制的深链
+- 支持 `?q=关键词&r=地区` 直接分享结果页；`/` 键聚焦搜索框
+- 提示：用 `file://` 双击打开时浏览器会拦截 JSON 读取，站内命中为空，用 `python serve.py` 启动即可获得完整效果
+---
+
 ## 部署到 GitHub Pages（推荐）
 1) 在 GitHub 创建一个仓库（Public 或 Private with Pages），例如：`yourname/niaoguo-site`
 2) 在本地运行以下命令（PowerShell）：
@@ -55,11 +64,22 @@
 ---
 
 ## 本地预览
-在项目目录运行：
+在项目目录运行（默认端口 5600，已为文本资源统一补上 `charset=utf-8`）：
+```powershell
+python serve.py
+```
+或用标准库临时起一个静态服务（端口 8000）：
 ```powershell
 python -m http.server 8000
 ```
-访问 `http://localhost:8000/` 进行本地预览。
+访问 `http://localhost:5600/`（或 `http://localhost:8000/`）进行本地预览。
+---
+
+## 仓库卫生
+- `.gitignore` 已忽略二进制/反编译产物与日志（`*.dll`、`*.exe`、`disasm.txt`、`*.log` 等）。
+- `users.json` / `sessions.json` / `points.json` / `keys.json` 属于本地演示数据或敏感信息，已加入 `.gitignore`；
+  **若这些文件曾被提交过，.gitignore 不会把它们从历史中移除**，需要另行执行 `git rm --cached` 并清理历史。
+- 站点为纯前端静态页，不含后端；页面中的登录与积分均保存在浏览器 localStorage。
 ---
 
 如需我为你创建仓库并接入，或编写自动化脚本（含仓库 URL 注入），请把你的 GitHub 仓库地址发我即可。

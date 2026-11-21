@@ -13,6 +13,7 @@
         <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
         <nav class="site-nav">
           <a href="index.html">首页</a>
+          <a href="search.html">聚合搜索</a>
           <a href="features.html">功能分类</a>
           <a href="downloads.html">软件下载</a>
           <a href="tutorials.html">教程专区</a>
@@ -123,22 +124,29 @@
     <footer class="site-footer"><div class="container"><span>© 2025 鸟国网站 niaoguo.com</span></div></footer>
 
     <!-- 静态模式：禁用后端 API，任务积分仅为本地演示 -->
+    <!-- 注意：纯静态站点没有后端，这里必须为 true（原来设为 false 会让登录/积分请求 localhost:5050 而全部失败）。 -->
     <script>
       (function(){
         window.Niao = window.Niao || {};
         window.Niao.config = window.Niao.config || {};
-        window.Niao.config.static = false;
-        window.Niao.config.apiBase = 'http://localhost:5050';
+        window.Niao.config.static = true;
       })();
     </script>
     <script src="script.js"></script>
     <script>
       (async function(){
-        const u = window.Niao?.auth?.getSessionUser() || '';
         const taskUser = document.getElementById('taskUser');
         const taskPoints = document.getElementById('taskPoints');
         const taskBar = document.getElementById('taskBar');
         const taskText = document.getElementById('taskText');
+        let u = window.Niao?.auth?.getSessionUser() || '';
+        // 页面打开后再登录时，闭包里捕获的 u 会是旧值（''），
+        // 导致“请先登录”一直不放行；各操作前统一重新读取一次会话。
+        const syncUser = () => {
+          u = window.Niao?.auth?.getSessionUser() || '';
+          taskUser.textContent = u || '未登录';
+          return u;
+        };
         taskUser.textContent = u || '未登录';
         if (u) {
           try {
@@ -176,6 +184,7 @@
           newbieStatus.textContent = done? '已补回 +8 积分' : '未领取';
         }
         if (bindBtn) bindBtn.addEventListener('click', async () => {
+          syncUser();
           if (!u) { alert('请先登录'); return; }
           const em = bindEmail.value; const ph = bindPhone.value;
           if (!validEmail(em) && !validPhone(ph)) { alert('请至少填写有效的邮箱或手机号'); return; }
@@ -188,6 +197,7 @@
           alert('已保存资料并领取绑定奖励');
         });
         if (newbieBtn) newbieBtn.addEventListener('click', async () => {
+          syncUser();
           if (!u) { alert('请先登录'); return; }
           if (readRaw('niao.bonus.newbie.'+u, '')==='1') { alert('此奖励每个账号仅限一次'); return; }
           await window.Niao?.auth?.addPoints(u, 8, 'newbie'); writeRaw('niao.bonus.newbie.'+u, '1');
@@ -459,6 +469,7 @@
         }
 
         function preventDoubleAward(){
+          syncUser();
           if (!u) return true;
           const key = 'niao.quiz.awarded.'+u+'.'+currentQuizId;
           const done = readRaw(key, '')==='1';
@@ -467,12 +478,14 @@
         }
 
         if (genBtn) genBtn.addEventListener('click', () => {
+          syncUser();
           if (!u) { alert('请先登录再参与答题与计分'); return; }
           const lang = langSel.value; const level = levelSel.value;
           try { renderQuiz(lang, level); try { saveQuizState(u); } catch(_){} } catch(e){ quizArea.innerHTML = '<p>生成试卷失败</p>'; }
         });
 
         if (submitBtn) submitBtn.addEventListener('click', async () => {
+          syncUser();
           if (!u) { alert('请先登录'); return; }
           if (!currentQuizId) { alert('请先生成试卷'); return; }
           const s = scoreQuiz();

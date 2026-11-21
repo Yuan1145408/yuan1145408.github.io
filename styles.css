@@ -47,8 +47,9 @@ body {
   justify-content: space-between;
   padding: 14px 0;
 }
-.site-nav { display:flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; white-space: nowrap; }
-.site-title { font-size: 22px; letter-spacing: 1px; }
+.site-nav { display:flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; white-space: nowrap; min-width: 0; }
+.site-nav::-webkit-scrollbar { height: 0; }
+.site-title { font-size: 22px; letter-spacing: 1px; flex: none; white-space: nowrap; }
 .site-nav a {
   color: var(--text);
   text-decoration: none;
