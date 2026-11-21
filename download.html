@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>下载中心 - 鸟国网站</title>
+    <meta name="description" content="直链与网盘链接解析、多线程分片下载、实时进度滑条与暂停续传。" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="search.html">聚合搜索</a>
+          <a href="download.html" class="active">下载中心</a>
+          <a href="settings.html">设置</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="games.html">游戏专区</a>
+          <a href="minecraft.html">我的世界</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container" style="max-width:900px;">
+          <h2>下载中心</h2>
+          <p class="muted">粘贴直链或网盘分享文案，自动识别并解析；直链支持多线程分片下载与暂停续传，进度条可拖动查看。</p>
+
+          <div class="card">
+            <label class="field-row" style="display:block;">
+              <span>下载链接 / 分享文案</span>
+              <textarea id="dlInput" rows="2" placeholder="https://example.com/app.exe&#10;或：通过网盘分享 链接: https://pan.baidu.com/s/xxxx 提取码: abcd"></textarea>
+            </label>
+            <div class="row" style="margin-top:12px;">
+              <button class="btn primary" id="parseBtn" type="button">解析链接</button>
+              <button class="btn" id="pasteBtn" type="button">读剪贴板</button>
+              <label class="field-inline">
+                并发
+                <select id="dlConcurrency">
+                  <option value="1">1</option><option value="2">2</option>
+                  <option value="4">4</option><option value="6">6</option><option value="8">8</option>
+                </select>
+              </label>
+              <a class="btn" href="settings.html">更多设置</a>
+              <span id="dlStatus" class="chip" role="status" aria-live="polite">等待解析</span>
+            </div>
+          </div>
+
+          <div class="card" id="dlInfoCard" hidden style="margin-top:16px;">
+            <h4 id="dlInfoTitle">解析结果</h4>
+            <dl class="kv" id="dlInfoList"></dl>
+            <div class="row" id="dlNetdiskActions" hidden style="margin-top:12px;"></div>
+          </div>
+
+          <div class="card" id="dlProgressCard" hidden style="margin-top:16px;">
+            <div class="dl-head">
+              <h4 id="dlFileName">准备下载</h4>
+              <span class="chip" id="dlModeChip">—</span>
+            </div>
+
+            <div class="dl-slider-wrap">
+              <input class="dl-slider" id="dlSlider" type="range" min="0" max="1000" value="0" step="1"
+                     aria-label="下载进度，可拖动查看" />
+              <div class="dl-slider-meta">
+                <span id="dlPercent">0%</span>
+                <span id="dlBytes">0 B / 0 B</span>
+                <span id="dlSpeed">—</span>
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:12px;">
+              <button class="btn primary" id="dlStartBtn" type="button">开始下载</button>
+              <button class="btn" id="dlPauseBtn" type="button" disabled>暂停</button>
+              <button class="btn" id="dlCancelBtn" type="button" disabled>取消</button>
+              <button class="btn" id="dlSaveBtn" type="button" hidden>保存文件</button>
+              <button class="btn" id="dlBrowserBtn" type="button" hidden>用浏览器下载</button>
+            </div>
+            <p class="muted" id="dlHint" style="margin-top:10px;"></p>
+          </div>
+
+          <div class="card" style="margin-top:16px;">
+            <h4>说明</h4>
+            <ul class="muted" style="margin:0;padding-left:1.2em;line-height:1.9;">
+              <li>多线程下载需要服务器支持 <code>Range</code> 且允许跨域；不满足会自动降级为单线程。</li>
+              <li>百度 / 夸克 / 123 / 阿里云盘需要登录授权，浏览器内无法直接取直链，本页会提取分享地址与提取码并跳转。</li>
+              <li>蓝奏云等公开分享会尝试解析直链，页面结构变化时请手动打开。</li>
+              <li>所有下载在本机完成，不经过任何中转服务器。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="container"><span>© 2025 鸟国网站 niaoguo.com</span></div></footer>
+
+    <script src="app-settings.js"></script>
+    <script src="download-core.js"></script>
+    <script src="script.js"></script>
+    <script>
+      (function () {
+        'use strict';
+        var $ = function (id) { return document.getElementById(id); };
+        var S = window.NiaoSettings;
+        var D = window.NiaoDownloader;
+
+        var current = null;      // 解析结果
+        var task = null;         // 下载任务
+        var lastProgress = null;
+        var scrubbing = false;
+        var lastBlobUrl = null;
+
+        // 并发数初值来自设置
+        var concSel = $('dlConcurrency');
+        concSel.value = String(S.get('download.concurrency') || 4);
+        concSel.addEventListener('change', function () {
+          S.set({ 'download.concurrency': parseInt(concSel.value, 10) || 4 });
+          if (window.Niao && window.Niao.toast) window.Niao.toast('并发数已设为 ' + concSel.value, 'ok');
+        });
+        window.addEventListener('niao:settings', function (e) {
+          concSel.value = String(e.detail['download.concurrency'] || 4);
+        });
+
+        function status(msg, kind) {
+          var el = $('dlStatus');
+          el.textContent = msg;
+          el.className = 'chip' + (kind ? ' is-' + kind : '');
+        }
+
+        function fmtBytes(n) {
+          if (!n || n < 0) return '0 B';
+          var u = ['B', 'KB', 'MB', 'GB', 'TB'];
+          var i = 0;
+          while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+          return (n >= 10 || i === 0 ? Math.round(n) : n.toFixed(1)) + ' ' + u[i];
+        }
+        function fmtTime(sec) {
+          if (!isFinite(sec) || sec <= 0) return '';
+          sec = Math.round(sec);
+          if (sec < 60) return sec + ' 秒';
+          if (sec < 3600) return Math.floor(sec / 60) + ' 分 ' + (sec % 60) + ' 秒';
+          return Math.floor(sec / 3600) + ' 小时 ' + Math.floor((sec % 3600) / 60) + ' 分';
+        }
+
+        function renderInfo(info) {
+          $('dlInfoCard').hidden = false;
+          var list = $('dlInfoList');
+          var rows = [];
+          function row(k, v, opts) {
+            if (v === undefined || v === null || v === '') return;
+            rows.push('<div><dt>' + k + '</dt><dd' + (opts && opts.mono ? ' class="mono"' : '') + '>' + v + '</dd></div>');
+          }
+          var typeLabel = info.kind === 'netdisk' ? ('网盘 · ' + info.providerName)
+            : info.kind === 'file' ? '直链文件' : '网页链接';
+          row('类型', typeLabel);
+          row('地址', info.url, { mono: true });
+          if (info.pwd) row('提取码', '<strong>' + info.pwd + '</strong>');
+          if (info.needsLogin) row('说明', '需要登录网盘账号，浏览器无法直接获取直链');
+          list.innerHTML = rows.join('');
+          $('dlInfoTitle').textContent = info.kind === 'netdisk' ? info.providerName + ' 分享链接' : '解析结果';
+
+          var actions = $('dlNetdiskActions');
+          if (info.kind === 'netdisk') {
+            actions.hidden = false;
+            actions.innerHTML =
+              '<a class="btn primary" href="' + info.url + '" target="_blank" rel="noopener noreferrer">打开网盘</a>' +
+              (info.pwd ? '<button class="btn" type="button" id="copyPwd">复制提取码</button>' : '') +
+              '<button class="btn" type="button" id="copyAll">复制分享信息</button>';
+            var cp = $('copyPwd');
+            if (cp) cp.addEventListener('click', function () {
+              (navigator.clipboard ? navigator.clipboard.writeText(info.pwd) : Promise.reject())
+                .then(function () { status('提取码已复制', 'ok'); })
+                .catch(function () { status('复制失败，请手动选择', 'err'); });
+            });
+            $('copyAll').addEventListener('click', function () {
+              var text = '链接: ' + info.url + (info.pwd ? ' 提取码: ' + info.pwd : '');
+              (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
+                .then(function () { status('分享信息已复制', 'ok'); })
+                .catch(function () { status('复制失败，请手动选择', 'err'); });
+            });
+          } else {
+            actions.hidden = true;
+            actions.innerHTML = '';
+          }
+        }
+
+        function setFill(pct) {
+          var el = $('dlSlider');
+          if (el) el.style.setProperty('--dl-fill', Math.max(0, Math.min(100, pct)) + '%');
+        }
+
+        function resetProgress() {
+          $('dlProgressCard').hidden = false;
+          $('dlSlider').value = '0';
+          setFill(0);
+          $('dlPercent').textContent = '0%';
+          $('dlBytes').textContent = '0 B / 0 B';
+          $('dlSpeed').textContent = '—';
+          $('dlSaveBtn').hidden = true;
+          $('dlBrowserBtn').hidden = true;
+        }
+
+        function setMode(text) { $('dlModeChip').textContent = text; }
+
+        function onProgress(p) {
+          lastProgress = p;
+          if (!scrubbing) {
+            $('dlSlider').value = String(Math.round(p.percent * 10));
+            setFill(p.percent);
+            $('dlPercent').textContent = p.total ? Math.round(p.percent) + '%' : '已下载 ' + fmtBytes(p.received);
+            $('dlSlider').classList.toggle('is-unknown', !p.total);
+          }
+          $('dlBytes').textContent = fmtBytes(p.received) + ' / ' + (p.total ? fmtBytes(p.total) : '大小未知');
+          $('dlSpeed').textContent = p.speed ? (fmtBytes(p.speed) + '/s' + (p.eta ? ' · 剩余 ' + fmtTime(p.eta) : '')) : '—';
+          if (p.name) $('dlFileName').textContent = p.name;
+          if (p.mode === 'multi') setMode('多线程 · ' + concSel.value + ' 分片');
+          else if (p.mode === 'single') setMode('单线程');
+          else setMode('探测中');
+          if (p.status === 'error') {
+            status('下载失败：' + (p.error || '未知错误'), 'err');
+            $('dlHint').textContent = '可能是服务器不允许跨域下载：可点击“用浏览器下载”直接交给浏览器。';
+            $('dlBrowserBtn').hidden = false;
+          }
+        }
+
+        async function parseAndPrepare() {
+          var text = $('dlInput').value;
+          var info = D.parseLink(text);
+          if (!info.ok) { status(info.msg, 'err'); return; }
+          current = info;
+          renderInfo(info);
+          resetProgress();
+          $('dlFileName').textContent = info.name || '未命名文件';
+          $('dlStartBtn').disabled = false;
+          $('dlPauseBtn').disabled = true;
+          $('dlCancelBtn').disabled = true;
+          $('dlHint').textContent = '';
+
+          if (info.kind === 'file') {
+            status('正在探测文件信息…');
+            var pro = await D.probe(info.url);
+            // 探测发现是网页（text/html 且没有文件名）时按网页处理
+            if (pro.ok && /text\/html/i.test(pro.type) && !/[.][a-z0-9]{2,5}$/i.test(info.name || '')) {
+              current = { ok: true, kind: 'page', url: info.url, host: info.host };
+              status('这是一个网页链接，将新标签打开', 'warn');
+              $('dlProgressCard').hidden = true;
+              $('dlStartBtn').disabled = true;
+              window.open(info.url, '_blank', 'noopener');
+              return;
+            }
+            if (pro.ok) {
+              status('已识别直链，准备就绪', 'ok');
+              if (!info.name) $('dlFileName').textContent = pro.name;
+              setMode(pro.ranges ? '支持分段' : '不支持分段');
+              $('dlHint').textContent = '文件大小 ' + fmtBytes(pro.size) +
+                (pro.ranges ? '，可多线程下载' : '，将使用单线程') + '。';
+            } else {
+              status('无法读取文件信息，可直接交给浏览器', 'warn');
+              $('dlHint').textContent = '探测失败：' + (pro.error || '') + '（常见于跨域限制）';
+              $('dlBrowserBtn').hidden = false;
+            }
+            if (S.get('download.autoStart')) startDownload();
+          } else if (info.kind === 'netdisk') {
+            status('已解析网盘链接' + (info.pwd ? '，提取码 ' + info.pwd : ''), 'ok');
+            $('dlHint').textContent = info.note;
+            $('dlProgressCard').hidden = true;
+          } else {
+            status('这是一个网页链接，将新标签打开', 'warn');
+            $('dlProgressCard').hidden = true;
+            window.open(info.url, '_blank', 'noopener');
+          }
+        }
+
+        function startDownload() {
+          if (!current || current.kind !== 'file') {
+            status('请先解析一个直链文件', 'warn');
+            return;
+          }
+          if (task && task.state.status === 'paused') { task.resume().then(finish); return; }
+          if (task && task.state.status === 'downloading') return;
+
+          $('dlStartBtn').disabled = true;
+          $('dlPauseBtn').disabled = false;
+          $('dlCancelBtn').disabled = false;
+          $('dlSaveBtn').hidden = true;
+          status('正在下载…');
+          setMode('准备中');
+
+          task = D.createTask({
+            url: current.url,
+            name: current.name,
+            concurrency: parseInt(concSel.value, 10) || 1,
+            chunkMB: S.get('download.chunkMB') || 4,
+            retry: S.get('download.retry') || 0,
+            onProgress: onProgress
+          });
+
+          task.start().then(finish).catch(function (err) {
+            $('dlStartBtn').disabled = false;
+            $('dlPauseBtn').disabled = true;
+            $('dlCancelBtn').disabled = true;
+            if (task.state.status !== 'canceled') status('下载失败：' + (err && err.message || err), 'err');
+          });
+        }
+
+        function finish(res) {
+          if (!res) return;
+          $('dlStartBtn').disabled = true;
+          $('dlPauseBtn').disabled = true;
+          $('dlCancelBtn').disabled = true;
+          $('dlSaveBtn').hidden = false;
+          status('下载完成', 'ok');
+          if (lastBlobUrl) { try { URL.revokeObjectURL(lastBlobUrl); } catch (e) {} }
+          lastBlobUrl = URL.createObjectURL(res.blob);
+          $('dlSaveBtn').onclick = function () {
+            var a = document.createElement('a');
+            a.href = lastBlobUrl;
+            a.download = res.name || 'download';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function () { a.remove(); }, 600);
+            status('已交给浏览器保存', 'ok');
+          };
+          $('dlHint').textContent = '已完成，点击“保存文件”写入本地。';
+        }
+
+        $('parseBtn').addEventListener('click', parseAndPrepare);
+        $('dlInput').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) parseAndPrepare(); });
+        $('pasteBtn').addEventListener('click', function () {
+          if (!navigator.clipboard || !navigator.clipboard.readText) { status('当前浏览器不支持读取剪贴板', 'warn'); return; }
+          navigator.clipboard.readText().then(function (t) {
+            $('dlInput').value = t;
+            status('已读取剪贴板，请点击解析', 'ok');
+          }).catch(function () { status('读取剪贴板被拒绝', 'err'); });
+        });
+
+        $('dlStartBtn').addEventListener('click', startDownload);
+        $('dlPauseBtn').addEventListener('click', function () {
+          if (!task) return;
+          if (task.state.status === 'downloading') {
+            task.pause();
+            $('dlPauseBtn').textContent = '继续';
+            status('已暂停，可继续', 'warn');
+          } else if (task.state.status === 'paused') {
+            $('dlPauseBtn').textContent = '暂停';
+            status('继续下载…');
+            task.resume().then(finish).catch(function () {});
+          }
+        });
+        $('dlCancelBtn').addEventListener('click', function () {
+          if (!task) return;
+          task.cancel();
+          $('dlStartBtn').disabled = false;
+          $('dlPauseBtn').disabled = true;
+          $('dlCancelBtn').disabled = true;
+          status('已取消', 'err');
+        });
+        $('dlBrowserBtn').addEventListener('click', function () {
+          if (!current) return;
+          var a = document.createElement('a');
+          a.href = current.url;
+          a.rel = 'noopener noreferrer';
+          a.download = '';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(function () { a.remove(); }, 600);
+          status('已交给浏览器下载', 'ok');
+        });
+
+        // 进度滑条：拖动时暂停自动跟随，松开回到实时进度
+        var slider = $('dlSlider');
+        slider.addEventListener('pointerdown', function () { scrubbing = true; });
+        slider.addEventListener('input', function () {
+          scrubbing = true;
+          setFill(slider.value / 10);
+          $('dlPercent').textContent = Math.round(slider.value / 10) + '%（预览）';
+        });
+        function endScrub() {
+          if (!scrubbing) return;
+          scrubbing = false;
+          $('dlPercent').textContent = Math.round(slider.value / 10) + '%';
+        }
+        slider.addEventListener('pointerup', endScrub);
+        slider.addEventListener('pointercancel', endScrub);
+        slider.addEventListener('change', endScrub);
+        slider.addEventListener('keyup', endScrub);
+
+        // 支持从其它页面带着链接跳过来：download.html?url=...
+        var qs = new URLSearchParams(location.search);
+        if (qs.get('url')) {
+          $('dlInput').value = qs.get('url');
+          if (qs.get('name')) current = { name: qs.get('name') };
+          parseAndPrepare();
+        }
+      })();
+    </script>
+  </body>
+</html>

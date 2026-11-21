@@ -1386,6 +1386,24 @@
       else { try { window.open(url, '_blank', 'noopener'); } catch(_) { window.location.href = url; } }
     });
 
+    // 跨域直链安装：转到下载中心，由多线程下载器接管（可显示进度、可暂停）
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a.btn[href]') : null;
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (!/^https?:\/\//i.test(href)) return;
+      if (!/\.(exe|msi|zip|7z|rar|apk|iso|dmg|pkg|deb|rpm|appimage|tar\.gz|tgz)(\?|#|$)/i.test(href)) return;
+      var settings = (window.NiaoSettings && window.NiaoSettings.get) ? window.NiaoSettings.get() : {};
+      if (settings['install.mode'] && settings['install.mode'] !== 'auto') return;
+      var same = false;
+      try { same = new URL(href).origin === window.location.origin; } catch (_) {}
+      if (same) return; // 同源文件浏览器可直接下载
+      e.preventDefault();
+      var target = 'download.html?url=' + encodeURIComponent(href) +
+        '&name=' + encodeURIComponent(a.getAttribute('download') || '');
+      window.open(target, '_blank', 'noopener');
+    }, true);
+
     // 拦截需要登录/兑换的直接下载/安装操作
     if (!isStatic()) {
       document.addEventListener('click', async (e) => {

@@ -32,6 +32,8 @@
       <a href="tutorials.html">教程</a>
       <a href="downloads.html">下载</a>
       <a href="games.html">游戏</a>
+      <a href="download.html">下载中心</a>
+      <a href="settings.html">设置</a>
     </nav>
     <div class="topbar__status">
       <span class="pulse-dot" aria-hidden="true"></span>
@@ -86,10 +88,13 @@
         </button>
       </form>
 
-      <div class="scopebar" id="scopeBar" role="tablist" aria-label="搜索范围">
-        <button class="scope-btn is-on" type="button" role="tab" aria-selected="true" data-scope="all">全部</button>
-        <button class="scope-btn" type="button" role="tab" aria-selected="false" data-scope="site">站内</button>
-        <button class="scope-btn" type="button" role="tab" aria-selected="false" data-scope="web">全网</button>
+      <div class="scopebar">
+        <div class="scope-track" id="scopeBar" role="tablist" aria-label="搜索范围" data-value="all">
+          <span class="scope-glider" id="scopeGlider" aria-hidden="true"></span>
+          <button class="scope-btn is-on" type="button" role="tab" aria-selected="true" data-scope="all" tabindex="0">全部</button>
+          <button class="scope-btn" type="button" role="tab" aria-selected="false" data-scope="site" tabindex="-1">站内</button>
+          <button class="scope-btn" type="button" role="tab" aria-selected="false" data-scope="web" tabindex="-1">全网</button>
+        </div>
         <span class="scopebar__hint" id="scopeHint">站内索引 + 全网公开数据源，统一去重排序</span>
       </div>
 
@@ -292,6 +297,7 @@
     </div>
   </footer>
 
+  <script src="app-settings.js"></script>
   <script src="search-sources.js"></script>
   <script src="search-web.js"></script>
   <script src="search.js"></script>

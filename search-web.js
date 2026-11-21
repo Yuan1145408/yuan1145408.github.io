@@ -174,6 +174,7 @@
     }
 
     function attempt() {
+      if (src.forceProxy) return Promise.reject(new Error('force proxy'));
       var t = src.proxyable ? Math.min(timeout, 4200) : timeout;
       return fetchText(url, t).then(function (text) {
         return done(parsePayload(src, text, q), 'direct');
@@ -181,15 +182,23 @@
     }
 
     function withProxy() {
-      if (!src.proxyable || !PROXIES.length || opts.noProxy) return Promise.reject(new Error('skip proxy'));
-      var proxy = PROXIES[0];
-      return fetchText(proxy.wrap(url), PROXY_TIMEOUT).then(function (text) {
-        return done(parsePayload(src, text, q), proxy.name);
-      });
+      if ((!src.proxyable && !src.forceProxy) || !PROXIES.length || opts.noProxy) {
+        return Promise.reject(new Error('skip proxy'));
+      }
+      // 依次尝试多条公共代理线路，任意一条成功即可
+      var i = 0;
+      function next() {
+        if (i >= PROXIES.length) return Promise.reject(new Error('all proxies failed'));
+        var proxy = PROXIES[i++];
+        return fetchText(proxy.wrap(url), PROXY_TIMEOUT).then(function (text) {
+          return done(parsePayload(src, text, q), proxy.name);
+        }).catch(function (e) { return next(); });
+      }
+      return next();
     }
 
     return attempt().catch(function (err) {
-      if (!src.proxyable || opts.noProxy) throw err;
+      if ((!src.proxyable && !src.forceProxy) || opts.noProxy) throw err;
       // 直连失败（多为网络不可达），走公共代理再试一次
       return withProxy().catch(function () { throw err; });
     }).catch(function (err) {
@@ -199,6 +208,7 @@
         id: src.id, name: src.name, short: src.short || src.name,
         state: timeoutLike ? 'timeout' : 'error',
         count: 0, ms: ms, error: String(err && err.message || err),
+        fallback: typeof src.fallback === 'function' ? src.fallback(q) : '',
         results: []
       };
     });
@@ -267,7 +277,9 @@
       p = Promise.race([p, new Promise(function (resolve) {
         setTimeout(function () {
           resolve({ id: src.id, name: src.name, short: src.short || src.name, state: 'timeout',
-            count: 0, ms: (opts.deadline || DEADLINE), results: [] });
+            count: 0, ms: (opts.deadline || DEADLINE),
+            fallback: typeof src.fallback === 'function' ? src.fallback(query) : '',
+            results: [] });
         }, (opts.deadline || DEADLINE) + 50);
       })]);
       if (typeof opts.onSource === 'function') {

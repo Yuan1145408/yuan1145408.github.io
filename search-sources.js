@@ -199,6 +199,39 @@
       }
     },
 
+    /* ---------------- 游戏下载（HTML 解析 + 代理） ---------------- */
+    {
+      id: 'gamer520', name: 'gamer520 游戏下载', short: 'G520', badge: 'G',
+      group: 'game', weight: 1.15, kind: 'html', forceProxy: true,
+      home: 'https://www.gamer520.com',
+      note: 'PC 游戏下载站，页面含网盘直链，需代理读取',
+      fallback: function (q) { return 'https://www.gamer520.com/?s=' + enc(q); },
+      build: function (q) { return 'https://www.gamer520.com/?s=' + enc(q); },
+      parseText: function (doc) {
+        var arts = doc.querySelectorAll('article');
+        var out = [];
+        for (var i = 0; i < arts.length && out.length < 8; i++) {
+          var a = arts[i].querySelector('.entry-title a');
+          if (!a) continue;
+          var href = a.getAttribute('href') || '';
+          if (href.indexOf('gamer520.com') < 0) continue;
+          var title = (a.getAttribute('title') || a.textContent || '').replace(/\s+/g, ' ').trim();
+          var cat = arts[i].querySelector('.meta-category a');
+          var date = arts[i].querySelector('.meta-date time');
+          var bits = [];
+          if (cat) bits.push(cat.textContent.trim());
+          if (date) bits.push(date.textContent.trim());
+          out.push({
+            title: clamp(title, 110),
+            snippet: bits.length ? bits.join(' · ') + '｜点击进入详情页获取网盘下载地址' : '点击进入详情页获取网盘下载地址',
+            url: href,
+            badges: ['游戏']
+          });
+        }
+        return out;
+      }
+    },
+
     /* ---------------- 问答 / 社区 ---------------- */
     {
       id: 'stackoverflow', name: 'Stack Overflow', short: 'SO', badge: 'S', group: 'qa', weight: 1.2,
@@ -344,12 +377,15 @@
     { key: 'qa', label: '问答' },
     { key: 'academic', label: '学术' },
     { key: 'book', label: '图书' },
+    { key: 'game', label: '游戏下载' },
     { key: 'minecraft', label: '我的世界' }
   ];
 
   /* 公共 CORS 代理：仅在源标记 proxyable 且直连失败时使用 */
   var PROXIES = [
-    { name: 'allorigins', wrap: function (u) { return 'https://api.allorigins.win/raw?url=' + enc(u); } }
+    { name: 'allorigins', wrap: function (u) { return 'https://api.allorigins.win/raw?url=' + enc(u); } },
+    { name: 'codetabs', wrap: function (u) { return 'https://api.codetabs.com/v1/proxy?quest=' + enc(u); } },
+    { name: 'cors.eu.org', wrap: function (u) { return 'https://cors.eu.org/' + u; } }
   ];
 
   window.NIAO_SEARCH_SOURCES = SOURCES;

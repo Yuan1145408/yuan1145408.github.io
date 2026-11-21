@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>设置 - 鸟国网站</title>
+    <meta name="description" content="集中配置下载、安装与搜索行为：并发分片、分片大小、重试次数、安装方式、默认搜索范围与启用的搜索源。" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="search.html">聚合搜索</a>
+          <a href="download.html">下载中心</a>
+          <a href="settings.html" class="active">设置</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="games.html">游戏专区</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container" style="max-width:860px;">
+          <h2>设置</h2>
+          <p class="muted">所有设置保存在当前浏览器，立即生效；下载中心与搜索页会自动读取。</p>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top:0;">
+        <div class="container" style="max-width:860px;">
+          <div class="card">
+            <h4>下载</h4>
+            <div class="settings-grid">
+              <label class="field-row">
+                <span>并发分片数</span>
+                <select id="setConcurrency" data-key="download.concurrency">
+                  <option value="1">1（单线程）</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4（默认）</option>
+                  <option value="6">6</option>
+                  <option value="8">8（最快，需服务器支持分段）</option>
+                </select>
+              </label>
+              <label class="field-row">
+                <span>单个分片大小</span>
+                <select id="setChunk" data-key="download.chunkMB">
+                  <option value="1">1 MB</option>
+                  <option value="2">2 MB</option>
+                  <option value="4">4 MB（默认）</option>
+                  <option value="8">8 MB</option>
+                  <option value="16">16 MB</option>
+                </select>
+              </label>
+              <label class="field-row">
+                <span>分片失败重试</span>
+                <select id="setRetry" data-key="download.retry">
+                  <option value="0">不重试</option>
+                  <option value="1">1 次</option>
+                  <option value="2">2 次（默认）</option>
+                  <option value="4">4 次</option>
+                </select>
+              </label>
+              <label class="field-row">
+                <span>解析后自动开始</span>
+                <input type="checkbox" id="setAutoStart" data-key="download.autoStart" />
+              </label>
+              <label class="field-row">
+                <span>保存方式</span>
+                <select id="setSaveMode" data-key="download.saveMode">
+                  <option value="blob">内存合并后保存（可显示进度）</option>
+                  <option value="stream">直接交给浏览器下载</option>
+                </select>
+              </label>
+            </div>
+            <p class="muted" style="margin-top:12px;">
+              说明：多线程下载依赖服务器支持 <code>Range</code> 请求且允许跨域；不满足时会自动降级为单线程，
+              并在下载中心显示实际使用的模式。
+            </p>
+          </div>
+
+          <div class="card" style="margin-top:16px;">
+            <h4>安装</h4>
+            <div class="settings-grid">
+              <label class="field-row">
+                <span>点击“直接安装”时</span>
+                <select id="setInstallMode" data-key="install.mode">
+                  <option value="auto">自动：能下载就下载，否则打开新标签</option>
+                  <option value="browser">交给浏览器处理</option>
+                  <option value="open">总是打开新标签</option>
+                </select>
+              </label>
+              <label class="field-row">
+                <span>安装前检查是否为可执行文件</span>
+                <input type="checkbox" id="setCheckFile" data-key="install.checkFile" />
+              </label>
+              <label class="field-row">
+                <span>记住上次选择的安装方式</span>
+                <input type="checkbox" id="setRemember" data-key="install.remember" />
+              </label>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:16px;">
+            <h4>搜索</h4>
+            <div class="settings-grid">
+              <label class="field-row">
+                <span>默认搜索范围</span>
+                <select id="setScope" data-key="search.scope">
+                  <option value="all">全部（站内 + 全网）</option>
+                  <option value="site">仅站内</option>
+                  <option value="web">仅全网</option>
+                </select>
+              </label>
+              <label class="field-row">
+                <span>每页结果数</span>
+                <select id="setPageSize" data-key="search.pageSize">
+                  <option value="10">10 条</option>
+                  <option value="20">20 条</option>
+                  <option value="30">30 条</option>
+                </select>
+              </label>
+              <label class="field-row">
+                <span>允许公共代理兜底（被墙站点）</span>
+                <input type="checkbox" id="setProxy" data-key="search.proxy" />
+              </label>
+            </div>
+            <h5 style="margin:18px 0 8px;">启用的搜索源</h5>
+            <div id="sourceToggles" class="source-toggles"><p class="muted">加载中…</p></div>
+          </div>
+
+          <div class="row" style="margin-top:20px; gap:12px;">
+            <button class="btn primary" id="saveBtn" type="button">保存设置</button>
+            <button class="btn" id="resetBtn" type="button">恢复默认</button>
+            <span id="saveStatus" class="chip" role="status" aria-live="polite">尚未修改</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="container"><span>© 2025 鸟国网站 niaoguo.com</span></div></footer>
+
+    <script src="app-settings.js"></script>
+    <script src="search-sources.js"></script>
+    <script src="script.js"></script>
+    <script>
+      (function () {
+        'use strict';
+        var S = window.NiaoSettings;
+        var statusEl = document.getElementById('saveStatus');
+
+        function setStatus(msg, kind) {
+          if (!statusEl) return;
+          statusEl.textContent = msg;
+          statusEl.className = 'chip' + (kind ? ' is-' + kind : '');
+        }
+
+        var controls = Array.prototype.slice.call(document.querySelectorAll('[data-key]'));
+
+        function fill(settings) {
+          controls.forEach(function (el) {
+            var key = el.getAttribute('data-key');
+            var v = settings[key];
+            if (el.type === 'checkbox') el.checked = !!v;
+            else el.value = String(v);
+          });
+          renderSources(settings['search.disabledSources'] || []);
+        }
+
+        function renderSources(disabled) {
+          var wrap = document.getElementById('sourceToggles');
+          if (!wrap) return;
+          var list = window.NIAO_SEARCH_SOURCES || [];
+          if (!list.length) { wrap.innerHTML = '<p class="muted">搜索源配置未加载。</p>'; return; }
+          wrap.innerHTML = list.map(function (s) {
+            var on = disabled.indexOf(s.id) < 0;
+            return '<label class="source-toggle">' +
+              '<input type="checkbox" data-src="' + s.id + '"' + (on ? ' checked' : '') + ' />' +
+              '<span>' + s.name + '</span></label>';
+          }).join('');
+        }
+
+        function collect() {
+          var patch = {};
+          controls.forEach(function (el) {
+            var key = el.getAttribute('data-key');
+            if (el.type === 'checkbox') patch[key] = el.checked;
+            else if (el.tagName === 'SELECT') {
+              var num = parseInt(el.value, 10);
+              patch[key] = /^\d+$/.test(el.value) && ['download.chunkMB', 'download.retry', 'search.pageSize', 'download.concurrency'].indexOf(key) >= 0
+                ? num : el.value;
+            } else patch[key] = el.value;
+          });
+          var disabled = [];
+          Array.prototype.forEach.call(document.querySelectorAll('[data-src]'), function (el) {
+            if (!el.checked) disabled.push(el.getAttribute('data-src'));
+          });
+          patch['search.disabledSources'] = disabled;
+          return patch;
+        }
+
+        document.getElementById('saveBtn').addEventListener('click', function () {
+          S.set(collect());
+          setStatus('已保存，立即生效', 'ok');
+          if (window.Niao && window.Niao.toast) window.Niao.toast('设置已保存', 'ok');
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', function () {
+          if (!confirm('恢复默认设置？这会清除当前所有自定义项。')) return;
+          S.reset();
+          fill(S.get());
+          setStatus('已恢复默认', 'ok');
+        });
+
+        controls.forEach(function (el) {
+          el.addEventListener('change', function () { setStatus('有未保存的修改', 'warn'); });
+        });
+
+        fill(S.get());
+      })();
+    </script>
+  </body>
+</html>

@@ -110,6 +110,51 @@ python build_search_index.py     # 内容更新后重建站内索引
 
 ---
 
+## 小游戏（arcade.html）
+站内自带、纯前端运行，不依赖任何外站嵌入（原来 iframe 外站常被 X-Frame-Options 拦截，导致白屏）：
+- **2048**：方向键 / WASD / 触屏滑动，合并计分，达成 2048 提示
+- **贪吃蛇**：Canvas 渲染，速度随得分递增，撞墙或撞自己结束
+- **扫雷**：9×9 10 雷，左键翻开、右键插旗、长按插旗；首点不踩雷，通关按用时计分
+- 最高分存 `localStorage`（键 `niao.arcade.*`）；`?g=2048|snake|mine` 直达某个游戏
+- `games-extra.json` 中 2048 / snake / minesweeper 三条已改为 `embedUrl: arcade.html?g=...`，
+  游戏专区点击“本站游玩”即在站内弹窗打开，不再跳外站
+
+## 下载中心（download.html）
+| 能力 | 说明 |
+|---|---|
+| 链接解析 | 自动识别直链、网盘分享文案（可从整段文字中提取链接与提取码） |
+| 网盘支持 | 百度 / 夸克 / 蓝奏云 / 123 云盘 / 阿里云盘；提取分享地址与提取码，一键复制 |
+| 远端探测 | 读取大小、是否支持 `Range`、文件名（`Content-Disposition`） |
+| 多线程下载 | 按 `Range` 分片并发（1–8），单分片失败自动重试；不支持分段时降级单线程 |
+| 进度滑条 | 实时百分比 / 已下载 / 速度 / 剩余时间；拖动滑条可预览进度，松开回到实时 |
+| 暂停续传 | 暂停后仅重下未完成分片；取消则丢弃 |
+| 保存 | 内存合并为 Blob 后 `a[download]` 保存；跨域受限时可改用“用浏览器下载” |
+
+核心实现：`download-core.js`（`NiaoDownloader.parseLink / probe / createTask`），页面为 `download.html`。
+
+> 说明：跨域响应默认只暴露少数响应头，`Content-Length` / `Content-Range` 常被隐藏；
+> 此时无法得知总大小，界面会显示“已下载 X / 大小未知”，并在完成后补齐真实大小。
+> 多线程需要服务器同时满足「支持 Range」与「允许跨域读取响应头」。
+
+## 设置（settings.html）
+集中配置，保存在 `localStorage`（`niao.settings.v1`），`app-settings.js` 提供 `NiaoSettings.get/set/reset/onChange`：
+- **下载**：并发分片数、分片大小、失败重试、解析后自动开始、保存方式
+- **安装**：直装行为（自动 / 交给浏览器 / 总开新标签）、安装前检查、记住选择
+- **搜索**：默认范围、每页条数、代理兜底开关、启用的搜索源（可逐源关闭）
+
+搜索页与下载中心会在初始化时读取设置，并在 `niao:settings` 事件后即时生效。
+
+## 直装与跨域链接
+- `downloads.html` / `games.html` 曾经设 `static=false` 且指向不存在的 `localhost:5050`，导致点击“直接安装”被登录/积分拦截；已统一为 `static=true`
+- 新增全局接管：点击指向跨域可执行文件的按钮时，自动转到 `download.html?url=...`，由下载器显示进度并保存；同源文件仍交给浏览器
+- 可在设置里把安装方式改为“总是打开新标签”以恢复原始行为
+
+## 搜索源新增：gamer520
+- 站点 `https://www.gamer520.com`，站内搜索 `?s=关键词`，结果为 WordPress 文章列表
+- 该站未返回 `Access-Control-Allow-Origin`，且公共代理对其经常超时，因此：
+  - 配置 `forceProxy: true`，直接走代理（依次尝试 allorigins → codetabs → cors.eu.org）
+  - 全部失败时，来源条显示为**可点击的「直达」**，跳转 gamer520 站内搜索结果，不占结果位
+
 ## 部署到 GitHub Pages（推荐）
 1) 在 GitHub 创建一个仓库（Public 或 Private with Pages），例如：`yourname/niaoguo-site`
 2) 在本地运行以下命令（PowerShell）：
