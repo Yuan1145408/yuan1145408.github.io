@@ -125,6 +125,17 @@
                   <button type="button" role="tab" data-game="2048" class="is-on" aria-selected="true">2048</button>
                   <button type="button" role="tab" data-game="snake" aria-selected="false">贪吃蛇</button>
                   <button type="button" role="tab" data-game="mine" aria-selected="false">扫雷</button>
+                  <button type="button" role="tab" data-game="pong" aria-selected="false">乒乓</button>
+                  <button type="button" role="tab" data-game="ttt" aria-selected="false">井字棋</button>
+                  <button type="button" role="tab" data-game="c4" aria-selected="false">四子棋</button>
+                  <button type="button" role="tab" data-game="reversi" aria-selected="false">黑白棋</button>
+                  <button type="button" role="tab" data-game="memory" aria-selected="false">记忆翻牌</button>
+                  <button type="button" role="tab" data-game="breakout" aria-selected="false">打砖块</button>
+                  <button type="button" role="tab" data-game="fifteen" aria-selected="false">十五拼图</button>
+                </div>
+                <div class="arcade-tabs" id="modeWrap" role="group" aria-label="游戏模式" hidden>
+                  <button type="button" data-mode="1p" class="is-on">单人模式</button>
+                  <button type="button" data-mode="2p">双人模式</button>
                 </div>
                 <div class="score-pill" id="arcadeScore">得分 <b>0</b></div>
               </div>
@@ -133,6 +144,7 @@
                 <div id="board2048"></div>
                 <canvas id="snakeCanvas" width="400" height="400" hidden></canvas>
                 <div id="mineBoard" hidden></div>
+                <div id="extraStage" hidden></div>
                 <div class="arcade-overlay" id="overlay" hidden>
                   <div>
                     <h4 id="overlayTitle">准备好了吗</h4>
@@ -188,10 +200,10 @@
         return parseInt(localStorage.getItem(k) || '0', 10) || 0;
       }
 
-      function setScore(n) {
+      function setScore(n, key) {
         score = n;
         scoreEl.innerHTML = '得分 <b>' + n + '</b>';
-        bestEl.textContent = '最高 ' + best(game, n) + ' 分';
+        bestEl.textContent = '最高 ' + best(key || game, n) + ' 分';
       }
 
       function showOverlay(title, text, btn) {
@@ -434,34 +446,82 @@
       /* ---------------- 切换与输入 ---------------- */
       var HELP = {
         '2048': '方向键或 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动方块；触屏可直接滑动。相同数字相撞会合并。',
-        snake: '方向键或 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 转向；触屏滑动。吃到黄点 +10 分，速度逐渐加快。',
+        snake: '方向键或 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 转向；触屏滑动。吃到黄点 +10 分，速度逐渐加快。双人模式两人同屏竞速。',
         mine: '左键翻开、右键标旗；触屏点击翻开，长按插旗。翻完所有非雷格子即通关。'
       };
 
+      var MODES = { '2048': ['1p'], snake: ['1p', '2p'], mine: ['1p'] };
+      var EXT_MODES = { snake2: ['2p'], pong: ['1p', '2p'], ttt: ['1p', '2p'], c4: ['1p', '2p'], reversi: ['1p', '2p'], memory: ['1p'], breakout: ['1p'], fifteen: ['1p'] };
+      var gameMode = '1p';
+      var pendingExt = false;
+      var curExt = null, curKeyHandler = null;
+
+      function renderModeSwitch(modes) {
+        var wrap = $('modeWrap');
+        if (!wrap) return;
+        wrap.hidden = modes.length < 2;
+        Array.prototype.forEach.call(wrap.querySelectorAll('button'), function (b) {
+          var m = b.getAttribute('data-mode');
+          b.hidden = modes.indexOf(m) < 0;
+          var on = m === gameMode;
+          b.classList.toggle('is-on', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      }
+
       function switchGame(name) {
+        var reg = window.ArcadeGames || null;
+        var effName = name;
+        if (name === 'snake' && gameMode === '2p') effName = 'snake2';
+        var ext = reg ? reg[effName] : null;
+        var isExtGame = !MODES[name]; // 不属于内嵌三件套（2048/贪吃蛇单人/扫雷）的都由扩展包实现
+
+        if (curExt && curExt.stop) curExt.stop();
+        curExt = null; curKeyHandler = null;
+
         game = name;
         paused = false;
         clearInterval(snake.timer);
         $('board2048').hidden = name !== '2048';
-        canvas.hidden = name !== 'snake';
-        $('mineBoard').hidden = name !== 'mine';
-        helpEl.innerHTML = HELP[name];
-        bestEl.textContent = '最高 ' + best(name) + ' 分';
+        canvas.hidden = !(name === 'snake' && !ext);
+        $('mineBoard').hidden = !(name === 'mine' && !isExtGame);
+        var extra = $('extraStage');
+        extra.hidden = !ext;
+        if (ext) extra.innerHTML = '';
+
+        // 贪吃蛇的 1p 用内嵌实现、2p 用扩展包，模式集合按 tab 统一
+        var modes = name === 'snake' ? MODES.snake : (ext ? ext.modes : (MODES[name] || EXT_MODES[name] || ['1p']));
+        if (modes.indexOf(gameMode) < 0) gameMode = modes[0];
+        renderModeSwitch(modes);
+
+        helpEl.innerHTML = ext ? ext.help : (HELP[name] || (isExtGame ? '' : HELP.mine));
+        bestEl.textContent = '最高 ' + best(ext ? effName : name) + ' 分';
         Array.prototype.forEach.call($('arcadeTabs').querySelectorAll('button'), function (b) {
           var on = b.getAttribute('data-game') === name;
           b.classList.toggle('is-on', on);
           b.setAttribute('aria-selected', on ? 'true' : 'false');
         });
         hideOverlay();
-        if (name === '2048') init2048();
+        if (ext) {
+          curExt = ext; curKeyHandler = ext._key || null; ext.init(gameMode);
+        } else if (isExtGame && !reg) {
+          pendingExt = true; // arcade-games.js 尚未加载，加载完成后由 ArcadeBoot 补启
+        } else if (name === '2048') init2048();
         else if (name === 'snake') initSnake();
         else { initMine(); mine.startedAt = Date.now(); }
-        setScore(0);
+        if (!ext) setScore(0);
       }
 
       $('arcadeTabs').addEventListener('click', function (e) {
         var b = e.target.closest('button[data-game]');
         if (b && b.getAttribute('data-game') !== game) switchGame(b.getAttribute('data-game'));
+      });
+
+      $('modeWrap').addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-mode]');
+        if (!b) return;
+        var m = b.getAttribute('data-mode');
+        if (m !== gameMode) { gameMode = m; switchGame(game); }
       });
 
       $('restartBtn').addEventListener('click', function () { switchGame(game); });
@@ -476,6 +536,8 @@
         var tag = (document.activeElement && document.activeElement.tagName) || '';
         if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
         var k = e.key.toLowerCase();
+        // 扩展游戏（乒乓/双人贪吃蛇/打砖块等）优先接管按键
+        if (window.ArcadeAPI && window.ArcadeAPI.dispatchKey(e, k)) return;
         var map = { arrowleft: [-1, 0], arrowright: [1, 0], arrowup: [0, -1], arrowdown: [0, 1],
                     a: [-1, 0], d: [1, 0], w: [0, -1], s: [0, 1] };
         if (!map[k]) return;
@@ -485,6 +547,10 @@
         } else if (game === 'snake') {
           turn(map[k][0], map[k][1]);
         }
+      });
+      // 松开按键通知扩展游戏（乒乓等需要持续按住的控制）
+      document.addEventListener('keyup', function (e) {
+        if (window.ArcadeAPI) window.ArcadeAPI.dispatchKey(e, e.key.toLowerCase());
       });
 
       // 触屏滑动
@@ -540,10 +606,34 @@
 
       overlayBtn.addEventListener('click', function () { hideOverlay(); });
 
-      var qp = new URLSearchParams(location.search).get('g');
-      switchGame(['2048', 'snake', 'mine'].indexOf(qp) >= 0 ? qp : '2048');
+      // 暴露给扩展游戏包（arcade-games.js）的桥接接口
+      window.ArcadeAPI = {
+        stage: function () { return $('extraStage'); },
+        setScore: function (n, key) { setScore(n, key); },
+        best: best,
+        overlay: function (title, text, btn, onClick) {
+          showOverlay(title, text, btn);
+          overlayBtn.onclick = function () { hideOverlay(); if (onClick) onClick(); };
+        },
+        overlayHide: hideOverlay,
+        state: function (s) { stateEl.textContent = s; },
+        isPaused: function () { return paused; },
+        dispatchKey: function (e, k) {
+          if (curKeyHandler && curKeyHandler(e, k)) { if (e.type === 'keydown') e.preventDefault(); return true; }
+          return false;
+        }
+      };
+      // arcade-games.js 加载完成后重跑一次当前游戏：
+      // 补启挂起的扩展游戏，并让「贪吃蛇 + 双人模式」正确路由到扩展包
+      window.ArcadeBoot = function () { pendingExt = false; switchGame(game); };
+
+      var qs = new URLSearchParams(location.search);
+      var qp = qs.get('g');
+      if (qs.get('mode') === '2p') gameMode = '2p';
+      switchGame(['2048', 'snake', 'mine', 'pong', 'ttt', 'c4', 'reversi', 'memory', 'breakout', 'fifteen'].indexOf(qp) >= 0 ? qp : '2048');
     })();
     </script>
+    <script src="arcade-games.js"></script>
     <script src="nav-glider.js"></script>
   </body>
 </html>

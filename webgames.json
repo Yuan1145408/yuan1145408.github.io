@@ -1,742 +1,751 @@
 {
- "version": 1,
- "generated": "2026-11-21T09:06:26Z",
- "note": "只收录公开平台入口与开源项目页面，不托管任何游戏本体或资源文件。",
- "categories": [
-  {
-   "key": "cloud",
-   "label": "云游戏平台",
-   "desc": "浏览器串流运行 3A 大作，本地不需要显卡"
-  },
-  {
-   "key": "browser",
-   "label": "浏览器直玩",
-   "desc": "WASM / WebGL 移植，打开标签页就进游戏"
-  },
-  {
-   "key": "source",
-   "label": "开源项目与源码",
-   "desc": "可下载、可自建、可二次开发的移植与工具链"
-  }
- ],
- "items": [
-  {
-   "id": "start-qq",
-   "cat": "cloud",
-   "name": "腾讯 START 云游戏",
-   "region": "cn",
-   "need": "account",
-   "desc": "国内用户量最大的云游戏平台之一，网页版直接登录开玩，覆盖主流网游与部分正版 3A，节点多、延迟低。",
-   "tags": [
-    "正版授权",
-    "网页即玩",
-    "1080P"
-   ],
-   "play": "https://start.qq.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "cg163",
-   "cat": "cloud",
-   "name": "网易云游戏",
-   "region": "cn",
-   "need": "account",
-   "desc": "网易旗下云游戏，网页端优化较好，除网易系作品外也接入第三方单机，支持手机与 PC 进度互通。",
-   "tags": [
-    "跨端同步",
-    "免下载"
-   ],
-   "play": "https://cg.163.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "suileyoo",
-   "cat": "cloud",
-   "name": "随乐游云游戏",
-   "region": "cn",
-   "need": "account",
-   "desc": "主打“3A 大作网页版秒开”，《使命召唤》《生化危机》《极限竞速》等新作上线较快。",
-   "tags": [
-    "3A 专区",
-    "秒开"
-   ],
-   "play": "https://www.suileyoo.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "3ayx",
-   "cat": "cloud",
-   "name": "3A 云游戏",
-   "region": "cn",
-   "need": "account",
-   "desc": "以 3A 单机与主机移植作为主的云游戏平台，含大量模组版与试玩版，按时长计费。",
-   "tags": [
-    "单机为主",
-    "按时长"
-   ],
-   "play": "https://play.3ayx.net/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "paoyu",
-   "cat": "cloud",
-   "name": "胖鱼云游戏",
-   "region": "cn",
-   "need": "account",
-   "desc": "门槛较低的国内云游戏服务，老旧电脑也能跑，适合先试试云游戏手感再决定是否升级硬件。",
-   "tags": [
-    "低配友好"
-   ],
-   "play": "https://www.paoyu.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "migu",
-   "cat": "cloud",
-   "name": "咪咕快游",
-   "region": "cn",
-   "need": "account",
-   "desc": "运营商背景的云游戏平台，带宽资源好，PC 网页、手机、电视可切换，高峰期排队相对短。",
-   "tags": [
-    "运营商",
-    "多端"
-   ],
-   "play": "https://cg.migu.cn/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "xbox-cloud",
-   "cat": "cloud",
-   "name": "Xbox Cloud Gaming",
-   "region": "global",
-   "need": "account",
-   "desc": "微软官方云游戏，Xbox 第一方与 Game Pass 库全覆盖，网页端直接串流，需订阅与对应地区网络。",
-   "tags": [
-    "Game Pass",
-    "官方"
-   ],
-   "play": "https://www.xbox.com/play",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "luna",
-   "cat": "cloud",
-   "name": "Amazon Luna",
-   "region": "global",
-   "need": "account",
-   "desc": "亚马逊云游戏，频道制订阅，网页端可用，部分频道对接 Ubisoft+ 等第三方库。",
-   "tags": [
-    "频道订阅"
-   ],
-   "play": "https://luna.amazon.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "boosteroid",
-   "cat": "cloud",
-   "name": "Boosteroid",
-   "region": "global",
-   "need": "account",
-   "desc": "欧洲系云游戏平台，可串流自己已购买的游戏（含 Steam / Epic 库），对 3A 支持较好。",
-   "tags": [
-    "自带游戏库"
-   ],
-   "play": "https://boosteroid.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "gfn",
-   "cat": "cloud",
-   "name": "GeForce NOW",
-   "region": "global",
-   "need": "account",
-   "desc": "英伟达云游戏，直连 RTX 算力，支持光追与 DLSS，画质接近本地高端硬件；国内访问需代理。",
-   "tags": [
-    "RTX",
-    "需代理"
-   ],
-   "play": "https://play.geforcenow.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "nowgg",
-   "cat": "cloud",
-   "name": "now.gg",
-   "region": "global",
-   "need": "free",
-   "desc": "以手游云端化为主，浏览器里直接跑安卓游戏，免安装，部分游戏免登录试玩。",
-   "tags": [
-    "手游云端",
-    "免安装"
-   ],
-   "play": "https://now.gg/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "gta3-wasm",
-   "cat": "browser",
-   "name": "GTA III（WASM 移植）",
-   "region": "global",
-   "need": "instant",
-   "mobile": true,
-   "desc": "《侠盗猎车手 3》开源重制 re3 的 WebAssembly 版本，浏览器内跑完整单机流程，支持键鼠 / 手柄 / 触屏。",
-   "tags": [
-    "开放世界",
-    "约 130MB"
-   ],
-   "play": "https://wasmarcade.com/",
-   "repo": "",
-   "dl": ""
-  },
-  {
-   "id": "gtavc-wasm",
-   "cat": "browser",
-   "name": "GTA: Vice City（WASM）",
-   "region": "global",
-   "need": "files",
-   "desc": "罪恶都市的浏览器移植版，需要自备正版游戏资源文件，首次进入按页面提示导入。",
-   "tags": [
-    "需自备文件"
-   ],
-   "play": "https://joncodeofficial.github.io/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "halflife-webxash",
-   "cat": "browser",
-   "name": "Half-Life / CS 1.6（WebXash）",
-   "region": "global",
-   "need": "instant",
-   "desc": "基于 Xash3D 引擎的浏览器移植，含免费试玩内容，也支持导入自有的 Half-Life、CS 1.6 资源。",
-   "tags": [
-    "FPS",
-    "含试玩"
-   ],
-   "play": "https://x8bitrain.github.io/webXash/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "halo-ce",
-   "cat": "browser",
-   "name": "Halo: Combat Evolved（Web）",
-   "region": "global",
-   "need": "files",
-   "desc": "《光环：战斗进化》的浏览器运行器，需自备游戏文件，支持多人联机。",
-   "tags": [
-    "需自备文件",
-    "联机"
-   ],
-   "play": "https://mitchellhynes.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "halo-mobile",
-   "cat": "browser",
-   "name": "Halo CE Mobile",
-   "region": "global",
-   "need": "files",
-   "mobile": true,
-   "desc": "面向手机浏览器的光环移植，需自备游戏文件，提供触屏操作布局。",
-   "tags": [
-    "手机可玩",
-    "需自备文件"
-   ],
-   "play": "https://hcemobile.com/",
-   "repo": "",
-   "dl": ""
-  },
-  {
-   "id": "doom-browser",
-   "cat": "browser",
-   "name": "DOOM（浏览器版）",
-   "region": "global",
-   "need": "instant",
-   "mobile": true,
-   "desc": "基于 WASM 的 Doom 分享版，打开即玩，支持浏览器内联机对战，也有 Three.js 重制版可选。",
-   "tags": [
-    "经典 FPS",
-    "联机",
-    "约 5MB"
-   ],
-   "play": "https://silentspacemarine.com/",
-   "repo": "",
-   "dl": ""
-  },
-  {
-   "id": "quake1",
-   "cat": "browser",
-   "name": "Quake（q1.pieter.com）",
-   "region": "global",
-   "need": "instant",
-   "desc": "初代《雷神之锤》的 WebAssembly 移植，单人与多人服务器都可用。",
-   "tags": [
-    "FPS",
-    "联机"
-   ],
-   "play": "https://q1.pieter.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "quake2",
-   "cat": "browser",
-   "name": "Quake II",
-   "region": "global",
-   "need": "instant",
-   "desc": "《雷神之锤 2》浏览器版，含多人对战，加载后可直接加入公共服务器。",
-   "tags": [
-    "FPS",
-    "联机"
-   ],
-   "play": "https://q2.pieter.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "quake3",
-   "cat": "browser",
-   "name": "Quake III Arena",
-   "region": "global",
-   "need": "instant",
-   "desc": "《雷神之锤 3》竞技场浏览器版，保留原版的移动手感与竞技节奏。",
-   "tags": [
-    "竞技",
-    "联机"
-   ],
-   "play": "https://q3.pieter.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "q3js",
-   "cat": "browser",
-   "name": "Quake III（Q3JS）",
-   "region": "global",
-   "need": "instant",
-   "desc": "更早的 ioquake3 编译版，带服务器浏览器，适合体验原汁原味的 Q3 对战。",
-   "tags": [
-    "服务器浏览器"
-   ],
-   "play": "https://q3js.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "rtcw",
-   "cat": "browser",
-   "name": "Return to Castle Wolfenstein",
-   "region": "global",
-   "need": "instant",
-   "desc": "《重返德军总部》的浏览器移植，单机战役与多人模式都可运行。",
-   "tags": [
-    "FPS",
-    "单机战役"
-   ],
-   "play": "https://rtcw.pieter.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "urban-terror",
-   "cat": "browser",
-   "name": "Urban Terror",
-   "region": "global",
-   "need": "instant",
-   "desc": "基于 Q3 引擎的战术射击免费游戏，浏览器版可直接联机。",
-   "tags": [
-    "战术射击",
-    "联机"
-   ],
-   "play": "https://ut.pieter.com/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "cod-zombies",
-   "cat": "browser",
-   "name": "COD 僵尸模式（Black Ops）",
-   "region": "global",
-   "need": "instant",
-   "desc": "《黑色行动》僵尸模式系列地图的浏览器合集，含 Kino der Toten、Nacht der Untoten 等，可多人合作。",
-   "tags": [
-    "僵尸",
-    "合作"
-   ],
-   "play": "https://vel.gg/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "skate3",
-   "cat": "browser",
-   "name": "Skate 3（浏览器移植）",
-   "region": "global",
-   "need": "files",
-   "desc": "《Skate 3》的粉丝移植版，需自备游戏文件，用手柄体验最佳。",
-   "tags": [
-    "需自备文件",
-    "体育"
-   ],
-   "play": "https://skate.aaddpp.lol/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "mc-classic",
-   "cat": "browser",
-   "name": "Minecraft Classic",
-   "region": "global",
-   "need": "instant",
-   "mobile": true,
-   "desc": "官方放出的《我的世界》经典版，免登录直接建造，可通过邀请链接和朋友同房。",
-   "tags": [
-    "官方",
-    "沙盒",
-    "约 14MB"
-   ],
-   "play": "https://classic.minecraft.net/",
-   "repo": "",
-   "dl": ""
-  },
-  {
-   "id": "openttd-web",
-   "cat": "browser",
-   "name": "OpenTTD（网页版）",
-   "region": "global",
-   "need": "instant",
-   "desc": "开源运输模拟《OpenTTD》的 WebAssembly 构建，单机沙盒，约 5MB 即可开一局。",
-   "tags": [
-    "模拟经营",
-    "约 5MB"
-   ],
-   "play": "https://openttd-web.pages.dev/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "micropolis",
-   "cat": "browser",
-   "name": "micropolisJS（模拟城市）",
-   "region": "global",
-   "need": "instant",
-   "desc": "《模拟城市》开源版 Micropolis 的纯 JS 重写，不到 1MB，载入即玩，仅建议桌面端。",
-   "tags": [
-    "模拟经营",
-    "小于 1MB"
-   ],
-   "play": "https://www.graememcc.co.uk/micropolisJS/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "surfd",
-   "cat": "browser",
-   "name": "CS: Source Surf",
-   "region": "global",
-   "need": "instant",
-   "desc": "CS:S 滑翔（Surf）模式的浏览器版，含在线服务器，纯娱乐向。",
-   "tags": [
-    "CS",
-    "联机"
-   ],
-   "play": "https://surfd.net/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "bunnyhop",
-   "cat": "browser",
-   "name": "CS: Source Bunnyhop",
-   "region": "global",
-   "need": "instant",
-   "desc": "CS:S 连跳（Bhop）竞速，带排行榜与在线服务器，约 11MB。",
-   "tags": [
-    "CS",
-    "竞速"
-   ],
-   "play": "https://bunnyhop.lol/",
-   "repo": "",
-   "dl": "",
-   "mobile": false
-  },
-  {
-   "id": "src-regta",
-   "cat": "source",
-   "name": "re-GTA（GTA III / VC 逆向工程）",
-   "region": "global",
-   "need": "free",
-   "desc": "gta3 与 Vice City 的逆向工程源码，re3 / reVC 的基础，可自行编译出 PC 版或 WASM 版。仓库已归档，仍有镜像价值。",
-   "tags": [
-    "C++",
-    "155★"
-   ],
-   "repo": "https://github.com/Jai-JAP/re-GTA",
-   "dl": "https://github.com/Jai-JAP/re-GTA/archive/refs/heads/re3.zip",
-   "branch": "re3",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-webxash",
-   "cat": "source",
-   "name": "webXash（Half-Life 浏览器移植）",
-   "region": "global",
-   "need": "free",
-   "desc": "把 Xash3D 引擎搬进浏览器，支持导入自有 Half-Life / CS 1.6 资源，前面直玩页面的项目来源。",
-   "tags": [
-    "TypeScript",
-    "185★"
-   ],
-   "repo": "https://github.com/x8BitRain/webXash",
-   "dl": "https://github.com/x8BitRain/webXash/archive/refs/heads/main.zip",
-   "branch": "main",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-xash3d",
-   "cat": "source",
-   "name": "Xash3D FWGS",
-   "region": "global",
-   "need": "free",
-   "desc": "GoldSrc 引擎的开源重实现，webXash 等浏览器移植的上游项目，可编译到 WASM。",
-   "tags": [
-    "C",
-    "2958★"
-   ],
-   "repo": "https://github.com/FWGS/xash3d-fwgs",
-   "dl": "https://github.com/FWGS/xash3d-fwgs/archive/refs/heads/master.zip",
-   "branch": "master",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-quakejs",
-   "cat": "source",
-   "name": "QuakeJS",
-   "region": "global",
-   "need": "free",
-   "desc": "把 ioquake3 编译成 JavaScript 的经典项目，自带服务器与客户端，是浏览器 FPS 移植的教科书。",
-   "tags": [
-    "JavaScript",
-    "1613★"
-   ],
-   "repo": "https://github.com/inolen/quakejs",
-   "dl": "https://github.com/inolen/quakejs/archive/refs/heads/master.zip",
-   "branch": "master",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-micropolis",
-   "cat": "source",
-   "name": "micropolisJS",
-   "region": "global",
-   "need": "free",
-   "desc": "《模拟城市》开源版本的 HTML5 / JS 重写，代码量小，适合当作浏览器游戏开发范例。",
-   "tags": [
-    "JavaScript",
-    "738★"
-   ],
-   "repo": "https://github.com/graememcc/micropolisJS",
-   "dl": "https://github.com/graememcc/micropolisJS/archive/refs/heads/main.zip",
-   "branch": "main",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-openttd",
-   "cat": "source",
-   "name": "OpenTTD",
-   "region": "global",
-   "need": "free",
-   "desc": "开源运输大亨，官方支持 Emscripten 构建网页版，可自己编译出浏览器可玩的版本。",
-   "tags": [
-    "C++",
-    "8521★"
-   ],
-   "repo": "https://github.com/OpenTTD/OpenTTD",
-   "dl": "https://github.com/OpenTTD/OpenTTD/archive/refs/heads/master.zip",
-   "branch": "master",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-stk",
-   "cat": "source",
-   "name": "SuperTuxKart",
-   "region": "global",
-   "need": "free",
-   "desc": "开源卡丁车竞速，官方提供 WebAssembly 构建，约 120MB，可直接在浏览器跑。",
-   "tags": [
-    "C++",
-    "5491★"
-   ],
-   "repo": "https://github.com/supertuxkart/stk-code",
-   "dl": "https://github.com/supertuxkart/stk-code/archive/refs/heads/master.zip",
-   "branch": "master",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-jsdos",
-   "cat": "source",
-   "name": "js-dos",
-   "region": "global",
-   "need": "free",
-   "desc": "在浏览器里跑 DOS 程序的 API，可把老游戏与工具直接嵌进网页，支持存档与手柄。",
-   "tags": [
-    "TypeScript",
-    "1348★"
-   ],
-   "repo": "https://github.com/caiiiycuk/js-dos",
-   "dl": "https://github.com/caiiiycuk/js-dos/archive/refs/heads/8.xx.zip",
-   "branch": "8.xx",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-emscripten",
-   "cat": "source",
-   "name": "Emscripten",
-   "region": "global",
-   "need": "free",
-   "desc": "C/C++ 编译到 WebAssembly 的工具链，绝大多数“3A 网页化”项目的底层依赖。",
-   "tags": [
-    "工具链",
-    "27789★"
-   ],
-   "repo": "https://github.com/emscripten-core/emscripten",
-   "dl": "https://github.com/emscripten-core/emscripten/archive/refs/heads/main.zip",
-   "branch": "main",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-godot",
-   "cat": "source",
-   "name": "Godot Engine",
-   "region": "global",
-   "need": "free",
-   "desc": "开源游戏引擎，一键导出 Web 版本，适合自己把 3D 项目做成网页游戏。",
-   "tags": [
-    "引擎",
-    "MIT",
-    "120502★"
-   ],
-   "repo": "https://github.com/godotengine/godot",
-   "dl": "https://github.com/godotengine/godot/archive/refs/heads/master.zip",
-   "branch": "master",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-retroarch",
-   "cat": "source",
-   "name": "RetroArch（Web 版）",
-   "region": "global",
-   "need": "free",
-   "desc": "多平台模拟器前端，提供 WebAssembly 构建，可在浏览器里跑多种主机与街机核心。",
-   "tags": [
-    "模拟器",
-    "14663★"
-   ],
-   "repo": "https://github.com/libretro/RetroArch",
-   "dl": "https://github.com/libretro/RetroArch/archive/refs/heads/master.zip",
-   "branch": "master",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-dosbox",
-   "cat": "source",
-   "name": "DOSBox Staging",
-   "region": "global",
-   "need": "free",
-   "desc": "现代维护的 DOSBox 分支，可配合 Emscripten 或 js-dos 把 DOS 游戏搬上网页。",
-   "tags": [
-    "C++",
-    "1842★"
-   ],
-   "repo": "https://github.com/dosbox-staging/dosbox-staging",
-   "dl": "https://github.com/dosbox-staging/dosbox-staging/archive/refs/heads/main.zip",
-   "branch": "main",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-awesome-decomp",
-   "cat": "source",
-   "name": "awesome-decomp-games（索引）",
-   "region": "global",
-   "need": "free",
-   "desc": "2468 个反编译 / 静态重编译 / 源码移植项目的总索引，本站浏览器直玩清单的主要来源，链接每日体检。",
-   "tags": [
-    "索引",
-    "3148★",
-    "CC0"
-   ],
-   "repo": "https://github.com/SubmitGame/awesome-decomp-games",
-   "dl": "https://github.com/SubmitGame/awesome-decomp-games/archive/refs/heads/main.zip",
-   "branch": "main",
-   "play": "",
-   "mobile": false
-  },
-  {
-   "id": "src-awesome-ports",
-   "cat": "source",
-   "name": "Awesome Browser Game Ports",
-   "region": "global",
-   "need": "free",
-   "desc": "专门收录“能在浏览器里直接跑的真实游戏”的清单，条目带可玩性标注。",
-   "tags": [
-    "索引",
-    "清单"
-   ],
-   "repo": "https://github.com/bitburner/Awesome-Browser-Game-Ports",
-   "dl": "https://github.com/bitburner/Awesome-Browser-Game-Ports/archive/refs/heads/main.zip",
-   "branch": "main",
-   "play": "",
-   "mobile": false
-  }
- ]
+  "version": 1,
+  "generated": "2026-11-21T09:06:26Z",
+  "note": "只收录公开平台入口与开源项目页面，不托管任何游戏本体或资源文件。",
+  "categories": [
+    {
+      "key": "cloud",
+      "label": "云游戏平台",
+      "desc": "浏览器串流运行 3A 大作，本地不需要显卡"
+    },
+    {
+      "key": "browser",
+      "label": "浏览器直玩",
+      "desc": "WASM / WebGL 移植，打开标签页就进游戏"
+    },
+    {
+      "key": "source",
+      "label": "开源项目与源码",
+      "desc": "可下载、可自建、可二次开发的移植与工具链"
+    }
+  ],
+  "items": [
+    {
+      "id": "start-qq",
+      "cat": "cloud",
+      "name": "腾讯 START 云游戏",
+      "region": "cn",
+      "need": "account",
+      "desc": "国内用户量最大的云游戏平台之一，网页版直接登录开玩，覆盖主流网游与部分正版 3A，节点多、延迟低。",
+      "tags": [
+        "正版授权",
+        "网页即玩",
+        "1080P"
+      ],
+      "play": "https://start.qq.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "cg163",
+      "cat": "cloud",
+      "name": "网易云游戏",
+      "region": "cn",
+      "need": "account",
+      "desc": "网易旗下云游戏，网页端优化较好，除网易系作品外也接入第三方单机，支持手机与 PC 进度互通。",
+      "tags": [
+        "跨端同步",
+        "免下载"
+      ],
+      "play": "https://cg.163.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "suileyoo",
+      "cat": "cloud",
+      "name": "随乐游云游戏",
+      "region": "cn",
+      "need": "account",
+      "desc": "主打“3A 大作网页版秒开”，《使命召唤》《生化危机》《极限竞速》等新作上线较快。",
+      "tags": [
+        "3A 专区",
+        "秒开"
+      ],
+      "play": "https://www.suileyoo.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "3ayx",
+      "cat": "cloud",
+      "name": "3A 云游戏",
+      "region": "cn",
+      "need": "account",
+      "desc": "以 3A 单机与主机移植作为主的云游戏平台，含大量模组版与试玩版，按时长计费。",
+      "tags": [
+        "单机为主",
+        "按时长"
+      ],
+      "play": "https://play.3ayx.net/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "paoyu",
+      "cat": "cloud",
+      "name": "胖鱼云游戏",
+      "region": "cn",
+      "need": "account",
+      "desc": "门槛较低的国内云游戏服务，老旧电脑也能跑，适合先试试云游戏手感再决定是否升级硬件。",
+      "tags": [
+        "低配友好"
+      ],
+      "play": "https://www.paoyu.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "migu",
+      "cat": "cloud",
+      "name": "咪咕快游",
+      "region": "cn",
+      "need": "account",
+      "desc": "运营商背景的云游戏平台，带宽资源好，PC 网页、手机、电视可切换，高峰期排队相对短。",
+      "tags": [
+        "运营商",
+        "多端"
+      ],
+      "play": "https://cg.migu.cn/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "xbox-cloud",
+      "cat": "cloud",
+      "name": "Xbox Cloud Gaming",
+      "region": "global",
+      "need": "account",
+      "desc": "微软官方云游戏，Xbox 第一方与 Game Pass 库全覆盖，网页端直接串流，需订阅与对应地区网络。",
+      "tags": [
+        "Game Pass",
+        "官方"
+      ],
+      "play": "https://www.xbox.com/play",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "luna",
+      "cat": "cloud",
+      "name": "Amazon Luna",
+      "region": "global",
+      "need": "account",
+      "desc": "亚马逊云游戏，频道制订阅，网页端可用，部分频道对接 Ubisoft+ 等第三方库。",
+      "tags": [
+        "频道订阅"
+      ],
+      "play": "https://luna.amazon.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "boosteroid",
+      "cat": "cloud",
+      "name": "Boosteroid",
+      "region": "global",
+      "need": "account",
+      "desc": "欧洲系云游戏平台，可串流自己已购买的游戏（含 Steam / Epic 库），对 3A 支持较好。",
+      "tags": [
+        "自带游戏库"
+      ],
+      "play": "https://boosteroid.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "gfn",
+      "cat": "cloud",
+      "name": "GeForce NOW",
+      "region": "global",
+      "need": "account",
+      "desc": "英伟达云游戏，直连 RTX 算力，支持光追与 DLSS，画质接近本地高端硬件；国内访问需代理。",
+      "tags": [
+        "RTX",
+        "需代理"
+      ],
+      "play": "https://play.geforcenow.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "nowgg",
+      "cat": "cloud",
+      "name": "now.gg",
+      "region": "global",
+      "need": "free",
+      "desc": "以手游云端化为主，浏览器里直接跑安卓游戏，免安装，部分游戏免登录试玩。",
+      "tags": [
+        "手游云端",
+        "免安装"
+      ],
+      "play": "https://now.gg/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "gta3-wasm",
+      "cat": "browser",
+      "name": "GTA III（WASM 移植）",
+      "region": "global",
+      "need": "instant",
+      "mobile": true,
+      "desc": "《侠盗猎车手 3》开源重制 re3 的 WebAssembly 版本，浏览器内跑完整单机流程，支持键鼠 / 手柄 / 触屏。",
+      "tags": [
+        "开放世界",
+        "约 130MB"
+      ],
+      "play": "https://wasmarcade.com/",
+      "repo": "",
+      "dl": ""
+    },
+    {
+      "id": "gtavc-wasm",
+      "cat": "browser",
+      "name": "GTA: Vice City（WASM）",
+      "region": "global",
+      "need": "files",
+      "desc": "罪恶都市的浏览器移植版，需要自备正版游戏资源文件，首次进入按页面提示导入。",
+      "tags": [
+        "需自备文件"
+      ],
+      "play": "https://joncodeofficial.github.io/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "halflife-webxash",
+      "cat": "browser",
+      "name": "Half-Life / CS 1.6（WebXash）",
+      "region": "global",
+      "need": "instant",
+      "desc": "基于 Xash3D 引擎的浏览器移植，含免费试玩内容，也支持导入自有的 Half-Life、CS 1.6 资源。",
+      "tags": [
+        "FPS",
+        "含试玩"
+      ],
+      "play": "https://x8bitrain.github.io/webXash/",
+      "repo": "",
+      "dl": "",
+      "mobile": false,
+      "embeddable": true
+    },
+    {
+      "id": "halo-ce",
+      "cat": "browser",
+      "name": "Halo: Combat Evolved（Web）",
+      "region": "global",
+      "need": "files",
+      "desc": "《光环：战斗进化》的浏览器运行器，需自备游戏文件，支持多人联机。",
+      "tags": [
+        "需自备文件",
+        "联机"
+      ],
+      "play": "https://mitchellhynes.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "halo-mobile",
+      "cat": "browser",
+      "name": "Halo CE Mobile",
+      "region": "global",
+      "need": "files",
+      "mobile": true,
+      "desc": "面向手机浏览器的光环移植，需自备游戏文件，提供触屏操作布局。",
+      "tags": [
+        "手机可玩",
+        "需自备文件"
+      ],
+      "play": "https://hcemobile.com/",
+      "repo": "",
+      "dl": ""
+    },
+    {
+      "id": "doom-browser",
+      "cat": "browser",
+      "name": "DOOM（浏览器版）",
+      "region": "global",
+      "need": "instant",
+      "mobile": true,
+      "desc": "基于 WASM 的 Doom 分享版，打开即玩，支持浏览器内联机对战，也有 Three.js 重制版可选。",
+      "tags": [
+        "经典 FPS",
+        "联机",
+        "约 5MB"
+      ],
+      "play": "https://silentspacemarine.com/",
+      "repo": "",
+      "dl": "",
+      "embeddable": true
+    },
+    {
+      "id": "quake1",
+      "cat": "browser",
+      "name": "Quake（q1.pieter.com）",
+      "region": "global",
+      "need": "instant",
+      "desc": "初代《雷神之锤》的 WebAssembly 移植，单人与多人服务器都可用。",
+      "tags": [
+        "FPS",
+        "联机"
+      ],
+      "play": "https://q1.pieter.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "quake2",
+      "cat": "browser",
+      "name": "Quake II",
+      "region": "global",
+      "need": "instant",
+      "desc": "《雷神之锤 2》浏览器版，含多人对战，加载后可直接加入公共服务器。",
+      "tags": [
+        "FPS",
+        "联机"
+      ],
+      "play": "https://q2.pieter.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "quake3",
+      "cat": "browser",
+      "name": "Quake III Arena",
+      "region": "global",
+      "need": "instant",
+      "desc": "《雷神之锤 3》竞技场浏览器版，保留原版的移动手感与竞技节奏。",
+      "tags": [
+        "竞技",
+        "联机"
+      ],
+      "play": "https://q3.pieter.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "q3js",
+      "cat": "browser",
+      "name": "Quake III（Q3JS）",
+      "region": "global",
+      "need": "instant",
+      "desc": "更早的 ioquake3 编译版，带服务器浏览器，适合体验原汁原味的 Q3 对战。",
+      "tags": [
+        "服务器浏览器"
+      ],
+      "play": "https://q3js.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false,
+      "embeddable": true
+    },
+    {
+      "id": "rtcw",
+      "cat": "browser",
+      "name": "Return to Castle Wolfenstein",
+      "region": "global",
+      "need": "instant",
+      "desc": "《重返德军总部》的浏览器移植，单机战役与多人模式都可运行。",
+      "tags": [
+        "FPS",
+        "单机战役"
+      ],
+      "play": "https://rtcw.pieter.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "urban-terror",
+      "cat": "browser",
+      "name": "Urban Terror",
+      "region": "global",
+      "need": "instant",
+      "desc": "基于 Q3 引擎的战术射击免费游戏，浏览器版可直接联机。",
+      "tags": [
+        "战术射击",
+        "联机"
+      ],
+      "play": "https://ut.pieter.com/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "cod-zombies",
+      "cat": "browser",
+      "name": "COD 僵尸模式（Black Ops）",
+      "region": "global",
+      "need": "instant",
+      "desc": "《黑色行动》僵尸模式系列地图的浏览器合集，含 Kino der Toten、Nacht der Untoten 等，可多人合作。",
+      "tags": [
+        "僵尸",
+        "合作"
+      ],
+      "play": "https://vel.gg/",
+      "repo": "",
+      "dl": "",
+      "mobile": false,
+      "embeddable": true
+    },
+    {
+      "id": "skate3",
+      "cat": "browser",
+      "name": "Skate 3（浏览器移植）",
+      "region": "global",
+      "need": "files",
+      "desc": "《Skate 3》的粉丝移植版，需自备游戏文件，用手柄体验最佳。",
+      "tags": [
+        "需自备文件",
+        "体育"
+      ],
+      "play": "https://skate.aaddpp.lol/",
+      "repo": "",
+      "dl": "",
+      "mobile": false
+    },
+    {
+      "id": "mc-classic",
+      "cat": "browser",
+      "name": "Minecraft Classic",
+      "region": "global",
+      "need": "instant",
+      "mobile": true,
+      "desc": "官方放出的《我的世界》经典版，免登录直接建造，可通过邀请链接和朋友同房。",
+      "tags": [
+        "官方",
+        "沙盒",
+        "约 14MB"
+      ],
+      "play": "https://classic.minecraft.net/",
+      "repo": "",
+      "dl": "",
+      "embeddable": true
+    },
+    {
+      "id": "openttd-web",
+      "cat": "browser",
+      "name": "OpenTTD（网页版）",
+      "region": "global",
+      "need": "instant",
+      "desc": "开源运输模拟《OpenTTD》的 WebAssembly 构建，单机沙盒，约 5MB 即可开一局。",
+      "tags": [
+        "模拟经营",
+        "约 5MB"
+      ],
+      "play": "https://openttd-web.pages.dev/",
+      "repo": "",
+      "dl": "",
+      "mobile": false,
+      "embeddable": true
+    },
+    {
+      "id": "micropolis",
+      "cat": "browser",
+      "name": "micropolisJS（模拟城市）",
+      "region": "global",
+      "need": "instant",
+      "desc": "《模拟城市》开源版 Micropolis 的纯 JS 重写，不到 1MB，载入即玩，仅建议桌面端。",
+      "tags": [
+        "模拟经营",
+        "小于 1MB"
+      ],
+      "play": "https://www.graememcc.co.uk/micropolisJS/",
+      "repo": "",
+      "dl": "",
+      "mobile": false,
+      "embeddable": true
+    },
+    {
+      "id": "surfd",
+      "cat": "browser",
+      "name": "CS: Source Surf",
+      "region": "global",
+      "need": "instant",
+      "desc": "CS:S 滑翔（Surf）模式的浏览器版，含在线服务器，纯娱乐向。",
+      "tags": [
+        "CS",
+        "联机"
+      ],
+      "play": "https://surfd.net/",
+      "repo": "",
+      "dl": "",
+      "mobile": false,
+      "embeddable": true
+    },
+    {
+      "id": "bunnyhop",
+      "cat": "browser",
+      "name": "CS: Source Bunnyhop",
+      "region": "global",
+      "need": "instant",
+      "desc": "CS:S 连跳（Bhop）竞速，带排行榜与在线服务器，约 11MB。",
+      "tags": [
+        "CS",
+        "竞速"
+      ],
+      "play": "https://bunnyhop.lol/",
+      "repo": "",
+      "dl": "",
+      "mobile": false,
+      "embeddable": true
+    },
+    {
+      "id": "src-regta",
+      "cat": "source",
+      "name": "re-GTA（GTA III / VC 逆向工程）",
+      "region": "global",
+      "need": "free",
+      "desc": "gta3 与 Vice City 的逆向工程源码，re3 / reVC 的基础，可自行编译出 PC 版或 WASM 版。仓库已归档，仍有镜像价值。",
+      "tags": [
+        "C++",
+        "155★"
+      ],
+      "repo": "https://github.com/Jai-JAP/re-GTA",
+      "dl": "https://github.com/Jai-JAP/re-GTA/archive/refs/heads/re3.zip",
+      "branch": "re3",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-webxash",
+      "cat": "source",
+      "name": "webXash（Half-Life 浏览器移植）",
+      "region": "global",
+      "need": "free",
+      "desc": "把 Xash3D 引擎搬进浏览器，支持导入自有 Half-Life / CS 1.6 资源，前面直玩页面的项目来源。",
+      "tags": [
+        "TypeScript",
+        "185★"
+      ],
+      "repo": "https://github.com/x8BitRain/webXash",
+      "dl": "https://github.com/x8BitRain/webXash/archive/refs/heads/main.zip",
+      "branch": "main",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-xash3d",
+      "cat": "source",
+      "name": "Xash3D FWGS",
+      "region": "global",
+      "need": "free",
+      "desc": "GoldSrc 引擎的开源重实现，webXash 等浏览器移植的上游项目，可编译到 WASM。",
+      "tags": [
+        "C",
+        "2958★"
+      ],
+      "repo": "https://github.com/FWGS/xash3d-fwgs",
+      "dl": "https://github.com/FWGS/xash3d-fwgs/archive/refs/heads/master.zip",
+      "branch": "master",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-quakejs",
+      "cat": "source",
+      "name": "QuakeJS",
+      "region": "global",
+      "need": "free",
+      "desc": "把 ioquake3 编译成 JavaScript 的经典项目，自带服务器与客户端，是浏览器 FPS 移植的教科书。",
+      "tags": [
+        "JavaScript",
+        "1613★"
+      ],
+      "repo": "https://github.com/inolen/quakejs",
+      "dl": "https://github.com/inolen/quakejs/archive/refs/heads/master.zip",
+      "branch": "master",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-micropolis",
+      "cat": "source",
+      "name": "micropolisJS",
+      "region": "global",
+      "need": "free",
+      "desc": "《模拟城市》开源版本的 HTML5 / JS 重写，代码量小，适合当作浏览器游戏开发范例。",
+      "tags": [
+        "JavaScript",
+        "738★"
+      ],
+      "repo": "https://github.com/graememcc/micropolisJS",
+      "dl": "https://codeload.github.com/graememcc/micropolisJS/zip/refs/heads/main",
+      "branch": "main",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-openttd",
+      "cat": "source",
+      "name": "OpenTTD",
+      "region": "global",
+      "need": "free",
+      "desc": "开源运输大亨，官方支持 Emscripten 构建网页版，可自己编译出浏览器可玩的版本。",
+      "tags": [
+        "C++",
+        "8521★"
+      ],
+      "repo": "https://github.com/OpenTTD/OpenTTD",
+      "dl": "https://codeload.github.com/OpenTTD/OpenTTD/zip/refs/heads/master",
+      "branch": "master",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-stk",
+      "cat": "source",
+      "name": "SuperTuxKart",
+      "region": "global",
+      "need": "free",
+      "desc": "开源卡丁车竞速，官方提供 WebAssembly 构建，约 120MB，可直接在浏览器跑。",
+      "tags": [
+        "C++",
+        "5491★"
+      ],
+      "repo": "https://github.com/supertuxkart/stk-code",
+      "dl": "https://github.com/supertuxkart/stk-code/archive/refs/heads/master.zip",
+      "branch": "master",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-jsdos",
+      "cat": "source",
+      "name": "js-dos",
+      "region": "global",
+      "need": "free",
+      "desc": "在浏览器里跑 DOS 程序的 API，可把老游戏与工具直接嵌进网页，支持存档与手柄。",
+      "tags": [
+        "TypeScript",
+        "1348★"
+      ],
+      "repo": "https://github.com/caiiiycuk/js-dos",
+      "dl": "https://github.com/caiiiycuk/js-dos/archive/refs/heads/8.xx.zip",
+      "branch": "8.xx",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-emscripten",
+      "cat": "source",
+      "name": "Emscripten",
+      "region": "global",
+      "need": "free",
+      "desc": "C/C++ 编译到 WebAssembly 的工具链，绝大多数“3A 网页化”项目的底层依赖。",
+      "tags": [
+        "工具链",
+        "27789★"
+      ],
+      "repo": "https://github.com/emscripten-core/emscripten",
+      "dl": "https://github.com/emscripten-core/emscripten/archive/refs/heads/main.zip",
+      "branch": "main",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-godot",
+      "cat": "source",
+      "name": "Godot Engine",
+      "region": "global",
+      "need": "free",
+      "desc": "开源游戏引擎，一键导出 Web 版本，适合自己把 3D 项目做成网页游戏。",
+      "tags": [
+        "引擎",
+        "MIT",
+        "120502★"
+      ],
+      "repo": "https://github.com/godotengine/godot",
+      "dl": "https://github.com/godotengine/godot/archive/refs/heads/master.zip",
+      "branch": "master",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-retroarch",
+      "cat": "source",
+      "name": "RetroArch（Web 版）",
+      "region": "global",
+      "need": "free",
+      "desc": "多平台模拟器前端，提供 WebAssembly 构建，可在浏览器里跑多种主机与街机核心。",
+      "tags": [
+        "模拟器",
+        "14663★"
+      ],
+      "repo": "https://github.com/libretro/RetroArch",
+      "dl": "https://github.com/libretro/RetroArch/archive/refs/heads/master.zip",
+      "branch": "master",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-dosbox",
+      "cat": "source",
+      "name": "DOSBox Staging",
+      "region": "global",
+      "need": "free",
+      "desc": "现代维护的 DOSBox 分支，可配合 Emscripten 或 js-dos 把 DOS 游戏搬上网页。",
+      "tags": [
+        "C++",
+        "1842★"
+      ],
+      "repo": "https://github.com/dosbox-staging/dosbox-staging",
+      "dl": "https://github.com/dosbox-staging/dosbox-staging/archive/refs/heads/main.zip",
+      "branch": "main",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-awesome-decomp",
+      "cat": "source",
+      "name": "awesome-decomp-games（索引）",
+      "region": "global",
+      "need": "free",
+      "desc": "2468 个反编译 / 静态重编译 / 源码移植项目的总索引，本站浏览器直玩清单的主要来源，链接每日体检。",
+      "tags": [
+        "索引",
+        "3148★",
+        "CC0"
+      ],
+      "repo": "https://github.com/SubmitGame/awesome-decomp-games",
+      "dl": "https://github.com/SubmitGame/awesome-decomp-games/archive/refs/heads/main.zip",
+      "branch": "main",
+      "play": "",
+      "mobile": false
+    },
+    {
+      "id": "src-awesome-ports",
+      "cat": "source",
+      "name": "Awesome Browser Game Ports",
+      "region": "global",
+      "need": "free",
+      "desc": "专门收录“能在浏览器里直接跑的真实游戏”的清单，条目带可玩性标注。",
+      "tags": [
+        "索引",
+        "清单"
+      ],
+      "repo": "https://github.com/bitburner/Awesome-Browser-Game-Ports",
+      "dl": "https://github.com/bitburner/Awesome-Browser-Game-Ports/archive/refs/heads/main.zip",
+      "branch": "main",
+      "play": "",
+      "mobile": false
+    }
+  ]
 }

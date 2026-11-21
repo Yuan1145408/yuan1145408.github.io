@@ -51,6 +51,9 @@
     var dl = safeUrl(it.dl);
 
     var actions = [];
+    if (play && it.embeddable) {
+      actions.push('<button class="btn primary wg-btn" type="button" data-wg-play="' + esc(it.id) + '" title="在站内播放器中直接游玩">本站畅玩</button>');
+    }
     if (play) {
       actions.push('<a class="btn primary wg-btn" href="' + esc(play) + '" target="_blank" rel="noopener noreferrer">' +
         (it.cat === 'cloud' ? '打开平台' : '立即游玩') + '</a>');
@@ -216,6 +219,59 @@
     }
   }
 
+  /* ---------------- 站内播放器 ---------------- */
+  var playerState = { id: null };
+
+  function openPlayer(id) {
+    if (!DATA) return;
+    var it = null;
+    DATA.items.forEach(function (x) { if (x.id === id) it = x; });
+    var play = it && safeUrl(it.play);
+    if (!play) return;
+    var sec = $('wgPlayerSec');
+    var frame = $('wgPlayerFrame');
+    if (!sec || !frame) return;
+    playerState.id = id;
+    $('wgPlayerTitle').textContent = it.name + ' · 站内畅玩';
+    $('wgPlayerNewTab').href = play;
+    frame.src = play;
+    sec.hidden = false;
+    try {
+      var u = new URL(window.location.href);
+      u.searchParams.set('play', id);
+      window.history.replaceState(null, '', u.pathname + (u.search ? u.search : '') + u.hash);
+    } catch (e) { /* 忽略 */ }
+    var top = sec.getBoundingClientRect().top + window.scrollY - 80;
+    if (window.scrollY > top || sec.getBoundingClientRect().top < 0) {
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function closePlayer() {
+    var frame = $('wgPlayerFrame');
+    if (frame) frame.src = 'about:blank';
+    playerState.id = null;
+    var sec = $('wgPlayerSec');
+    if (sec) sec.hidden = true;
+    try {
+      var u = new URL(window.location.href);
+      u.searchParams.delete('play');
+      window.history.replaceState(null, '', u.pathname + (u.search ? u.search : '') + u.hash);
+    } catch (e) { /* 忽略 */ }
+  }
+
+  function initPlayer() {
+    var btn = document.getElementById('wgPlayerClose');
+    if (btn) btn.addEventListener('click', closePlayer);
+    // 卡片上的「本站畅玩」按钮（事件委托，列表重渲染也有效）
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest ? e.target.closest('[data-wg-play]') : null;
+      if (t) { e.preventDefault(); openPlayer(t.getAttribute('data-wg-play')); }
+    });
+  }
+
   function renderStats() {
     var wrap = $('wgStats');
     if (!wrap || !DATA) return;
@@ -240,6 +296,7 @@
         state.q = q;
         if ($('wgSearch')) $('wgSearch').value = q;
       }
+      state.playId = u.searchParams.get('play');
     } catch (e) { /* 忽略 */ }
 
     fetch('webgames.json', { cache: 'no-cache' })
@@ -255,6 +312,8 @@
         // 分类不在数据里时回落到全部，避免空白页
         if (state.cat !== 'all' && !CAT_META[state.cat]) state.cat = 'all';
         render();
+        // URL 带入 play= 时自动打开站内播放器（支持从游戏专区跳转过来）
+        if (state.playId) { openPlayer(state.playId); state.playId = null; }
       })
       .catch(function (err) {
         console.warn('[webgames] 数据加载失败：', err && err.message);
@@ -268,6 +327,7 @@
     initTabs();
     initSearch();
     initCopy();
+    initPlayer();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

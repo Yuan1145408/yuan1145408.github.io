@@ -251,17 +251,33 @@
       const direct = sanitizeUrl(d.direct);
       const playUrl = sanitizeUrl(d.play);
       const websiteBtn = website ? `<a class="btn" href="${attrUrl(website)}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
+      const isMini = ((d.category || '').toLowerCase() === 'minigame');
       const local = sanitizeUrl(d.local);
-      const localBtn = local ? `<a class="btn primary" href="${attrUrl(local)}" target="_blank" rel="noopener noreferrer">本网资源</a>` : '';
-      const effectivePlay = sanitizeUrl(d.embedUrl) || playUrl;
-      let cloudLabel = '云玩';
-      try {
-        const u = new URL(effectivePlay, window.location.href);
-        const sameOrigin = u.origin === window.location.origin;
-        if ((d.embed || d.embedUrl) && sameOrigin) cloudLabel = '本站游玩';
-        else if ((d.embed || d.embedUrl)) cloudLabel = '云玩';
-      } catch (_) {}
-      const cloudBtn = effectivePlay ? `<button class="btn" data-play="${attrUrl(effectivePlay)}" data-play-name="${esc(d.name||cloudLabel)}" ${ (d.embed || d.embedUrl) ? 'data-play-embed="1"' : '' }>${cloudLabel}</button>` : '';
+      const play1p = sanitizeUrl(d.play1p);
+      const play2p = sanitizeUrl(d.play2p);
+      const localBtn = (local && !(isMini && local === play1p)) ? `<a class="btn primary" href="${attrUrl(local)}" target="_blank" rel="noopener noreferrer">本网资源</a>` : '';
+      // 小游戏：统一渲染「单人模式 / 双人模式」入口（站内 arcade.html 或外站）
+      let modeBtns = '';
+      let modeChips = '';
+      if (isMini) {
+        const modes = Array.isArray(d.modes) ? d.modes : (play2p ? ['1p', '2p'] : ['1p']);
+        modeChips = modes.map(m => `<span class="chip">${m === '2p' ? '双人' : '单人'}</span>`).join('');
+        if (play1p) modeBtns += `<a class="btn primary" href="${attrUrl(play1p)}">单人模式</a>`;
+        if (play2p) modeBtns += `<a class="btn" href="${attrUrl(play2p)}">双人模式</a>`;
+        const extPlay = sanitizeUrl(d.play);
+        if (!play1p && extPlay) modeBtns += `<a class="btn primary" href="${attrUrl(extPlay)}" target="_blank" rel="noopener noreferrer">开始游戏</a>`;
+      }
+      // 非 minigame：同源内嵌不再显示「本站游玩」按钮；跨域 embed 保留「云玩」
+      const effectivePlay = isMini ? '' : (sanitizeUrl(d.embedUrl) || playUrl);
+      let cloudBtn = '';
+      if (effectivePlay) {
+        try {
+          const u = new URL(effectivePlay, window.location.href);
+          if (u.origin !== window.location.origin) {
+            cloudBtn = `<button class="btn" data-play="${attrUrl(effectivePlay)}" data-play-name="${esc(d.name||'云玩')}" ${ (d.embed || d.embedUrl) ? 'data-play-embed="1"' : '' }>云玩</button>`;
+          }
+        } catch (_) {}
+      }
       // 付费项显示所需积分（默认500），并为有直链的付费项自动接入兑换
       const isPaid = ((d.category || '').toLowerCase() === 'paid');
       const costVal = isPaid ? (parseInt(d.cost || 500, 10) || 500) : (parseInt(d.cost || 0, 10) || 0);
@@ -284,9 +300,11 @@
           ${costChip}
           ${websiteBtn}
           ${localBtn}
+          ${modeBtns}
           ${cloudBtn}
           ${directBtn}
           ${tagsChips}
+          ${modeChips}
         </div>
       `;
       gridEl.appendChild(el);
@@ -350,14 +368,48 @@
   function renderVMZone(items) { renderZone(vmGrid, items, '暂无虚拟机数据'); }
   function renderOSZone(items) { renderZone(osGrid, items, '暂无系统镜像数据'); }
 
+  // 网页游戏精选：webgames.json 中允许 iframe 嵌入的条目，整合进游戏专区
+  async function loadWebgames() {
+    try {
+      const r = await fetch('./webgames.json', { cache: 'no-cache' });
+      if (!r.ok) return null;
+      return await r.json();
+    } catch (_) { return null; }
+  }
+  function renderWebgamesPicks(data) {
+    const grid = document.getElementById('webgamesGrid');
+    if (!grid || !data || !Array.isArray(data.items)) return;
+    const picks = data.items.filter(x => x.embeddable && x.play);
+    grid.innerHTML = '';
+    if (!picks.length) { grid.innerHTML = '<p>暂无可站内畅玩的网页游戏</p>'; return; }
+    picks.forEach(it => {
+      const el = document.createElement('div');
+      el.className = 'card';
+      const tags = Array.isArray(it.tags) ? it.tags.map(t => `<span class="chip">${esc(t)}</span>`).join('') : '';
+      const need = it.need === 'files' ? '<span class="chip">需自备游戏文件</span>' : '';
+      el.innerHTML = `
+        <h4>${esc(it.name)}</h4>
+        <p>${esc(it.desc || '')}</p>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <a class="btn primary" href="webgames.html?play=${encodeURIComponent(it.id)}">本站开玩</a>
+          <a class="btn" href="${attrUrl(it.play)}" target="_blank" rel="noopener noreferrer">原始页面</a>
+          ${need}
+          ${tags}
+        </div>
+      `;
+      grid.appendChild(el);
+    });
+  }
+
   // 初始化：所有数据源并发请求（原来 6 次串行 await，首屏会明显变慢）
   (async function init(){
-    const [mirrorList, tutorials, software, games, dl] = await Promise.all([
+    const [mirrorList, tutorials, software, games, dl, wg] = await Promise.all([
       loadMirrors(),
       loadExtraTutorials(),
       loadExtraSoftware(),
       loadExtraGames(),
-      loadDownloadsExtra()
+      loadDownloadsExtra(),
+      loadWebgames()
     ]);
 
     renderMirrorsList(mirrorList);
@@ -373,6 +425,7 @@
     renderBrowserCards(browsers);
 
     renderGames(games);
+    renderWebgamesPicks(wg);
     renderVMZone(dl.vm);
     renderOSZone(dl.os);
   })();

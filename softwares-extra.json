@@ -6,7 +6,11 @@
     "website": "https://code.visualstudio.com/",
     "direct": "https://update.code.visualstudio.com/latest/win32-x64-user/stable",
     "desc": "轻量但强大的代码编辑器，丰富扩展生态。",
-    "tags": ["开发", "编辑器", "必备"]
+    "tags": [
+      "开发",
+      "编辑器",
+      "必备"
+    ]
   },
   {
     "id": "github-desktop",
@@ -15,7 +19,11 @@
     "website": "https://desktop.github.com/",
     "direct": "https://central.github.com/deployments/desktop/desktop/latest/win32",
     "desc": "可视化管理 Git 仓库，适合初学者与日常协作。",
-    "tags": ["Git", "版本管理", "协作"]
+    "tags": [
+      "Git",
+      "版本管理",
+      "协作"
+    ]
   },
   {
     "id": "rustup",
@@ -24,7 +32,11 @@
     "website": "https://rustup.rs/",
     "direct": "https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe",
     "desc": "安装并管理 Rust 稳定版/测试版工具链。",
-    "tags": ["语言", "Rust", "命令行"]
+    "tags": [
+      "语言",
+      "Rust",
+      "命令行"
+    ]
   },
   {
     "id": "temurin-jdk17",
@@ -33,16 +45,25 @@
     "website": "https://adoptium.net/",
     "direct": "https://api.adoptium.net/v3/binary/latest/17/ga/windows/x64/jdk/hotspot/normal/eclipse",
     "desc": "开源且稳定的 Java 发行版，适合生产环境。",
-    "tags": ["语言", "Java", "JDK"]
+    "tags": [
+      "语言",
+      "Java",
+      "JDK"
+    ]
   },
   {
     "id": "nodejs-lts",
-    "name": "Node.js LTS (x64 MSI)",
+    "name": "Node.js LTS 18 (x64 MSI)",
     "category": "runtime",
     "website": "https://nodejs.org/en/",
-    "direct": "https://nodejs.org/dist/latest-v18.x/node-v18.20.4-x64.msi",
+    "direct": "https://nodejs.org/dist/v18.20.8/node-v18.20.8-x64.msi",
     "desc": "长期支持版本，适合大多数前后端项目。",
-    "tags": ["语言", "JavaScript", "后端", "前端"]
+    "tags": [
+      "语言",
+      "JavaScript",
+      "后端",
+      "前端"
+    ]
   },
   {
     "id": "python",
@@ -51,7 +72,11 @@
     "website": "https://www.python.org/",
     "direct": "https://www.python.org/ftp/python/3.12.6/python-3.12.6-amd64.exe",
     "desc": "广泛应用的通用编程语言，数据分析与自动化利器。",
-    "tags": ["语言", "Python", "数据"]
+    "tags": [
+      "语言",
+      "Python",
+      "数据"
+    ]
   },
   {
     "id": "go",
@@ -60,7 +85,11 @@
     "website": "https://go.dev/dl/",
     "direct": "https://go.dev/dl/go1.22.5.windows-amd64.msi",
     "desc": "并发友好的编译型语言，适合后端与云原生工具。",
-    "tags": ["语言", "Go", "后端"]
+    "tags": [
+      "语言",
+      "Go",
+      "后端"
+    ]
   },
   {
     "id": "docker-desktop",
@@ -69,7 +98,11 @@
     "website": "https://www.docker.com/products/docker-desktop/",
     "direct": "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe",
     "desc": "容器开发的主力工具，包含 Docker Engine 与 Compose。",
-    "tags": ["容器", "DevOps", "工具"]
+    "tags": [
+      "容器",
+      "DevOps",
+      "工具"
+    ]
   },
   {
     "id": "chrome",
@@ -78,7 +111,11 @@
     "website": "https://www.google.com/chrome/",
     "direct": "https://dl.google.com/chrome/install/standalonesetup64.exe",
     "desc": "常用浏览器，适合开发者调试与扩展生态。",
-    "tags": ["浏览器", "前端", "调试"]
+    "tags": [
+      "浏览器",
+      "前端",
+      "调试"
+    ]
   },
   {
     "id": "firefox",
@@ -87,7 +124,11 @@
     "website": "https://www.mozilla.org/firefox/new/",
     "direct": "https://download.mozilla.org/?product=firefox-latest&os=win64&lang=zh-CN",
     "desc": "注重隐私与开放生态的浏览器。",
-    "tags": ["浏览器", "隐私", "调试"]
+    "tags": [
+      "浏览器",
+      "隐私",
+      "调试"
+    ]
   },
   {
     "id": "edge",
@@ -96,7 +137,10 @@
     "website": "https://www.microsoft.com/edge",
     "direct": "http://go.microsoft.com/fwlink/?LinkID=2093437",
     "desc": "微软 Chromium 内核浏览器，企业版离线安装包链接。",
-    "tags": ["浏览器", "Windows"]
+    "tags": [
+      "浏览器",
+      "Windows"
+    ]
   },
   {
     "id": "brave",
@@ -104,8 +148,11 @@
     "category": "browser",
     "website": "https://brave.com/download/",
     "direct": "https://laptop-updates.brave.com/latest/winx64",
-    "desc": "注重隐私与去广告的浏览器，Chromium 生态。",
-    "tags": ["浏览器", "隐私"]
+    "desc": "注重隐私与去广告的浏览器，Chromium 生态。安装器由官方 CDN 分发，部分网络环境下载需代理。",
+    "tags": [
+      "浏览器",
+      "隐私"
+    ]
   },
   {
     "id": "opera",
@@ -113,8 +160,10 @@
     "category": "browser",
     "website": "https://www.opera.com/download",
     "direct": "https://www.opera.com/download",
-    "desc": "老牌浏览器，内置功能丰富（VPN/侧边栏等）。",
-    "tags": ["浏览器"]
+    "desc": "老牌浏览器，内置功能丰富（VPN/侧边栏等）。部分网络环境访问官网会返回 451，需自备代理。",
+    "tags": [
+      "浏览器"
+    ]
   },
   {
     "id": "vivaldi",
@@ -122,8 +171,11 @@
     "category": "browser",
     "website": "https://vivaldi.com/download/",
     "direct": "https://downloads.vivaldi.com/stable/Vivaldi.x64.exe",
-    "desc": "可高度自定义的 Chromium 浏览器（前 Opera 团队）。",
-    "tags": ["浏览器", "定制"]
+    "desc": "可高度自定义的 Chromium 浏览器（前 Opera 团队）。官方直链，部分网络环境下载需代理。",
+    "tags": [
+      "浏览器",
+      "定制"
+    ]
   },
   {
     "id": "chromium",
@@ -132,7 +184,10 @@
     "website": "https://chromium.org/",
     "direct": "https://download-chromium.appspot.com/?platform=Win_x64",
     "desc": "Chromium 开源浏览器快照构建（可能非稳定版）。",
-    "tags": ["浏览器", "开源"]
+    "tags": [
+      "浏览器",
+      "开源"
+    ]
   },
   {
     "id": "7zip",
@@ -141,7 +196,10 @@
     "website": "https://www.7-zip.org/",
     "direct": "https://www.7-zip.org/a/7z2408-x64.exe",
     "desc": "开源压缩/解压工具，支持多种格式。",
-    "tags": ["工具", "压缩"]
+    "tags": [
+      "工具",
+      "压缩"
+    ]
   },
   {
     "id": "vs-build-tools",
@@ -150,9 +208,12 @@
     "website": "https://visualstudio.microsoft.com/zh-hans/downloads/",
     "direct": "https://aka.ms/vs/17/release/vs_BuildTools.exe",
     "desc": "Windows C/C++/MSVC 编译环境与相关工具。",
-    "tags": ["C/C++", "编译器", "Windows"]
-  }
-  ,
+    "tags": [
+      "C/C++",
+      "编译器",
+      "Windows"
+    ]
+  },
   {
     "id": "pro-tool-demo",
     "name": "Pro 工具包（示例付费）",
@@ -160,7 +221,10 @@
     "website": "https://example.com/pro-tool",
     "direct": "https://example.com/pro-tool-installer.exe",
     "desc": "示例付费软件，购买后安装时将自动下载密钥文件。",
-    "tags": ["付费", "示例"],
+    "tags": [
+      "付费",
+      "示例"
+    ],
     "cost": 100,
     "redeemId": "pro-tool",
     "bonusFilename": "pro-tool-license.txt",

@@ -112,12 +112,13 @@ python build_search_index.py     # 内容更新后重建站内索引
 
 ## 小游戏（arcade.html）
 站内自带、纯前端运行，不依赖任何外站嵌入（原来 iframe 外站常被 X-Frame-Options 拦截，导致白屏）：
-- **2048**：方向键 / WASD / 触屏滑动，合并计分，达成 2048 提示
-- **贪吃蛇**：Canvas 渲染，速度随得分递增，撞墙或撞自己结束
-- **扫雷**：9×9 10 雷，左键翻开、右键插旗、长按插旗；首点不踩雷，通关按用时计分
-- 最高分存 `localStorage`（键 `niao.arcade.*`）；`?g=2048|snake|mine` 直达某个游戏
-- `games-extra.json` 中 2048 / snake / minesweeper 三条已改为 `embedUrl: arcade.html?g=...`，
-  游戏专区点击“本站游玩”即在站内弹窗打开，不再跳外站
+- **单人 / 双人模式统一**：`?g=<游戏>&mode=2p` 直达双人模式；支持双人的游戏在页内可一键切换模式
+- 站内游戏：2048、贪吃蛇（含双人同屏）、扫雷、乒乓（1P vs AI / 2P）、井字棋（AI / 2P）、
+  四子棋（AI / 2P）、黑白棋（AI / 2P）、记忆翻牌、打砖块、十五拼图，全部在 `arcade.html` + `arcade-games.js`
+- `games-extra.json` 每个小游戏带 `modes` 与 `play1p` / `play2p` 字段，游戏专区卡片渲染
+  「单人模式 / 双人模式」按钮；同源内嵌不再显示「本站游玩」按钮
+- 网页游戏整合：`webgames.json` 中实测允许嵌入的条目（`embeddable: true`）已同步到
+  游戏专区「网页游戏 · 站内畅玩」区块，经 `webgames.html?play=<id>` 的站内播放器运行
 
 ## 下载中心（download.html）
 | 能力 | 说明 |

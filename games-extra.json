@@ -28,7 +28,7 @@
     "name": "EA App",
     "category": "platform",
     "website": "https://www.ea.com/ea-app",
-    "direct": "https://origin-a.akamaihd.net/EA-Desktop-App/latest/EAappInstaller.exe",
+    "direct": "https://www.ea.com/ea-app",
     "desc": "EA 官方 PC 客户端（原 Origin）",
     "tags": [
       "平台",
@@ -40,7 +40,7 @@
     "name": "Battle.net 暴雪战网",
     "category": "platform",
     "website": "https://www.battle.net/",
-    "direct": "https://download.battle.net/en-us/battle.net_setup.exe",
+    "direct": "https://downloader.battle.net/download/getInstaller?os=win&installer=Battle.net-Setup.exe",
     "desc": "暴雪与动视的官方平台（战网）",
     "tags": [
       "平台",
@@ -64,7 +64,7 @@
     "name": "GOG Galaxy",
     "category": "platform",
     "website": "https://www.gog.com/",
-    "direct": "https://content-system.gog.com/open_link/download?path=/galaxy/client/setup_galaxy_2.0.exe",
+    "direct": "https://www.gog.com/galaxy",
     "desc": "DRM-Free（无数字版权保护）为主的游戏商店",
     "tags": [
       "平台",
@@ -142,7 +142,7 @@
     "category": "games",
     "genre": "shooter",
     "website": "https://crossout.net/",
-    "direct": "https://crossout.net/en/download/",
+    "direct": "https://crossout.net/",
     "desc": "载具改装战斗（免费）",
     "tags": [
       "载具",
@@ -200,7 +200,7 @@
     "category": "games",
     "genre": "shooter",
     "website": "https://playvalorant.com/",
-    "direct": "https://playvalorant.com/zh-cn/download/",
+    "direct": "https://playvalorant.com/",
     "desc": "战术竞技 FPS（免费）",
     "tags": [
       "FPS",
@@ -227,8 +227,8 @@
     "name": "三角洲行动（Delta Force: Hawk Ops）",
     "category": "games",
     "genre": "shooter",
-    "website": "https://deltaforce.qq.com/",
-    "direct": "https://deltaforce.qq.com/",
+    "website": "https://df.qq.com/",
+    "direct": "https://df.qq.com/",
     "desc": "战术射击（国服）",
     "tags": [
       "FPS",
@@ -242,7 +242,7 @@
     "category": "games",
     "genre": "shooter",
     "website": "https://asia.wargaming.net/zh-cn/games/wot/",
-    "direct": "https://asia.wargaming.net/zh-cn/wot/download/",
+    "direct": "https://worldoftanks.asia/zh-cn/download/",
     "desc": "坦克载具战争（免费）",
     "tags": [
       "载具",
@@ -335,7 +335,7 @@
     "category": "games",
     "genre": "rpg",
     "website": "https://www.playstartrekonline.com/en",
-    "direct": "https://www.playstartrekonline.com/en/start",
+    "direct": "https://www.playstartrekonline.com/en/download",
     "desc": "星际迷航 MMO（免费）",
     "tags": [
       "MMO",
@@ -487,16 +487,17 @@
     "name": "2048",
     "category": "minigame",
     "website": "https://play2048.co/",
-    "play": "arcade.html?g=2048",
-    "embed": true,
-    "embedUrl": "arcade.html?g=2048",
-    "desc": "数字合成小游戏（站内已内置可玩版本，点击“本站游玩”直接开始）",
+    "desc": "数字合成小游戏（站内可玩，支持单人模式）",
     "tags": [
       "益智",
       "轻量",
       "站内可玩"
     ],
-    "local": "arcade.html?g=2048"
+    "local": "arcade.html?g=2048",
+    "modes": [
+      "1p"
+    ],
+    "play1p": "arcade.html?g=2048"
   },
   {
     "id": "tetris",
@@ -504,11 +505,13 @@
     "category": "minigame",
     "website": "https://tetris.com/play-tetris",
     "play": "https://tetris.com/play-tetris",
-    "embedUrl": "./minigames/tetris/index.html",
     "desc": "经典下落方块",
     "tags": [
       "益智",
       "经典"
+    ],
+    "modes": [
+      "1p"
     ]
   },
   {
@@ -516,32 +519,36 @@
     "name": "扫雷 Minesweeper",
     "category": "minigame",
     "website": "https://minesweeper.online/",
-    "play": "arcade.html?g=mine",
-    "embedUrl": "arcade.html?g=mine",
-    "desc": "经典扫雷（站内已内置可玩版本，点击“本站游玩”直接开始）",
+    "desc": "经典扫雷（站内可玩，支持单人模式）",
     "tags": [
       "益智",
       "经典",
       "站内可玩"
     ],
-    "embed": true,
-    "local": "arcade.html?g=mine"
+    "local": "arcade.html?g=mine",
+    "modes": [
+      "1p"
+    ],
+    "play1p": "arcade.html?g=mine"
   },
   {
     "id": "snake",
     "name": "贪吃蛇 Snake",
     "category": "minigame",
     "website": "https://playsnake.org/",
-    "play": "arcade.html?g=snake",
-    "embed": true,
-    "embedUrl": "arcade.html?g=snake",
-    "desc": "控制小蛇吃食物（站内已内置可玩版本，点击“本站游玩”直接开始）",
+    "desc": "控制小蛇吃食物（站内可玩，支持单人模式与双人模式）",
     "tags": [
       "休闲",
       "经典",
       "站内可玩"
     ],
-    "local": "arcade.html?g=snake"
+    "local": "arcade.html?g=snake",
+    "modes": [
+      "1p",
+      "2p"
+    ],
+    "play1p": "arcade.html?g=snake",
+    "play2p": "arcade.html?g=snake&mode=2p"
   },
   {
     "id": "pacman",
@@ -553,6 +560,9 @@
     "tags": [
       "街机",
       "经典"
+    ],
+    "modes": [
+      "1p"
     ]
   },
   {
@@ -561,10 +571,12 @@
     "category": "minigame",
     "website": "https://flappybird.io/",
     "play": "https://flappybird.io/",
-    "embedUrl": "./minigames/flappy/index.html",
     "desc": "点击躲障碍",
     "tags": [
       "休闲"
+    ],
+    "modes": [
+      "1p"
     ]
   },
   {
@@ -576,6 +588,9 @@
     "desc": "数字逻辑谜题",
     "tags": [
       "益智"
+    ],
+    "modes": [
+      "1p"
     ]
   },
   {
@@ -587,6 +602,10 @@
     "desc": "棋类对战",
     "tags": [
       "棋类"
+    ],
+    "modes": [
+      "1p",
+      "2p"
     ]
   },
   {
@@ -595,10 +614,13 @@
     "category": "minigame",
     "website": "https://www.247checkers.com/",
     "play": "https://www.247checkers.com/",
-    "embedUrl": "./minigames/checkers/index.html",
     "desc": "棋类对战（跳棋）",
     "tags": [
       "棋类"
+    ],
+    "modes": [
+      "1p",
+      "2p"
     ]
   },
   {
@@ -606,95 +628,119 @@
     "name": "四子棋 Connect Four",
     "category": "minigame",
     "website": "https://www.connect4.org/",
-    "play": "https://www.connect4.org/",
-    "embed": true,
-    "embedUrl": "./minigames/connect4/index.html",
-    "desc": "四子连珠",
+    "desc": "四子连珠（站内可玩，支持单人模式与双人模式）",
     "tags": [
       "棋类",
       "益智"
-    ]
+    ],
+    "modes": [
+      "1p",
+      "2p"
+    ],
+    "local": "arcade.html?g=c4",
+    "play1p": "arcade.html?g=c4",
+    "play2p": "arcade.html?g=c4&mode=2p"
   },
   {
     "id": "tictactoe",
     "name": "井字棋 Tic-Tac-Toe",
     "category": "minigame",
     "website": "https://playtictactoe.org/",
-    "play": "https://playtictactoe.org/",
-    "embed": true,
-    "embedUrl": "./minigames/tictactoe/index.html",
-    "desc": "井字棋对战",
+    "desc": "井字棋对战（站内可玩，支持单人模式与双人模式）",
     "tags": [
       "棋类",
       "益智"
-    ]
+    ],
+    "modes": [
+      "1p",
+      "2p"
+    ],
+    "local": "arcade.html?g=ttt",
+    "play1p": "arcade.html?g=ttt",
+    "play2p": "arcade.html?g=ttt&mode=2p"
   },
   {
     "id": "reversi",
     "name": "黑白棋 Reversi",
     "category": "minigame",
     "website": "https://www.playok.com/en/reversi/",
-    "play": "https://www.playok.com/en/reversi/",
-    "embedUrl": "./minigames/reversi/index.html",
-    "desc": "经典翻转棋",
+    "desc": "经典翻转棋（站内可玩，支持单人模式与双人模式）",
     "tags": [
       "棋类",
       "益智"
-    ]
+    ],
+    "modes": [
+      "1p",
+      "2p"
+    ],
+    "local": "arcade.html?g=reversi",
+    "play1p": "arcade.html?g=reversi",
+    "play2p": "arcade.html?g=reversi&mode=2p"
   },
   {
     "id": "memory",
     "name": "记忆翻牌 Memory",
     "category": "minigame",
     "website": "https://www.memozor.com/memory-games/online-free-games/for-adults",
-    "play": "https://www.memozor.com/memory-games/online-free-games/for-adults",
-    "embedUrl": "./minigames/memory/index.html",
-    "desc": "找出配对卡片",
+    "desc": "找出配对卡片（站内可玩，支持单人模式）",
     "tags": [
       "益智",
       "记忆"
-    ]
+    ],
+    "modes": [
+      "1p"
+    ],
+    "local": "arcade.html?g=memory",
+    "play1p": "arcade.html?g=memory"
   },
   {
     "id": "breakout",
     "name": "打砖块 Breakout",
     "category": "minigame",
     "website": "https://elgoog.im/breakout/",
-    "play": "https://elgoog.im/breakout/",
-    "embed": true,
-    "embedUrl": "./minigames/breakout/index.html",
-    "desc": "经典打砖块",
+    "desc": "经典打砖块（站内可玩，支持单人模式）",
     "tags": [
       "街机",
       "经典"
-    ]
+    ],
+    "modes": [
+      "1p"
+    ],
+    "local": "arcade.html?g=breakout",
+    "play1p": "arcade.html?g=breakout"
   },
   {
     "id": "pong",
     "name": "乒乓 Pong",
     "category": "minigame",
     "website": "https://pingponggame.org/",
-    "play": "https://pingponggame.org/",
-    "embed": true,
-    "embedUrl": "./minigames/pong/index.html",
-    "desc": "双人乒乓",
+    "desc": "双人乒乓（站内可玩，支持单人模式与双人模式）",
     "tags": [
       "街机",
       "经典"
-    ]
+    ],
+    "modes": [
+      "1p",
+      "2p"
+    ],
+    "local": "arcade.html?g=pong",
+    "play1p": "arcade.html?g=pong",
+    "play2p": "arcade.html?g=pong&mode=2p"
   },
   {
     "id": "fifteen",
     "name": "十五拼图 15 Puzzle",
     "category": "minigame",
     "website": "https://www.puzzle-game.com/15-puzzle",
-    "play": "https://www.puzzle-game.com/15-puzzle",
-    "embed": true,
-    "embedUrl": "./minigames/fifteen/index.html",
-    "desc": "滑块拼图",
+    "desc": "滑块拼图（站内可玩，支持单人模式）",
     "tags": [
       "益智"
-    ]
+    ],
+    "modes": [
+      "1p"
+    ],
+    "local": "arcade.html?g=fifteen",
+    "play1p": "arcade.html?g=fifteen"
   },
   {
     "id": "spaceinvaders",
@@ -702,12 +748,13 @@
     "category": "minigame",
     "website": "https://elgoog.im/space-invaders/",
     "play": "https://elgoog.im/space-invaders/",
-    "embed": true,
-    "embedUrl": "./minigames/spaceinvaders/index.html",
     "desc": "经典射击街机",
     "tags": [
       "街机",
       "射击"
+    ],
+    "modes": [
+      "1p"
     ]
   },
   {
@@ -716,12 +763,13 @@
     "category": "minigame",
     "website": "https://chromedino.com/",
     "play": "https://chromedino.com/",
-    "embed": true,
-    "embedUrl": "./minigames/dino/index.html",
     "desc": "离线恐龙跑酷",
     "tags": [
       "跑酷",
       "休闲"
+    ],
+    "modes": [
+      "1p"
     ]
   },
   {
@@ -734,6 +782,9 @@
     "tags": [
       "纸牌",
       "益智"
+    ],
+    "modes": [
+      "1p"
     ]
   },
   {
@@ -746,6 +797,9 @@
     "tags": [
       "益智",
       "经典"
+    ],
+    "modes": [
+      "1p"
     ]
   }
 ]
