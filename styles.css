@@ -144,8 +144,33 @@ body {
   justify-content: space-between;
   padding: 14px 0;
 }
-.site-nav { display:flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; white-space: nowrap; min-width: 0; }
-.site-nav::-webkit-scrollbar { height: 0; }
+.site-nav {
+  display: flex; flex-wrap: nowrap; gap: 6px;
+  overflow-x: auto; overflow-y: hidden;
+  white-space: nowrap; min-width: 0;
+  -webkit-overflow-scrolling: touch;
+}
+/* Firefox 用标准属性；Chromium / Safari 走下面的 ::-webkit-scrollbar 自定义（无两端箭头） */
+@supports (-moz-appearance: none) {
+  .site-nav {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted) 55%, transparent) transparent;
+  }
+}
+/* 溢出时显示细滚动条：所有专区一致，且始终可滚到最后一个入口 */
+.site-nav::-webkit-scrollbar { height: 6px; }
+.site-nav::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.site-nav::-webkit-scrollbar-track {
+  background: color-mix(in oklab, var(--text) 5%, transparent);
+  border-radius: 3px;
+}
+.site-nav::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+  border-radius: 3px;
+}
+.site-nav::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--primary) 75%, transparent);
+}
 .site-title { font-size: 22px; letter-spacing: 1px; flex: none; white-space: nowrap; }
 .site-nav a {
   color: var(--text);
@@ -587,7 +612,7 @@ strong, b { color: var(--text-strong); font-weight: 640; }
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
 }
-.header-inner { padding: var(--sp-3) 0; gap: var(--sp-4); min-height: var(--header-h); }
+.header-inner { padding: var(--sp-3) 0; gap: var(--sp-4); min-height: var(--header-h); justify-content: flex-start; }
 .site-title {
   font-size: var(--fs-lg);
   font-weight: 700;
@@ -597,10 +622,35 @@ strong, b { color: var(--text-strong); font-weight: 640; }
 .site-title a { color: var(--text-strong); }
 .site-title a:hover { text-decoration: none; color: var(--primary); }
 
-.site-nav { gap: 2px; align-items: center; }
-.site-nav a {
-  margin: 0;
+.site-nav { gap: 2px; align-items: center; padding-bottom: 7px; flex: 1 1 auto; }
+
+/* 主题切换：固定在顶栏右端，不参与导航项布局，避免各页导航起点漂移 */
+.nav-theme-toggle {
+  flex: none;
   padding: 6px 10px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--card-2) 70%, transparent);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+.nav-theme-toggle:hover {
+  color: var(--primary);
+  border-color: color-mix(in oklab, var(--primary) 45%, var(--border));
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+  text-decoration: none;
+}
+.site-nav a {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  margin: 0;
+  padding: 0 10px;
+  line-height: 1;
   border-radius: var(--r-full);
   font-size: var(--fs-sm);
   color: var(--muted);
@@ -935,13 +985,9 @@ blockquote {
   .header-inner { padding: var(--sp-2) 0; }
   .site-nav {
     overflow-x: auto;
-    scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
-    mask-image: linear-gradient(to right, #000 calc(100% - 18px), transparent);
-    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 18px), transparent);
-    padding-bottom: 2px;
+    padding-bottom: 7px;
   }
-  .site-nav::-webkit-scrollbar { display: none; }
 }
 @media (max-width: 560px) {
   .container { width: min(var(--container), 94vw); }
@@ -949,7 +995,7 @@ blockquote {
   .btn { padding: 0 var(--sp-3); }
   .grid { gap: var(--sp-3); }
   h4, .card h4 { font-size: var(--fs-base); }
-  .site-nav a { padding: 6px 8px; }
+  .site-nav a { padding: 0 8px; }
 }
 
 /* ---------------- L. 浅色主题兼容 ---------------- */
@@ -1020,14 +1066,15 @@ blockquote {
   font-size: var(--fs-xs);
 }
 
-/* 区块标题行：标题不被右侧控件挤压换行 */
+/* 区块标题行：标题占据剩余宽度并允许折行，避免窄屏把页面撑出横向滚动 */
 .section-head {
   display: flex; align-items: flex-start; justify-content: space-between;
   gap: var(--sp-3); flex-wrap: wrap;
   margin-bottom: var(--sp-4);
+  min-width: 0;
 }
-.section-head h2, .section-head h3 { flex: none; margin: 0; }
-.section-head .controls { align-items: center; flex-wrap: wrap; }
+.section-head h2, .section-head h3 { flex: 1 1 auto; min-width: 0; margin: 0; }
+.section-head .controls { align-items: center; flex-wrap: wrap; min-width: 0; }
 .controls label {
   display: inline-flex; align-items: center; gap: var(--sp-2);
   white-space: nowrap; color: var(--muted); font-size: var(--fs-sm);
@@ -1135,3 +1182,20 @@ body > .container > p { color: var(--text); }
 .field-row:has(textarea) { display: block; }
 .field-row:has(textarea) > span { display: block; margin-bottom: var(--sp-2); }
 .field-row textarea { width: 100%; min-height: 68px; font-family: var(--font-mono); font-size: var(--fs-sm); }
+
+/* ---------------- 国内模式 / 代理设置（downloads.html） ---------------- */
+.cn-mode { row-gap: var(--sp-2); }
+.cn-mode label { row-gap: var(--sp-1); }
+.cn-mode input[type="text"] { width: min(240px, 100%); }
+#proxyStatus { transition: color var(--dur) var(--ease), background var(--dur) var(--ease),
+  border-color var(--dur) var(--ease); }
+#proxySaveBtn.is-flash {
+  border-color: color-mix(in oklab, var(--ok) 55%, var(--border));
+  background: color-mix(in oklab, var(--ok) 16%, var(--card-2));
+  color: var(--ok);
+}
+@media (max-width: 640px) {
+  .cn-mode { align-items: stretch; }
+  .cn-mode label { flex-wrap: wrap; }
+  .cn-mode input[type="text"] { width: 100%; }
+}

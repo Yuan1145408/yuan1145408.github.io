@@ -15,11 +15,23 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <h1 class="site-title"><a href="index.html">鸟国网站</a></h1>
       <nav class="site-nav">
         <a href="index.html">首页</a>
         <a href="search.html">聚合搜索</a>
-        <a href="tutorials.html">教程专区</a>
+        <a href="download.html">下载中心</a>
+        <a href="settings.html">设置</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html" class="active">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+        <a href="android.html">安卓专区</a>
       </nav>
     </div>
   </header>
@@ -37,17 +49,17 @@
 library(tidyverse)
 
 # 读取 CSV
-df <- read_csv("data.csv")
+df &lt;- read_csv("data.csv")
 
 # 过滤、分组、聚合
-df2 <- df %>% filter(score > 60) %>% group_by(city) %>% summarise(avg = mean(score))
+df2 &lt;- df %>% filter(score > 60) %>% group_by(city) %>% summarise(avg = mean(score))
 
 # 可视化
 ggplot(df2, aes(x = city, y = avg)) + geom_col()
     </code></pre>
 
     <h2>建模（示例）</h2>
-    <pre><code>model <- lm(mpg ~ cyl + hp, data = mtcars)
+    <pre><code>model &lt;- lm(mpg ~ cyl + hp, data = mtcars)
 summary(model)
     </code></pre>
 

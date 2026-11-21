@@ -100,11 +100,8 @@
         requestAnimationFrame(function () { bar.classList.remove('is-instant'); });
       });
 
-      /* 移动端：让当前项在可横向滚动的导航里居中进入视野（属于定位，不做动画） */
-      if (nav.scrollWidth > nav.clientWidth + 4) {
-        var target = active.offsetLeft - (nav.clientWidth - active.offsetWidth) / 2;
-        nav.scrollLeft = Math.max(0, Math.min(target, nav.scrollWidth - nav.clientWidth));
-      }
+      /* 导航初始滚动位置固定在最左：切页时上栏位置不跳，横向滚动交给用户 */
+      nav.scrollLeft = 0;
     }
 
     function goTo(el, preview) {

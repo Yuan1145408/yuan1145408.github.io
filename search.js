@@ -1255,3 +1255,23 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();
+
+/* 顶栏返回键：优先回上一页，无历史时回首页 */
+;(function () {
+  function bind() {
+    var back = document.getElementById('navBack');
+    if (!back || back.getAttribute('data-bound') === '1') return;
+    back.setAttribute('data-bound', '1');
+    back.addEventListener('click', function (e) {
+      e.preventDefault();
+      try {
+        if (window.history && window.history.length > 1) window.history.back();
+        else window.location.href = 'index.html';
+      } catch (_) {
+        window.location.href = 'index.html';
+      }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+})();

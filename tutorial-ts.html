@@ -11,13 +11,15 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <h1 class="site-title"><a href="index.html">鸟国网站</a></h1>
       <nav class="site-nav">
         <a href="index.html">首页</a>
         <a href="search.html">聚合搜索</a>
+        <a href="download.html">下载中心</a>
+        <a href="settings.html">设置</a>
         <a href="features.html">功能分类</a>
         <a href="downloads.html">软件下载</a>
-        <a href="tutorials.html">教程专区</a>
+        <a href="tutorials.html" class="active">教程专区</a>
         <a href="vm.html">虚拟机专区</a>
         <a href="os.html">系统镜像专区</a>
         <a href="games.html">游戏专区</a>
@@ -25,6 +27,7 @@
         <a href="tasks.html" id="navTasks">任务</a>
         <a href="user.html" id="navUser">用户</a>
         <a href="#" id="navLogin">登录</a>
+        <a href="android.html">安卓专区</a>
       </nav>
     </div>
   </header>
@@ -48,7 +51,7 @@
 type Id = number | string
 interface User { id: Id; name: string; age?: number }
 // 泛型
-function wrap<T>(value: T){ return { value } }
+function wrap&lt;T>(value: T){ return { value } }
 // 字面量与联合类型
 type Direction = 'up'|'down'
 // 类型收窄
@@ -119,16 +122,16 @@ export function add(a:number,b:number){ return a+b }
     <h3>类型系统进阶与工具类型</h3>
     <pre><code>// 联合/交叉/字面量/可辨识联合
 type Id = number | string
-type WithMeta<T> = T & { createdAt: Date }
+type WithMeta&lt;T> = T & { createdAt: Date }
 type Direction = 'up' | 'down'
 interface Shape { kind: 'circle'|'rect'; area(): number }
 
 // 工具类型：Partial/Pick/Omit/Readonly/Record/Required/NonNullable
 type User = { id: Id; name: string; age?: number }
-type UserPatch = Partial<User>
-type UserView = Pick<User, 'id'|'name'>
-type UserRequired = Required<User>
-type Dict = Record<string, number>
+type UserPatch = Partial&lt;User>
+type UserView = Pick&lt;User, 'id'|'name'>
+type UserRequired = Required&lt;User>
+type Dict = Record&lt;string, number>
     </code></pre>
     <p>建议：优先用类型表达业务约束（可辨识联合 + 类型缩小），减少运行时分支错误。</p>
 
@@ -145,8 +148,8 @@ function handle(u: User | null) {
     </code></pre>
 
     <h3>泛型与约束</h3>
-    <pre><code>function wrap<T>(value: T) { return { value } }
-function top<T extends { score: number }>(arr: T[]) {
+    <pre><code>function wrap&lt;T>(value: T) { return { value } }
+function top&lt;T extends { score: number }>(arr: T[]) {
   return [...arr].sort((a,b)=>b.score-a.score)[0]
 }
     </code></pre>

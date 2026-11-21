@@ -15,11 +15,23 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <h1 class="site-title"><a href="index.html" style="text-decoration:none;color:inherit;">鸟国网站</a></h1>
+      <h1 class="site-title"><a href="index.html">鸟国网站</a></h1>
       <nav class="site-nav">
         <a href="index.html">首页</a>
         <a href="search.html">聚合搜索</a>
-        <a href="tutorials.html">教程专区</a>
+        <a href="download.html">下载中心</a>
+        <a href="settings.html">设置</a>
+        <a href="features.html">功能分类</a>
+        <a href="downloads.html">软件下载</a>
+        <a href="tutorials.html" class="active">教程专区</a>
+        <a href="vm.html">虚拟机专区</a>
+        <a href="os.html">系统镜像专区</a>
+        <a href="games.html">游戏专区</a>
+        <a href="official.html">官方跳转</a>
+        <a href="tasks.html" id="navTasks">任务</a>
+        <a href="user.html" id="navUser">用户</a>
+        <a href="#" id="navLogin">登录</a>
+        <a href="android.html">安卓专区</a>
       </nav>
     </div>
   </header>
@@ -49,10 +61,10 @@ import { useState } from 'react'
 export default function App(){
   const [count, setCount] = useState(0)
   return (
-    <div style={{padding:20}}>
-      <h2>你好 React</h2>
-      <button className="btn" onClick={()=>setCount(count+1)}>点击 {count}</button>
-    </div>
+    &lt;div style={{padding:20}}>
+      &lt;h2>你好 React&lt;/h2>
+      &lt;button className="btn" onClick={()=>setCount(count+1)}>点击 {count}&lt;/button>
+    &lt;/div>
   )
 }
     </code></pre>
@@ -64,19 +76,19 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import App from './App.jsx'
 
-function About(){ return <div>关于我们</div> }
+function About(){ return &lt;div>关于我们&lt;/div> }
 
 createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <nav style={{display:'flex', gap:10}}>
-      <Link to="/">首页</Link>
-      <Link to="/about">关于</Link>
-    </nav>
-    <Routes>
-      <Route path="/" element={<App/>} />
-      <Route path="/about" element={<About/>} />
-    </Routes>
-  </BrowserRouter>
+  &lt;BrowserRouter>
+    &lt;nav style={{display:'flex', gap:10}}>
+      &lt;Link to="/">首页&lt;/Link>
+      &lt;Link to="/about">关于&lt;/Link>
+    &lt;/nav>
+    &lt;Routes>
+      &lt;Route path="/" element={&lt;App/>} />
+      &lt;Route path="/about" element={&lt;About/>} />
+    &lt;/Routes>
+  &lt;/BrowserRouter>
 )
     </code></pre>
 

@@ -1111,18 +1111,24 @@
     }
     let currentTheme = getTheme();
     applyTheme(currentTheme);
-    if (nav && !document.getElementById('navTheme')){
-      const themeLink = document.createElement('a');
-      themeLink.href = '#';
-      themeLink.id = 'navTheme';
-      themeLink.textContent = currentTheme === 'dark' ? '浅色' : '深色';
-      nav.prepend(themeLink);
-      themeLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        currentTheme = (currentTheme === 'dark' ? 'light' : 'dark');
-        applyTheme(currentTheme);
+    // 主题切换放在顶栏右侧的独立操作位，不占用导航项，避免各页导航位置漂移
+    if (!document.getElementById('navTheme')){
+      const host = document.querySelector('.site-header .header-inner') || nav;
+      if (host) {
+        const themeLink = document.createElement('a');
+        themeLink.href = '#';
+        themeLink.id = 'navTheme';
+        themeLink.className = 'nav-theme-toggle';
         themeLink.textContent = currentTheme === 'dark' ? '浅色' : '深色';
-      });
+        themeLink.setAttribute('aria-label', '切换深色 / 浅色主题');
+        host.appendChild(themeLink);
+        themeLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          currentTheme = (currentTheme === 'dark' ? 'light' : 'dark');
+          applyTheme(currentTheme);
+          themeLink.textContent = currentTheme === 'dark' ? '浅色' : '深色';
+        });
+      }
     }
     // 全站返回键：优先插入到导航栏最前；若无导航则创建浮动返回按钮
     const goBack = () => {
@@ -1670,4 +1676,130 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
+})();
+
+/* ============================================================
+   国内模式 · 本地代理设置（downloads.html）
+   - 之前只有静态控件、没有绑定，按钮点了没反应
+   - 这里补上保存 / 回填 / 状态反馈，复用全站设置存储 niao.settings.v1
+   ============================================================ */
+;(function () {
+  'use strict';
+
+  var SETTINGS_KEY = 'niao.settings.v1';
+  var LEGACY_KEY = 'niao.proxy';
+
+  function readAll() {
+    try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; } catch (_) { return {}; }
+  }
+
+  function writePatch(patch) {
+    var all = readAll();
+    Object.keys(patch).forEach(function (k) { all[k] = patch[k]; });
+    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(all)); return true; }
+    catch (_) { return false; }
+  }
+
+  function readProxy() {
+    var all = readAll();
+    var on = all['download.proxyOn'];
+    var url = all['download.proxyUrl'];
+    if (on === undefined || url === undefined) {
+      try {
+        var legacy = JSON.parse(localStorage.getItem(LEGACY_KEY) || 'null');
+        if (legacy) {
+          if (on === undefined) on = !!legacy.on;
+          if (url === undefined) url = legacy.url || '';
+        }
+      } catch (_) {}
+    }
+    return { on: !!on, url: url || '' };
+  }
+
+  function hostOf(url) {
+    try { return new URL(url).host; } catch (_) { return String(url).slice(0, 24); }
+  }
+
+  function toast(msg, type) {
+    if (window.Niao && typeof window.Niao.toast === 'function') window.Niao.toast(msg, type || 'ok');
+  }
+
+  function init() {
+    var toggle = document.getElementById('cnModeToggle');
+    var input = document.getElementById('proxyInput');
+    var save = document.getElementById('proxySaveBtn');
+    var status = document.getElementById('proxyStatus');
+    if (!toggle || !input || !save || !status) return;
+    if (save.getAttribute('data-bound') === '1') return;
+    save.setAttribute('data-bound', '1');
+
+    function setStatus(text, tone) {
+      status.textContent = text;
+      status.classList.remove('is-ok', 'is-error', 'warn');
+      if (tone === 'ok') status.classList.add('is-ok');
+      else if (tone === 'err') status.classList.add('is-error');
+      else if (tone === 'warn') status.classList.add('warn');
+    }
+
+    function render() {
+      var cfg = readProxy();
+      toggle.checked = cfg.on;
+      if (!input.value) input.value = cfg.url;
+      if (!cfg.url) setStatus('代理未设置', 'warn');
+      else if (cfg.on) setStatus('已启用 · ' + hostOf(cfg.url), 'ok');
+      else setStatus('已保存，未启用 · ' + hostOf(cfg.url), null);
+    }
+
+    function validUrl(v) {
+      return /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(v);
+    }
+
+    save.addEventListener('click', function () {
+      var url = input.value.trim();
+      if (url && !validUrl(url)) {
+        setStatus('地址格式无效', 'err');
+        toast('代理地址需以 http:// 或 https:// 开头', 'err');
+        input.focus();
+        return;
+      }
+      var on = url ? !!toggle.checked : false;
+      var ok = writePatch({ 'download.proxyUrl': url, 'download.proxyOn': on });
+      if (!ok) {
+        setStatus('保存失败：本地存储不可用', 'err');
+        toast('保存失败，请检查浏览器存储设置', 'err');
+        return;
+      }
+      if (!url) {
+        setStatus('代理未设置', 'warn');
+        toast('已清空代理地址', 'ok');
+      } else {
+        setStatus(on ? '已启用 · ' + hostOf(url) : '已保存，未启用 · ' + hostOf(url), on ? 'ok' : null);
+        toast(on ? '代理已保存并启用' : '代理地址已保存', 'ok');
+      }
+      save.classList.add('is-flash');
+      setTimeout(function () { save.classList.remove('is-flash'); }, 500);
+    });
+
+    toggle.addEventListener('change', function () {
+      var url = input.value.trim();
+      if (toggle.checked && !url) {
+        setStatus('先填写代理地址再启用', 'warn');
+        toast('请先填写代理地址', 'err');
+        input.focus();
+        return;
+      }
+      writePatch({ 'download.proxyOn': !!toggle.checked, 'download.proxyUrl': url });
+      render();
+    });
+
+    input.addEventListener('input', function () {
+      if (!input.value.trim()) setStatus('代理未设置', 'warn');
+      else setStatus(toggle.checked ? '待保存 · ' + hostOf(input.value.trim()) : '待保存', 'warn');
+    });
+
+    render();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
