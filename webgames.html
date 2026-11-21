@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>网页游戏 - 鸟国网站</title>
+    <meta name="description" content="3A 游戏网页化合集：云游戏平台、浏览器直玩的 WASM 移植（GTA、半条命、光环、DOOM、Quake 等），以及可下载的开源项目与源码。" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="search.html">聚合搜索</a>
+          <a href="download.html">下载中心</a>
+          <a href="settings.html">设置</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html">游戏专区</a>
+          <a href="webgames.html" class="active">网页游戏</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+          <a href="android.html">安卓专区</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="wg-hero">
+        <div class="container">
+          <p class="wg-hero__eyebrow">网页游戏 · 3A 网页化</p>
+          <h2 class="wg-hero__title">不装 100G，打开网页就进 3A</h2>
+          <p class="wg-hero__lead">
+            两类玩法：一是<strong>云游戏</strong>，渲染跑在服务器上，网页只负责显示；二是<strong>浏览器移植</strong>，
+            把游戏编译成 WebAssembly，直接在你的标签页里跑。下面每个入口都实测过可用性，并标注是否需要自备游戏文件。
+          </p>
+          <div class="wg-hero__stats" id="wgStats">
+            <span class="wg-stat"><b>44</b> 个入口</span>
+            <span class="wg-stat"><b>11</b> 个云平台</span>
+            <span class="wg-stat"><b>19</b> 个直玩移植</span>
+            <span class="wg-stat"><b>14</b> 个开源项目</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <aside class="wg-note">
+            <h3>先读这段，能少踩很多坑</h3>
+            <ul>
+              <li><b>本站不托管任何游戏本体。</b>所有入口都指向官方平台或项目原页面，需要自备文件的条目请使用你自己购买的正版游戏。</li>
+              <li><b>不要安装任何“启动器 / 扩展 / 插件”。</b>浏览器移植只需要一个标签页，凡是要你装东西的页面直接关掉。</li>
+              <li><b>标注「需自备游戏文件」的条目</b>本质是“浏览器运行器 + 你的合法资源”，页面本身不含游戏内容。</li>
+              <li><b>境外节点在国内可能需要代理</b>，标了「境外节点」的平台如果打不开，优先试上面带「国内直连」的。</li>
+            </ul>
+          </aside>
+
+          <div class="wg-toolbar">
+            <div class="wg-tabs" id="wgTabs" role="tablist" aria-label="分类筛选"></div>
+            <label class="wg-search">
+              <span class="sr-only">搜索网页游戏</span>
+              <input id="wgSearch" type="search" placeholder="搜索游戏名、平台或标签…" autocomplete="off" />
+            </label>
+            <span class="wg-count" id="wgCount" aria-live="polite"></span>
+          </div>
+
+          <div class="wg-grid" id="wgGrid">
+            <p class="wg-loading">正在读取入口列表…</p>
+          </div>
+          <p class="wg-empty" id="wgEmpty" hidden>
+            没有匹配的条目。换个关键词，或点上面的「全部」看看。
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h3 id="sec-1">自己把游戏搬上网页，大概要这几步</h3>
+          <ol class="wg-steps">
+            <li><b>拿源码。</b>优先找反编译 / 源码移植项目（上面的「开源项目与源码」里都是），确认许可证允许你的用途。</li>
+            <li><b>装工具链。</b>C/C++ 项目用 <a href="https://github.com/emscripten-core/emscripten" target="_blank" rel="noopener noreferrer">Emscripten</a> 编译到 WebAssembly；自研项目直接用 <a href="https://github.com/godotengine/godot" target="_blank" rel="noopener noreferrer">Godot</a> 导出 Web 版最省事。</li>
+            <li><b>过资源关。</b>把贴图、音频转成浏览器友好格式（WebP / OGG），大文件做分片加载，否则首屏就卡住。</li>
+            <li><b>处理输入与存档。</b>键鼠 + 手柄 + 触屏三套输入，存档走 IndexedDB，别指望 localStorage 装下几十 MB。</li>
+            <li><b>别自己托管受版权保护的资源。</b>只发布运行器，让用户导入自己的正版文件，这条线最安全。</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <span>© 2025 鸟国网站 niaoguo.com</span>
+        <span class="wg-credit">条目参考 awesome-decomp-games 等公开清单，链接逐条实测</span>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        window.Niao = window.Niao || {};
+        window.Niao.config = window.Niao.config || {};
+        window.Niao.config.static = true;
+        window.Niao.config.apiBase = 'http://localhost:5050';
+      })();
+    </script>
+    <script src="script.js"></script>
+    <script src="webgames.js"></script>
+    <script src="nav-glider.js"></script>
+  </body>
+</html>

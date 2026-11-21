@@ -27,6 +27,7 @@ PAGE_RULES = [
     ("index", "首页", "page"),
     ("downloads", "下载", "page"),
     ("games", "游戏", "page"),
+    ("webgames", "游戏", "page"),
     ("tutorials", "教程", "page"),
     ("features", "功能", "page"),
     ("vm", "虚拟机", "page"),
