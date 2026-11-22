@@ -167,6 +167,7 @@ python build_search_index.py     # 内容更新后重建站内索引
 | Mod 启动器 | 内置 Prism / HMCL / PCL2 / 官方启动器，可添加自定义启动器并配置路径、内存、JVM 参数、游戏目录 |
 | 模组管理 | 添加 / 编辑 / 删除 / 启用 / 禁用 / 搜索 / 按加载器筛选 / 导出清单；启用状态带入启动向导 |
 | 数据存储 | 全部存 `localStorage`（`niao.mc.launchers.v1` / `niao.mc.mods.v1` / `niao.mc.settings.v1`），无后端 |
+| 直接开玩 | `#mcwPlay` 面板（`minecraft-play.js`）：探测本机 `niao-host.js`、启动/结束实例、切换内嵌或桌面窗口、共享画面与全屏，离线时给出准确命令并禁用按钮 |
 
 ### 像网页游戏一样直接用（本地常驻服务 `niao-host.js`）
 
@@ -194,7 +195,7 @@ node niao-host.js --uninstall                               # 移除自启
 
 ### 游戏窗口显示位置（可在设置里切换）
 
-`mc-play.html` 的设置区提供两种模式，选择会写进 `niao-host.settings.json` 持久保存：
+「我的世界网页版 → 直接开玩」（`minecraft-web.html#mcwPlay`）的设置区提供两种模式，选择会写进 `niao-host.settings.json` 持久保存；`mc-play.html` 仍作为独立游玩页保留：
 
 | 模式 | 行为 |
 |---|---|

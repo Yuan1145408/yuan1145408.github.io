@@ -114,6 +114,45 @@
       .mcw-prov__log .warn { color: #ffc457; }
       .mcw-prov__log .err { color: #ff6b6b; }
       @media (prefers-reduced-motion: reduce) { .mcw-prov__bar { transition: none; } }
+
+      /* ---- 直接开玩（本地实例） ---- */
+      .mcw-play { margin-top: var(--sp-4); }
+      .mcw-play__head { display: flex; gap: var(--sp-3); align-items: flex-start; justify-content: space-between; flex-wrap: wrap; margin-bottom: var(--sp-4); }
+      .mcw-play__head p { margin-bottom: var(--sp-2); }
+      .mcw-play__grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr); gap: var(--sp-4); align-items: start; }
+      .mcw-play__stage {
+        position: relative; width: 100%; aspect-ratio: 16 / 9;
+        border-radius: var(--r-lg); overflow: hidden;
+        background: #05080f; border: 1px solid var(--border);
+        box-shadow: var(--sh-2);
+      }
+      .mcw-play__stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; display: none; }
+      .mcw-play__stage.is-live video { display: block; }
+      .mcw-play__ph {
+        position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 6px; padding: var(--sp-4);
+        text-align: center; color: #8095a8; font-size: var(--fs-sm);
+      }
+      .mcw-play__ph strong { color: #cfdae6; font-size: var(--fs-md); }
+      .mcw-play__ph span { max-width: 40ch; line-height: 1.7; }
+      .mcw-play__ph .big { font-size: 40px; line-height: 1; opacity: .55; }
+      .mcw-play__cube {
+        width: 54px; height: 54px; border-radius: 12px;
+        background: linear-gradient(155deg, #7ce9a9 0%, #3fbe83 45%, #1f7d54 100%);
+        box-shadow: inset 0 -10px 18px rgba(0, 0, 0, .35), inset 0 6px 12px rgba(255, 255, 255, .16), 0 12px 26px rgba(0, 0, 0, .4);
+      }
+      .mcw-play__bar { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-top: var(--sp-3); }
+      .mcw-play__side { display: flex; flex-direction: column; gap: var(--sp-3); min-width: 0; }
+      .mcw-play__side .mcw-field { margin-bottom: 0; }
+      .mcw-play__mode { border: 1px solid var(--border); border-radius: var(--r-md); padding: var(--sp-3); margin: 0; }
+      .mcw-play__mode legend { padding: 0 6px; font-size: var(--fs-sm); color: var(--muted); }
+      .mcw-play__hint { margin: 0; font-size: var(--fs-xs); color: var(--muted-2); line-height: 1.7; }
+      .mcw-play__hint code, .mcw-play__cmd code { font-family: var(--font-mono); }
+      .mcw-play__log { margin-top: var(--sp-3); max-height: 150px; min-height: 0; }
+      .mcw-play__log:empty { display: none; }
+      @media (max-width: 860px) {
+        .mcw-play__grid { grid-template-columns: minmax(0, 1fr); }
+      }
     </style>
   </head>
   <body>
@@ -155,7 +194,7 @@
             </p>
             <div class="row" id="mcwStats" style="margin-bottom:var(--sp-4);"></div>
             <div class="mcw-actions">
-              <a class="btn primary" href="mc-play.html">在浏览器里开玩（实例 26）</a>
+              <a class="btn primary" href="#mcwPlay">直接开玩（实例 26）</a>
               <a class="btn" href="#mcwWizard">开始启动向导</a>
               <a class="btn" href="#mcwLaunchers">管理启动器</a>
               <a class="btn" href="#mcwMods">管理模组</a>
@@ -163,6 +202,84 @@
               <a class="btn" href="mod-search.html">Mod 搜索与批量下载</a>
               <a class="btn" href="minecraft.html">资源下载页</a>
             </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- 直接开玩（本地实例） -->
+      <section class="section" id="mcwPlay" style="padding-top:0;">
+        <div class="container">
+          <div class="mcw-hero mcw-play">
+            <div class="mcw-play__head">
+              <div>
+                <p>
+                  <span class="chip">直接开玩</span>
+                  <span class="chip" id="mcwPlayState">检测本地服务…</span>
+                </p>
+                <h2 id="sec-play" style="margin-top:var(--sp-2);">浏览器里直接开局，不装启动器</h2>
+                <p>
+                  本机跑着 <code>niao-host.js</code> 时，这里会亮起「本地服务在线」：点一下启动，实例就会在后台拉起来，
+                  画面默认嵌在下面的 16:9 窗口里，鼠标点一下就能操作。也可以切成桌面独立窗口，或直接跳独立游玩页。
+                </p>
+              </div>
+              <div class="mcw-actions">
+                <a class="btn" href="mc-play.html">独立游玩页</a>
+              </div>
+            </div>
+
+            <div class="mcw-play__grid">
+              <div>
+                <div class="mcw-play__stage" id="mcwPlayStage">
+                  <video id="mcwPlayVideo" autoplay muted playsinline></video>
+                  <div class="mcw-play__ph" id="mcwPlayPh">
+                    <span class="big mcw-play__cube" aria-hidden="true"></span>
+                    <strong id="mcwPlayPhTitle">游戏尚未启动</strong>
+                    <span id="mcwPlayPhNote">先在本机启动服务，再点下面的「启动游戏」</span>
+                  </div>
+                </div>
+                <div class="mcw-play__bar">
+                  <button class="btn primary" id="mcwPlayStart" type="button" disabled>启动游戏</button>
+                  <button class="btn" id="mcwPlayStop" type="button" disabled>结束游戏</button>
+                  <button class="btn" id="mcwPlayShare" type="button">在浏览器中显示画面</button>
+                  <button class="btn" id="mcwPlayProbe" type="button">重新检测</button>
+                  <button class="btn" id="mcwPlayFull" type="button" hidden>全屏</button>
+                </div>
+              </div>
+
+              <div class="mcw-play__side">
+                <div class="mcw-field">
+                  <label for="mcwPlayInstance">实例目录名</label>
+                  <input id="mcwPlayInstance" list="mcwPlayInstanceList" value="26" autocomplete="off"
+                    placeholder="实例目录名，如 26" />
+                  <datalist id="mcwPlayInstanceList"></datalist>
+                </div>
+
+                <fieldset class="mcw-play__mode">
+                  <legend>游戏窗口显示位置</legend>
+                  <label class="mcw-opt">
+                    <input type="radio" name="mcwPlayDisplay" value="embedded" checked />
+                    <span><strong>浏览器内嵌</strong><small>窗口去边框，画面贴到左边的小窗里，适合边看攻略边玩。</small></span>
+                  </label>
+                  <label class="mcw-opt" style="margin-bottom:0;">
+                    <input type="radio" name="mcwPlayDisplay" value="desktop" />
+                    <span><strong>桌面独立窗口</strong><small>按常规方式弹窗，可自由拖动缩放、切全屏。</small></span>
+                  </label>
+                </fieldset>
+
+                <p class="mcw-play__hint">
+                  服务地址 <code>http://127.0.0.1:8791</code>，只监听本机。没有它时，左侧的启动按钮会保持禁用，
+                  这是浏览器的安全限制，不是页面出错。
+                </p>
+
+                <details>
+                  <summary class="mcw-play__hint" style="cursor:pointer;color:var(--primary);">服务没启动？看命令</summary>
+                  <pre class="mcw-cmd" id="mcwPlayCmd">node niao-host.js --instance 26 --root "D:\"</pre>
+                </details>
+              </div>
+            </div>
+
+            <pre class="mcw-cmd mcw-play__log" id="mcwPlayLog"></pre>
           </div>
         </div>
       </section>
@@ -418,6 +535,7 @@
     <script src="script.js"></script>
     <script src="app-settings.js"></script>
     <script src="mc-resolver.js"></script>
+    <script src="minecraft-play.js"></script>
     <script src="minecraft-web.js"></script>
     <script src="nav-glider.js"></script>
   </body>

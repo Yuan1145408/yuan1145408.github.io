@@ -405,7 +405,13 @@ const server = http.createServer(async (req, res) => {
             const full = path.join(cfg.root, d.name);
             const hasScript = fs.existsSync(path.join(full, process.platform === 'win32' ? 'niao-launch.cmd' : 'niao-launch.sh'));
             const hasPlan = fs.existsSync(path.join(full, 'launch-plan.json'));
-            const hasVersions = fs.existsSync(path.join(full, 'versions'));
+            // versions/ 必须真的含 <版本>/<版本>.json，否则像 QQBoot 这种同名目录会被误判成实例
+            let hasVersions = false;
+            try {
+              const vdir = path.join(full, 'versions');
+              hasVersions = fs.readdirSync(vdir, { withFileTypes: true })
+                .some((v) => v.isDirectory() && fs.existsSync(path.join(vdir, v.name, v.name + '.json')));
+            } catch (e) { hasVersions = false; }
             return { id: d.name, hasScript: hasScript, hasPlan: hasPlan, isInstance: hasScript || hasPlan || hasVersions };
           })
           .filter((it) => it.isInstance);
