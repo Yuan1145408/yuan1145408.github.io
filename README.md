@@ -136,10 +136,29 @@ python build_search_index.py     # 内容更新后重建站内索引
 | 能力 | 说明 |
 |---|---|
 | 版本选择 | 读取 Mojang 官方 `version_manifest_v2`（925+ 版本，含快照/旧版），跨域失败时回退内置常用版本清单 |
-| 启动方式 | 浏览器网页版（Eaglercraft，1.5.2 / 1.8.8）、本地启动器参数摘要、导出实例 JSON |
+| 启动方式 | 浏览器网页版（Eaglercraft，1.5.2 / 1.8.8）、**后台静默资源准备 + 本地启动**、本地启动器参数摘要、导出实例 JSON |
 | Mod 启动器 | 内置 Prism / HMCL / PCL2 / 官方启动器，可添加自定义启动器并配置路径、内存、JVM 参数、游戏目录 |
 | 模组管理 | 添加 / 编辑 / 删除 / 启用 / 禁用 / 搜索 / 按加载器筛选 / 导出清单；启用状态带入启动向导 |
 | 数据存储 | 全部存 `localStorage`（`niao.mc.launchers.v1` / `niao.mc.mods.v1` / `niao.mc.settings.v1`），无后端 |
+
+### 无网页客户端版本的启动流程（`mc-resolver.js`）
+
+当所选版本不是 1.5.2 / 1.8.8 时，不再提示用户"切换版本或去浏览器打开"，改为在后台静默准备：
+
+| 阶段 | 行为 | 失败处理 |
+|---|---|---|
+| 源探测 | 对每个候选主机发一次 Range 请求，标记可用性 | 全部不可用 → `E_LIB_SOURCE`，记录并阻止启动 |
+| 版本元数据 | HMCL 源 → PCL 源 → MC百科 → Mojang 官方 | 逐级降级，最终 `E_META` |
+| 客户端 jar | 镜像源 → 官方 `piston-data`；校验 size + SHA-1 | `E_DOWNLOAD` / `E_HASH` |
+| 依赖库 | 探测可用的 Maven（Sponge / Forge / 公共镜像 / 站点代理 / 公共 CORS 代理） | 缺失项计数，`E_VERIFY` 阻止启动 |
+| 资源索引与文件 | 索引 JSON + 抽样资源（默认 24 个，含 `zh_cn`/`en_us`/图标） | 镜像副本按"可读即通过"（`lenient`） |
+| 配置与校验 | 生成 classpath、mainClass、JVM/游戏参数；逐项回读缓存校验 | 缺一项即 `E_VERIFY` |
+| 写入实例 | `versions/`、`libraries/`、`assets/`、`launch-plan.json`、`niao-launch.cmd` | `E_FS_DENIED` / `E_NO_DIR` |
+| 启动 | `niao-mc://` 协议桥调用本地启动器 | 未启用桥 → `E_NO_BRIDGE`，明确阻止而不是假装成功 |
+
+- 全程只用 `fetch`：**不调用 `window.open`、不触发 `<a download>`、无页面跳转与浏览器下载窗口**（自动化测试断言 `window.open` 调用次数为 0）。
+- 读取站点已有的「下载代理」配置（`niao.settings.v1.download.proxyUrl`），直连失败后自动经代理重试。
+- 日志按阶段实时输出，失败时给出错误码、受影响文件清单与下一步动作。
 
 ## 下载中心（download.html）
 | 能力 | 说明 |

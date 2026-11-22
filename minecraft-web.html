@@ -97,6 +97,23 @@
       .mcw-banner p { margin: 0; font-size: var(--fs-sm); color: var(--muted); }
       .mcw-banner strong { color: var(--text-strong); }
       .mcw-empty { color: var(--muted); font-size: var(--fs-sm); padding: var(--sp-4); text-align: center; }
+
+      /* 后台资源准备面板 */
+      .mcw-prov { margin-top: var(--sp-4); border: 1px solid var(--border); border-radius: var(--r-md); padding: var(--sp-3); background: var(--card-2); }
+      .mcw-prov__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); flex-wrap: wrap; }
+      .mcw-prov__head strong { font-size: var(--fs-sm); color: var(--text-strong); }
+      .mcw-prov__track { height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; margin: var(--sp-2) 0; }
+      .mcw-prov__bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), color-mix(in oklab, var(--primary) 60%, #7de2a8)); transition: width .25s ease; }
+      .mcw-prov__log {
+        margin: var(--sp-2) 0 0; padding: var(--sp-2); border-radius: var(--r-sm);
+        background: var(--bg); border: 1px solid var(--border);
+        font-family: var(--font-mono); font-size: 12px; line-height: 1.65;
+        max-height: 220px; overflow: auto; white-space: pre-wrap; word-break: break-all;
+      }
+      .mcw-prov__log .ok { color: #4fd08a; }
+      .mcw-prov__log .warn { color: #ffc457; }
+      .mcw-prov__log .err { color: #ff6b6b; }
+      @media (prefers-reduced-motion: reduce) { .mcw-prov__bar { transition: none; } }
     </style>
   </head>
   <body>
@@ -233,6 +250,20 @@
                 <button class="btn" id="mcwExportBtn" type="button" hidden>下载实例配置</button>
               </div>
               <p class="mcw-note" id="mcwLaunchMsg" style="margin-top:var(--sp-3);"></p>
+
+              <div class="mcw-prov" id="mcwProvision" hidden>
+                <div class="mcw-prov__head">
+                  <strong id="mcwProvTitle">后台准备客户端资源</strong>
+                  <span class="mcw-note" id="mcwProvMeta">未开始</span>
+                </div>
+                <div class="mcw-prov__track"><div class="mcw-prov__bar" id="mcwProvBar"></div></div>
+                <p class="mcw-note" id="mcwProvStage" style="margin:0 0 var(--sp-2);">等待开始</p>
+                <div class="row" style="gap:8px;">
+                  <button class="btn" id="mcwProvDir" type="button">选择实例目录</button>
+                  <button class="btn" id="mcwProvCancel" type="button">取消</button>
+                </div>
+                <pre class="mcw-prov__log" id="mcwProvLog"></pre>
+              </div>
             </div>
           </div>
         </div>
@@ -382,6 +413,7 @@
       })();
     </script>
     <script src="script.js"></script>
+    <script src="mc-resolver.js"></script>
     <script src="minecraft-web.js"></script>
     <script src="nav-glider.js"></script>
   </body>

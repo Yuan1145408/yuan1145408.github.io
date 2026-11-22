@@ -10,6 +10,7 @@
   'use strict';
 
   var $ = function (id) { return document.getElementById(id); };
+  var Resolver = window.McResolver || null;
   var KEY = {
     SETTINGS: 'niao.mc.settings.v1',
     LAUNCHERS: 'niao.mc.launchers.v1',
@@ -291,7 +292,9 @@
         var v = state.version ? state.version.id : '';
         hint.innerHTML = WEB_CLIENTS[v]
           ? '当前版本 <b>' + esc(v) + '</b> 有对应的网页版客户端，点击「开始启动」会在新标签页打开。'
-          : '当前版本 <b>' + esc(v || '—') + '</b> 没有网页版客户端：网页版只提供 1.5.2 与 1.8.8，可切换版本，或改用本地启动器 / 导出配置。';
+          : '当前版本 <b>' + esc(v || '—') + '</b> 没有内置网页客户端：点击「开始启动」后会在后台按 ' +
+            'HMCL 源 → PCL 源 → MC百科 → 官方源 的顺序自动获取客户端与依赖，校验通过后写入实例目录并启动，' +
+            '不会跳转页面，也不会弹出下载窗口。';
       } else if (state.mode === 'launcher') {
         hint.textContent = '将按所选启动器的内存与 JVM 参数生成本次实例的配置摘要，复制到启动器中使用。';
       } else {
@@ -392,12 +395,14 @@
       html += '<p class="mcw-note" style="color:var(--warn,#ffc457)">注意：' + mismatch.length + ' 个模组 标注的适用版本与当前版本不一致，启动后可能加载失败。</p>';
     }
     if (state.mode === 'web' && !WEB_CLIENTS[v]) {
-      html += '<p class="mcw-note" style="color:var(--warn,#ffc457)">网页版只提供 1.5.2 与 1.8.8；当前版本没有网页客户端。</p>';
+      html += '<p class="mcw-note">该版本没有内置网页客户端，启动时将由后台自动获取客户端资源并完成配置（静默进行，不跳转）。</p>';
     }
     box.innerHTML = html;
 
     if (launchBtn) {
-      launchBtn.textContent = state.mode === 'web' ? '打开网页版客户端'
+      var noWeb = state.mode === 'web' && state.version && !WEB_CLIENTS[state.version.id];
+      launchBtn.textContent = state.mode === 'web'
+        ? (noWeb ? '后台准备并启动' : '打开网页版客户端')
         : (state.mode === 'launcher' ? '生成启动参数' : '下载实例配置');
     }
     // 参数摘要：仅本地启动器模式展示
@@ -483,7 +488,8 @@
     if (state.mode === 'web') {
       var url = WEB_CLIENTS[v];
       if (!url) {
-        if (msg) msg.innerHTML = '网页版没有 <b>' + esc(v) + '</b> 的客户端。请切换到 1.5.2 / 1.8.8，或改用本地启动器。';
+        // 该版本没有网页客户端：改为后台静默获取本地客户端资源并启动
+        provisionLaunch(v);
         return;
       }
       pushRecent({ time: stamp, version: v, mode: 'web', modCount: on.length });
@@ -509,6 +515,184 @@
     download('我的世界实例-' + v + '.json', json);
     pushRecent({ time: stamp, version: v, mode: 'export', modCount: on.length });
     if (msg) msg.textContent = '实例配置已下载，可归档或按需导入启动器。';
+  }
+
+  /* ---------------- 后台资源准备与静默启动 ----------------
+     适用：所选版本没有内置网页客户端（非 1.5.2 / 1.8.8）。
+     行为：按 HMCL → PCL → MC百科 → 官方源 逐级获取客户端/依赖/资源，
+           校验通过后写入实例目录并尝试启动；任一步失败即写日志并阻止启动。
+           全流程不发 window.open、不触发 <a download>，无页面跳转与下载窗口。
+     -------------------------------------------------------- */
+  var prov = { abort: null, running: false, dirHandle: null, plan: null, last: null };
+
+  function fmtBytes(n) {
+    n = Number(n) || 0;
+    if (n < 1024) return n + ' B';
+    if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
+    if (n < 1073741824) return (n / 1048576).toFixed(1) + ' MB';
+    return (n / 1073741824).toFixed(2) + ' GB';
+  }
+
+  function provEls() {
+    return {
+      box: $('mcwProvision'), bar: $('mcwProvBar'), stage: $('mcwProvStage'),
+      meta: $('mcwProvMeta'), log: $('mcwProvLog'), title: $('mcwProvTitle')
+    };
+  }
+
+  function provSetup(title) {
+    var e = provEls();
+    if (!e.box) return;
+    e.box.hidden = false;
+    if (e.log) e.log.textContent = '';
+    if (e.bar) e.bar.style.width = '0%';
+    if (e.stage) e.stage.textContent = '准备中…';
+    if (e.meta) e.meta.textContent = '未开始';
+    if (e.title) e.title.textContent = title || '后台准备客户端资源';
+  }
+
+  function provLog(line, kind) {
+    var e = provEls();
+    if (!e.log) return;
+    var t = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+    var span = document.createElement('span');
+    if (kind) span.className = kind;
+    span.textContent = '[' + t + '] ' + line + '\n';
+    e.log.appendChild(span);
+    e.log.scrollTop = e.log.scrollHeight;
+  }
+
+  function provProgress(p) {
+    var e = provEls();
+    if (!e) return;
+    var pct = p.total ? Math.min(100, Math.round((p.done / p.total) * 100)) : 0;
+    if (e.bar) e.bar.style.width = pct + '%';
+    if (e.stage) e.stage.textContent = p.label + (p.total ? '（' + p.done + ' / ' + p.total + '）' : '');
+    if (e.meta && p.bytes) e.meta.textContent = '已获取 ' + fmtBytes(p.bytes);
+  }
+
+  function provSetMsg(html, warn) {
+    var msg = $('mcwLaunchMsg');
+    if (!msg) return;
+    msg.innerHTML = html;
+    msg.style.color = warn ? 'var(--warn,#ffc457)' : '';
+  }
+
+  async function ensureInstanceDir() {
+    if (prov.dirHandle) return prov.dirHandle;
+    if (!Resolver) return null;
+    var saved = await Resolver.loadDirHandle();
+    if (saved) {
+      var ok = await Resolver.ensurePermission(saved, 'readwrite').catch(function () { return false; });
+      if (ok) { prov.dirHandle = saved; return saved; }
+    }
+    if (!window.showDirectoryPicker) return null;
+    try {
+      var h = await window.showDirectoryPicker({ mode: 'readwrite' });
+      prov.dirHandle = h;
+      await Resolver.saveDirHandle(h);
+      return h;
+    } catch (e) {
+      return null; // 用户取消选择
+    }
+  }
+
+  async function provisionLaunch(version) {
+    if (prov.running) return;
+    if (!Resolver) {
+      provSetMsg('资源解析模块未加载，无法准备客户端。', true);
+      return;
+    }
+    var btn = $('mcwLaunchBtn');
+    prov.running = true;
+    prov.abort = new AbortController();
+    provSetup('后台准备 ' + version + ' 的客户端资源');
+    provLog('任务启动：' + version + '（静默模式，不跳转、不弹下载）');
+
+    if (btn) { btn.disabled = true; btn.textContent = '正在准备…'; }
+    provSetMsg('正在后台获取 <b>' + esc(version) + '</b> 的客户端与依赖，页面不会跳转。');
+
+    // 实例目录：优先复用已授权的目录句柄，否则请求一次选择
+    var dir = await ensureInstanceDir();
+    if (dir) provLog('实例目录：' + dir.name);
+    else provLog('未选择实例目录：本次仅准备到浏览器缓存，无法写入本地实例', 'warn');
+
+    var l = currentLauncher();
+    var memory = l ? l.memory : 4096;
+
+    try {
+      var res = await Resolver.resolve(version, {
+        signal: prov.abort.signal,
+        memoryMB: memory,
+        assets: 'sample',
+        onLog: function (line) {
+          var kind = '';
+          if (/✗|失败|缺失|阻止|不可用/.test(line)) kind = 'err';
+          else if (/✓|就绪|完成|通过/.test(line)) kind = 'ok';
+          if (/跳过|降级|警告|提示/.test(line)) kind = 'warn';
+          provLog(line, kind);
+        },
+        onProgress: provProgress
+      });
+
+      prov.last = res;
+      provLog('资源获取与校验通过：' + fmtBytes(res.stats.bytes) + '，来源 ' + res.source, 'ok');
+
+      // 自动完成配置
+      if (l) {
+        res.plan.launcher = { name: l.name, type: l.type, path: l.path };
+        provLog('已绑定启动器：' + l.name + '（内存 ' + memory + ' MB）');
+      } else {
+        provLog('未配置启动器：启动脚本已生成，但需要手动指定启动器路径', 'warn');
+      }
+      save(KEY.SETTINGS, { version: state.version ? state.version.id : '', mode: state.mode, launcherId: state.launcherId });
+      try { localStorage.setItem('niao.mc.plan.v1', JSON.stringify(res.plan)); } catch (e) { }
+
+      // 写入本地实例目录
+      var dirOk = false;
+      if (dir) {
+        var mat = await Resolver.materialize(res.plan, dir, { onLog: function (x) { provLog(x); } });
+        dirOk = true;
+        provLog('实例目录写入完成：' + mat.written + ' 个文件（' + mat.dirName + '）', 'ok');
+      }
+
+      // 确认资源可用后再启动
+      var lr = await Resolver.launch(res.plan, { onLog: function (x) { provLog(x); } });
+      var stamp = new Date().toLocaleString('zh-CN', { hour12: false });
+      if (lr.ok) {
+        provLog('已通过本地协议桥请求启动客户端。', 'ok');
+        provSetMsg('已就绪并发出启动请求：<b>' + esc(version) + '</b>' +
+          (enabledMods().length ? '（' + enabledMods().length + ' 个模组已记录，网页版不加载本地模组）' : ''));
+        pushRecent({ time: stamp, version: version, mode: 'web', launcher: l ? l.name : '', modCount: enabledMods().length });
+      } else {
+        provLog('[' + lr.code + '] ' + lr.message, 'err');
+        var tail = dirOk
+          ? '<br>实例已写入 <b>' + esc(dir.name) + '</b>，可直接用本地启动器打开该目录运行。'
+          : '<br>尚未选择实例目录：点「选择实例目录」后再次启动，即可把已校验的资源写入本地实例。';
+        provSetMsg('资源已就绪，但启动被阻止：' + esc(lr.message) + tail, true);
+      }
+    } catch (e) {
+      var code = e && e.code ? e.code : 'E_UNKNOWN';
+      var message = e && e.message ? e.message : String(e);
+      provLog('错误 [' + code + '] ' + message, 'err');
+      if (e && e.detail && e.detail.length) {
+        provLog('受影响文件：' + e.detail.slice(0, 8).join('、') + (e.detail.length > 8 ? ' 等' : ''), 'err');
+      }
+      provLog('已阻止启动：资源未就绪或配置失败。', 'err');
+      if (e && e.code === 'E_ABORT') {
+        provSetMsg('已取消本次资源准备，启动未执行。', true);
+      } else {
+        provSetMsg('启动已阻止：' + esc(message) + '（详细原因见上方日志）', true);
+      }
+    } finally {
+      prov.running = false;
+      prov.abort = null;
+      if (btn) { btn.disabled = false; renderSummary(); }
+      var e = provEls();
+      if (e.stage) e.stage.textContent = '流程结束';
+      // 成功时保留 100% 进度，失败时保留中断位置
+      if (e.bar && prov.last) e.bar.style.width = '100%';
+    }
   }
 
   /* ---------------- 启动器管理 ---------------- */
@@ -713,6 +897,18 @@
     // 启动
     var launchBtn = $('mcwLaunchBtn');
     if (launchBtn) launchBtn.addEventListener('click', doLaunch);
+
+    // 后台资源准备面板
+    var provCancel = $('mcwProvCancel');
+    if (provCancel) provCancel.addEventListener('click', function () {
+      if (prov.abort) { prov.abort.abort(); provLog('收到取消请求，正在中止…', 'warn'); }
+    });
+    var provDir = $('mcwProvDir');
+    if (provDir) provDir.addEventListener('click', async function () {
+      var h = await ensureInstanceDir();
+      if (h) provLog('实例目录已选择：' + h.name);
+      else provLog('未选择实例目录（浏览器可能不支持目录写入）', 'warn');
+    });
     var copyBtn = $('mcwCopyBtn');
     if (copyBtn) copyBtn.addEventListener('click', function () {
       var box = $('mcwCmdBox');
