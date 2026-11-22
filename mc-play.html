@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>实例 26 · 我的世界</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:flex; flex-direction:column;
+    font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: radial-gradient(1200px 600px at 50% -10%, #1d3b2a, #0b0f0d 60%); color:#e8f0eb; }
+
+  header { display:flex; align-items:center; gap:14px; padding:12px 20px;
+    border-bottom:1px solid rgba(120,220,160,.14); background:rgba(10,16,13,.7); backdrop-filter:blur(8px); }
+  header h1 { margin:0; font-size:16px; font-weight:600; }
+  header .spacer { flex:1; }
+  .state { display:flex; align-items:center; gap:7px; font-size:13px; color:#9fb8a8; }
+  .dot { width:8px; height:8px; border-radius:50%; background:#e0b23a; }
+  .dot.on { background:#4ade80; box-shadow:0 0 8px #4ade80; }
+  .dot.off { background:#ef4444; }
+
+  main { flex:1; display:flex; flex-direction:column; align-items:center; padding:24px 16px; gap:16px; }
+  .stage { width:min(1024px,100%); }
+  .screen { position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden;
+    background:#050807; border:1px solid rgba(120,220,160,.2); box-shadow:0 24px 64px rgba(0,0,0,.55); }
+  .screen video, .screen .placeholder { position:absolute; inset:0; width:100%; height:100%; }
+  .screen video { object-fit:contain; background:#000; display:none; }
+  .placeholder { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+    color:#7f9b8b; font-size:14px; text-align:center; padding:24px; }
+  .placeholder .big { font-size:44px; opacity:.5; }
+
+  .controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  button { padding:11px 20px; font-size:14px; font-weight:600; border:0; border-radius:10px;
+    cursor:pointer; color:#062012; background:linear-gradient(180deg,#6ee7a0,#34c97a); transition:.15s; }
+  button.secondary { background:rgba(255,255,255,.1); color:#dcece2; }
+  button:hover:not(:disabled) { filter:brightness(1.08); }
+  button:disabled { opacity:.42; cursor:not-allowed; }
+
+  .settings { width:min(1024px,100%); padding:16px 20px; border-radius:12px;
+    background:rgba(20,30,24,.7); border:1px solid rgba(120,220,160,.14); }
+  .settings h2 { margin:0 0 12px; font-size:14px; color:#b8d4c4; }
+  .opt { display:flex; align-items:flex-start; gap:11px; padding:11px; border-radius:9px; cursor:pointer;
+    transition:.15s; border:1px solid transparent; }
+  .opt:hover { background:rgba(255,255,255,.04); }
+  .opt.sel { background:rgba(74,222,128,.09); border-color:rgba(74,222,128,.35); }
+  .opt input { margin-top:3px; accent-color:#34c97a; }
+  .opt .t { font-size:14px; font-weight:600; }
+  .opt .d { font-size:12.5px; color:#8fa89a; line-height:1.55; margin-top:3px; }
+  .tag { font-size:11px; padding:1px 7px; border-radius:20px; background:rgba(74,222,128,.18);
+    color:#6ee7a0; margin-left:7px; vertical-align:1px; }
+
+  pre { width:min(1024px,100%); margin:0; padding:12px; border-radius:10px; min-height:54px;
+    background:rgba(0,0,0,.42); font-size:12px; line-height:1.65; white-space:pre-wrap;
+    color:#a8c4b4; max-height:170px; overflow:auto; }
+  code { background:rgba(255,255,255,.08); padding:1px 6px; border-radius:5px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>我的世界 · 实例 26</h1>
+  <div class="spacer"></div>
+  <div class="state"><span class="dot" id="dot"></span><span id="stateText">检测本地服务…</span></div>
+</header>
+
+<main>
+  <div class="stage">
+    <div class="screen" id="screen">
+      <video id="video" autoplay muted playsinline></video>
+      <div class="placeholder" id="placeholder">
+        <div class="big">⛏</div>
+        <div id="phText">游戏尚未启动</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="play" type="button" disabled>启动游戏</button>
+    <button id="stop" class="secondary" type="button" disabled>结束游戏</button>
+    <button id="share" class="secondary" type="button">在浏览器中显示画面</button>
+  </div>
+
+  <div class="settings">
+    <h2>游戏窗口显示位置</h2>
+    <label class="opt" id="optEmbedded">
+      <input type="radio" name="display" value="embedded" />
+      <span><span class="t">浏览器内嵌<span class="tag">默认</span></span>
+        <span class="d">游戏窗口去掉边框，画面显示在上面的小窗口里，用鼠标点一下就接管操作。适合边看攻略边玩。</span></span>
+    </label>
+    <label class="opt" id="optDesktop">
+      <input type="radio" name="display" value="desktop" />
+      <span><span class="t">桌面独立窗口</span>
+        <span class="d">按常规方式弹出独立的游戏窗口，可以自由拖动、缩放、切全屏。性能与操作最稳定。</span></span>
+    </label>
+  </div>
+
+  <pre id="log">等待本地服务…</pre>
+</main>
+
+<script>
+(function () {
+  var BASE = 'http://127.0.0.1:8791';
+  var INSTANCE = '26';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var dot = $('dot'), stateText = $('stateText'), playBtn = $('play'), stopBtn = $('stop');
+  var shareBtn = $('share'), video = $('video'), phText = $('phText'), logEl = $('log');
+  var screenEl = $('screen'), placeholder = $('placeholder');
+  var online = false, running = false, sharing = false;
+
+  function say(msg) {
+    var t = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+    logEl.textContent += '\n[' + t + '] ' + msg;
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function api(path, opts) {
+    return fetch(BASE + path, opts).then(function (r) { return r.json(); });
+  }
+
+  /* ---------- 显示模式 ---------- */
+  var displayMode = 'embedded';
+
+  function paintMode(mode) {
+    displayMode = mode;
+    document.querySelectorAll('.opt').forEach(function (el) { el.classList.remove('sel'); });
+    var radio = document.querySelector('input[name="display"][value="' + mode + '"]');
+    if (radio) { radio.checked = true; radio.closest('.opt').classList.add('sel'); }
+  }
+
+  document.querySelectorAll('input[name="display"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      if (!this.checked) return;
+      paintMode(this.value);
+      if (!online) { say('已选择「' + (this.value === 'embedded' ? '浏览器内嵌' : '桌面独立窗口') + '」，服务连上后生效。'); return; }
+      api('/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ display: this.value })
+      }).then(function (res) {
+        if (res && res.ok) {
+          say('显示模式已保存：' + (res.display === 'embedded' ? '浏览器内嵌' : '桌面独立窗口') +
+            (running ? '（下次启动生效）' : ''));
+        } else { say('保存失败：' + JSON.stringify(res)); }
+      }).catch(function (e) { say('保存失败：' + e.message); });
+    });
+  });
+
+  /* ---------- 服务与状态 ---------- */
+  function probe() {
+    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 1500);
+    return fetch(BASE + '/health', { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        clearTimeout(timer);
+        online = !!(j && j.ok);
+        dot.className = 'dot ' + (online ? 'on' : 'off');
+        stateText.textContent = online ? '本地服务在线' : '本地服务未运行';
+        playBtn.disabled = !online || running;
+        stopBtn.disabled = !online || !running;
+        if (!online) {
+          phText.textContent = '本地服务未运行';
+          logEl.textContent = '请先在本机运行：\n  node niao-host.js --instance ' + INSTANCE + ' --root "D:\\"';
+        }
+        return online;
+      })
+      .catch(function () {
+        clearTimeout(timer);
+        online = false;
+        dot.className = 'dot off';
+        stateText.textContent = '本地服务未运行';
+        playBtn.disabled = true; stopBtn.disabled = true;
+        phText.textContent = '本地服务未运行';
+        logEl.textContent = '请先在本机运行：\n  node niao-host.js --instance ' + INSTANCE + ' --root "D:\\"';
+        return false;
+      });
+  }
+
+  function refreshStatus() {
+    if (!online) return;
+    api('/status').then(function (res) {
+      var list = (res && res.running) || [];
+      var mine = list.filter(function (x) { return String(x.instance) === INSTANCE; })[0];
+      running = !!mine;
+      playBtn.disabled = !online || running;
+      stopBtn.disabled = !online || !running;
+      if (running) {
+        phText.textContent = '游戏运行中';
+        if (displayMode === 'embedded') {
+          shareBtn.hidden = false;
+        }
+      } else {
+        phText.textContent = '游戏尚未启动';
+        if (!sharing) placeholder.style.display = '';
+      }
+    }).catch(function () { });
+  }
+
+  /* ---------- 启动 / 结束 ---------- */
+  playBtn.addEventListener('click', function () {
+    playBtn.disabled = true;
+    say('正在启动实例 ' + INSTANCE + '…');
+    if (displayMode === 'embedded') { placeholder.style.display = ''; phText.textContent = '正在启动…'; }
+    api('/launch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ instance: INSTANCE })
+    }).then(function (res) {
+      if (res && res.ok) {
+        running = true;
+        say('已启动（进程 ' + (res.pid || '?') + '，模式：' + (res.display === 'embedded' ? '浏览器内嵌' : '桌面窗口') + '）');
+        if (res.display === 'embedded') {
+          say('游戏窗口已去边框。点「在浏览器中显示画面」把它框进上面的小窗口。');
+          phText.textContent = '游戏运行中 · 点下方按钮显示画面';
+          shareBtn.hidden = false;
+        } else {
+          phText.textContent = '游戏已在桌面窗口运行';
+        }
+      } else {
+        say('启动失败：' + ((res && res.message) || '未知原因'));
+        playBtn.disabled = false;
+      }
+    }).catch(function (e) { say('请求失败：' + e.message); playBtn.disabled = false; });
+  });
+
+  stopBtn.addEventListener('click', function () {
+    say('结束游戏：关闭对应进程');
+    api('/stop', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ instance: INSTANCE })
+    }).then(function (res) {
+      if (res && res.ok) { say('已结束。'); }
+      else { say('结束失败：' + ((res && res.message) || '未知')); }
+      running = false;
+      stopSharing();
+      refreshStatus();
+    }).catch(function (e) { say('请求失败：' + e.message); });
+  });
+
+  /* ---------- 在浏览器里显示游戏画面 ---------- */
+  function stopSharing() {
+    sharing = false;
+    var s = video.srcObject;
+    if (s) { s.getTracks().forEach(function (t) { t.stop(); }); }
+    video.srcObject = null;
+    video.style.display = 'none';
+    placeholder.style.display = '';
+    shareBtn.textContent = '在浏览器中显示画面';
+  }
+
+  shareBtn.addEventListener('click', function () {
+    if (sharing) { stopSharing(); say('已停止共享，游戏窗口恢复可见。'); return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+      say('当前浏览器不支持画面共享，请改用桌面窗口模式。');
+      return;
+    }
+    navigator.mediaDevices.getDisplayMedia({
+      video: { frameRate: { ideal: 60 } },
+      audio: false
+    }).then(function (stream) {
+      sharing = true;
+      video.srcObject = stream;
+      video.style.display = 'block';
+      placeholder.style.display = 'none';
+      shareBtn.textContent = '停止共享画面';
+      stream.getVideoTracks()[0].addEventListener('ended', function () { stopSharing(); });
+      say('画面已接入。点一下小窗口即可用鼠标操作游戏（键盘需先点窗口获得焦点）。');
+      alignWindow();
+    }).catch(function (e) {
+      say('没有选择窗口：' + e.message + '（请在弹窗中选择 Minecraft 窗口）');
+    });
+  });
+
+  /** 把无边框游戏窗口对齐到视频区域，避免露馅 */
+  function alignWindow() {
+    var r = screenEl.getBoundingClientRect();
+    api('/window/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ instance: INSTANCE, x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) })
+    }).catch(function () { });
+  }
+
+  /* ---------- 初始化 ---------- */
+  probe().then(function (ok) {
+    if (!ok) return;
+    api('/settings').then(function (res) {
+      if (res && res.ok) { paintMode(res.display || 'embedded'); }
+      say('显示模式：' + (displayMode === 'embedded' ? '浏览器内嵌（默认）' : '桌面独立窗口'));
+      say('就绪，点「启动游戏」。');
+    }).catch(function () { paintMode('embedded'); });
+    refreshStatus();
+    setInterval(refreshStatus, 3000);
+  });
+  paintMode('embedded');
+})();
+</script>
+</body>
+</html>
