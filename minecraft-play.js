@@ -92,10 +92,10 @@
     online = ok;
     if (stateChip) {
       stateChip.className = 'chip ' + (ok ? 'is-ok' : 'is-error');
-      stateChip.textContent = ok ? '本地服务在线' : '本地服务未运行';
+      stateChip.textContent = ok ? '本地服务在线' : '未连上本机服务';
       stateChip.title = ok
         ? '已连上 ' + BASE + '（端口 ' + (info && info.port || 8791) + '）'
-        : '未检测到 ' + BASE + '，请先在本机运行 niao-host.js';
+        : '两种可能：① niao-host.js 没启动；② 浏览器拦下了本地网络访问（可在地址栏提示里允许，或点「本机游玩页」）';
     }
     syncButtons();
     if (!ok) {
@@ -103,7 +103,7 @@
       stopSharing();
       phTitle.textContent = '本地服务未运行';
       phNote.textContent = '服务没启动，或浏览器拦下了「本地网络访问」——可点「本机游玩页」直接在本机打开';
-      say('本地服务不可用：' + BASE);
+      say('未连上 ' + BASE + '（服务未启动，或被浏览器拦下本地网络访问）');
     }
   }
 
