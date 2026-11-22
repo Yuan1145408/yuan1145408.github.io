@@ -486,9 +486,9 @@
     var stamp = new Date().toLocaleString('zh-CN', { hour12: false });
 
     if (state.mode === 'web') {
-      var url = WEB_CLIENTS[v];
+      var url = WEB_CLIENTS[v] || (Resolver && Resolver.WEB_CLIENTS ? Resolver.WEB_CLIENTS[v] : null);
       if (!url) {
-        // 该版本没有网页客户端：改为后台静默获取本地客户端资源并启动
+        // 该版本没有网页客户端：改为后台静默获取资源，并在浏览器内尽力启动
         provisionLaunch(v);
         return;
       }
@@ -659,17 +659,31 @@
       // 确认资源可用后再启动
       var lr = await Resolver.launch(res.plan, { onLog: function (x) { provLog(x); } });
       var stamp = new Date().toLocaleString('zh-CN', { hour12: false });
-      if (lr.ok) {
+      var modNote = enabledMods().length ? '（' + enabledMods().length + ' 个模组已记录，网页版不加载本地模组）' : '';
+
+      if (lr.ok && lr.mode === 'webrun') {
+        provLog('已在浏览器内打开网页客户端：' + version, 'ok');
+        provSetMsg('已就绪，并在新标签页打开 <b>' + esc(version) + '</b> 的网页版客户端，关掉设置页即可开始游戏。' + modNote);
+        pushRecent({ time: stamp, version: version, mode: 'web', modCount: enabledMods().length });
+      } else if (lr.ok && lr.mode === 'host') {
+        provLog('本地服务已启动实例：' + (lr.pid ? 'pid ' + lr.pid : res.plan.id), 'ok');
+        provSetMsg('已就绪，本地服务已启动客户端 <b>' + esc(version) + '</b>。' + modNote);
+        pushRecent({ time: stamp, version: version, mode: 'launcher', launcher: l ? l.name : '本地服务', modCount: enabledMods().length });
+      } else if (lr.ok) {
         provLog('已通过本地协议桥请求启动客户端。', 'ok');
-        provSetMsg('已就绪并发出启动请求：<b>' + esc(version) + '</b>' +
-          (enabledMods().length ? '（' + enabledMods().length + ' 个模组已记录，网页版不加载本地模组）' : ''));
-        pushRecent({ time: stamp, version: version, mode: 'web', launcher: l ? l.name : '', modCount: enabledMods().length });
+        provSetMsg('已就绪并发出启动请求：<b>' + esc(version) + '</b>' + modNote);
+        pushRecent({ time: stamp, version: version, mode: 'launcher', launcher: l ? l.name : '', modCount: enabledMods().length });
       } else {
         provLog('[' + lr.code + '] ' + lr.message, 'err');
+        // 兜底：资源已就绪但无本地通路时，至少给出浏览器内可玩的入口
+        var actions = '';
+        if (lr.webUrl) {
+          actions += ' <a class="btn primary" href="' + esc(lr.webUrl) + '" target="_blank" rel="noopener">浏览器内开玩</a>';
+        }
         var tail = dirOk
-          ? '<br>实例已写入 <b>' + esc(dir.name) + '</b>，可直接用本地启动器打开该目录运行。'
-          : '<br>尚未选择实例目录：点「选择实例目录」后再次启动，即可把已校验的资源写入本地实例。';
-        provSetMsg('资源已就绪，但启动被阻止：' + esc(lr.message) + tail, true);
+          ? '<br>实例已写入 <b>' + esc(dir.name) + '</b>，也可用本地启动器打开该目录运行。'
+          : '<br>尚未选择实例目录：点「选择实例目录」后可把已校验的资源写入本地实例。';
+        provSetMsg('资源已就绪，但没有可用的启动通路：' + esc(lr.message) + tail + actions, true);
       }
     } catch (e) {
       var code = e && e.code ? e.code : 'E_UNKNOWN';

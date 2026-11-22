@@ -92,6 +92,7 @@
           <a href="os.html">系统镜像专区</a>
           <a href="games.html">游戏专区</a>
           <a href="webgames.html">网页游戏</a>
+          <a href="github-games.html">开源游戏库</a>
           <a href="official.html">官方跳转</a>
           <a href="tasks.html" id="navTasks">任务</a>
           <a href="user.html" id="navUser">用户</a>
@@ -297,14 +298,16 @@
           <div class="card" id="miLaunchCard" hidden style="margin-top:var(--sp-3);">
             <h4>启动</h4>
             <p class="mi-note" id="miLaunchText"></p>
+            <p class="mi-note" id="miHostState" hidden style="color:var(--ok,#59d18b);"></p>
             <div class="mi-row">
               <button class="btn primary" id="miGenScriptBtn" type="button">生成启动脚本</button>
               <button class="btn" id="miProtocolBtn" type="button">下载协议注册文件</button>
-              <a class="btn" id="miProtocolLaunch" href="#" hidden>通过协议启动</a>
+              <a class="btn" id="miProtocolLaunch" href="#" hidden>启动实例</a>
             </div>
             <p class="mi-note" style="margin-top:var(--sp-2);">
-              浏览器不能直接执行本地程序：脚本写入实例目录后双击即可启动；
-              若下载并运行协议注册文件（只需一次），页面上的「通过协议启动」就能唤起本地脚本。
+              推荐：先在本机跑一次 <code>node niao-host.js</code>（常驻本地服务，可注册开机自启），
+              页面检测到它之后，点「在浏览器内启动」就像网页游戏一样直接开玩。
+              没有本地服务时，仍可用实例目录里的启动脚本，或注册 <code>niao-mc://</code> 协议兜底。
             </p>
             <pre class="mi-log" id="miLaunchLog" hidden></pre>
           </div>

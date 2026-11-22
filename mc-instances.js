@@ -632,8 +632,9 @@
       logTo(log, '同步完成：' + id + ' @ ' + sy.commit.slice(0, 10));
       if (failures.length) logTo(log, '有 ' + failures.length + ' 个文件失败，请重试。');
       show($('miLaunchCard'), true);
-      $('miLaunchText').innerHTML = '实例已写入所选目录。版本 <b>' + esc(manifest.version.mc) + '</b>，' +
-        '启用脚本后会调用你本地的启动器（' + esc((manifest.version.loader && manifest.version.loader.type) || '原版') + '）运行。';
+      $('miLaunchText').innerHTML = '实例已写入所选目录。版本 <b>' + esc(manifest.version.mc) + '</b>，加载器 ' +
+        esc((manifest.version.loader && manifest.version.loader.type) || '原版') + '。' +
+        '点「生成启动脚本」写入启动文件后，页面会自动检测本地服务并给出最快开玩入口。';
       $('miLaunchCard').dataset.id = id;
     } catch (e) {
       logTo(log, '同步中断：' + errText(e));
@@ -657,14 +658,87 @@
       var script = McSync.buildLaunchScript(plan, isWin ? 'win' : 'unix');
       var name = isWin ? 'niao-launch.cmd' : 'niao-launch.sh';
       await McSync.writeFileToDir(sy.dirHandle, name, new Blob([script], { type: 'text/plain' }));
-      logTo(log, '已写入 ' + name + ' 与 launch-plan.json 到实例目录。双击 ' + name + ' 即可用启动器打开该实例。');
+      logTo(log, '已写入 ' + name + ' 与 launch-plan.json 到实例目录。有本地服务时可在浏览器内直接启动，否则双击 ' + name + ' 用启动器打开。');
       logTo(log, '内存 ' + plan.memoryMB + ' MB，JVM 参数：' + (plan.jvmArgs || '默认'));
       $('miProtocolLaunch').hidden = false;
       $('miProtocolLaunch').href = 'niao-mc://launch?instance=' + encodeURIComponent(id);
       $('miProtocolLaunch').dataset.ready = '1';
+      $('miProtocolLaunch').dataset.instance = id;
+      // 本地服务在跑的话，按钮直接走浏览器内启动
+      probeHost().then(function (info) {
+        var btn = $('miProtocolLaunch');
+        if (info && info.ok) {
+          btn.dataset.host = '1';
+          btn.textContent = '在浏览器内启动';
+          logTo(log, '检测到本地服务 ' + info.base + '，点「在浏览器内启动」即可直接开玩（无需协议注册）。');
+        } else {
+          btn.dataset.host = '';
+          btn.textContent = '启动实例';
+        }
+      });
     } catch (e) {
       logTo(log, '生成失败：' + errText(e));
     }
+  }
+
+  /* ---------------- 浏览器内启动 ---------------- */
+  var HOST_KEY = 'niao.mc.host.v1';
+
+  function hostBase() {
+    try {
+      var cfg = JSON.parse(localStorage.getItem(HOST_KEY) || '{}');
+      return (cfg.url || 'http://127.0.0.1:8791').replace(/\/$/, '');
+    } catch (e) {
+      return 'http://127.0.0.1:8791';
+    }
+  }
+
+  /** 探测本地常驻服务；浏览器只发 HTTP，不涉及执行本地程序 */
+  function probeHost() {
+    var base = hostBase();
+    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 1500);
+    return fetch(base + '/health', { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { return j && j.ok ? { ok: true, base: base, health: j } : { ok: false, base: base }; })
+      .catch(function () { return { ok: false, base: base }; })
+      .then(function (v) { clearTimeout(timer); return v; });
+  }
+
+  function launchViaHost(instanceId) {
+    var base = hostBase();
+    return fetch(base + '/launch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ instance: instanceId })
+    }).then(function (r) { return r.json(); });
+  }
+
+  /** 一键开玩：本地服务在线就走服务，否则回退协议桥 */
+  function playInstance(instanceId, logEl) {
+    var log = logEl || $('miLaunchLog');
+    logTo(log, '正在尝试浏览器内启动实例 ' + instanceId + '…');
+    return probeHost().then(function (info) {
+      if (info.ok) {
+        logTo(log, '本地服务在线：' + info.base);
+        return launchViaHost(instanceId).then(function (res) {
+          if (res && res.ok) {
+            logTo(log, '已启动实例 ' + instanceId + (res.pid ? '（进程 ' + res.pid + '）' : '') + '，游戏窗口正在打开。');
+            return { ok: true, mode: 'host', res: res };
+          }
+          logTo(log, '启动被拒绝：' + ((res && res.message) || '未知原因'));
+          return { ok: false, mode: 'host', res: res };
+        });
+      }
+      logTo(log, '本地服务未运行，改用协议桥唤起本地启动器。注册过 niao-mc:// 时会直接生效。');
+      try {
+        window.location.href = 'niao-mc://launch?instance=' + encodeURIComponent(instanceId);
+        return { ok: true, mode: 'protocol' };
+      } catch (e) {
+        logTo(log, '协议启动失败：' + errText(e));
+        return { ok: false, mode: 'protocol' };
+      }
+    });
   }
 
   function downloadReg() {
@@ -727,8 +801,26 @@
     });
     $('miGenScriptBtn').addEventListener('click', genScript);
     $('miProtocolBtn').addEventListener('click', downloadReg);
+    // 页面载入即探测本地服务，按钮文案随之切换
+    probeHost().then(function (info) {
+      var bar = $('miHostState');
+      if (!bar) return;
+      if (info.ok) {
+        bar.hidden = false;
+        bar.textContent = '本地服务在线（' + info.base + '）· 可直接在浏览器内启动实例，无需协议注册。';
+        bar.dataset.on = '1';
+      } else {
+        bar.hidden = true;
+        bar.dataset.on = '';
+      }
+    });
     $('miProtocolLaunch').addEventListener('click', function (e) {
-      if (!this.dataset.ready) { e.preventDefault(); }
+      if (!this.dataset.ready) { e.preventDefault(); return; }
+      // 本地服务在线时拦截默认跳转，直接在浏览器内启动
+      if (this.dataset.host === '1') {
+        e.preventDefault();
+        playInstance(this.dataset.instance || sy.id);
+      }
     });
     // 令牌与仓库改动即时保存（不触发网络）
     ['miOwner', 'miRepo', 'miBranch', 'miRoot'].forEach(function (id) { $(id).addEventListener('change', saveCfg); });
@@ -770,7 +862,10 @@
     window.NiaoInstance = {
       McGh: McGh, McSync: McSync,
       get cfg() { return cfg; },
-      isConnected: function () { return connected; }
+      isConnected: function () { return connected; },
+      probeHost: probeHost,
+      playInstance: playInstance,
+      hostBase: hostBase
     };
   }
 

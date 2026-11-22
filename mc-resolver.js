@@ -1196,27 +1196,118 @@
     return b;
   }
 
+  /* ---- 浏览器内直跑（像网页游戏一样使用）---- */
+
+  // Eaglercraft 官方公开客户端：浏览器内 WASM/JS 运行，无需本地程序
+  var WEB_CLIENTS = {
+    '1.5.2': 'https://eaglercraft.com/mc/1.5.2/',
+    '1.8.8': 'https://eaglercraft.com/mc/1.8.8/'
+  };
+
+  // 本地常驻 host 服务（由本地启动器 install 后常驻），浏览器只发 HTTP，不执行程序
+  var HOST_KEY = 'niao.mc.host.v1';
+  function readHost() {
+    try { return JSON.parse(localStorage.getItem(HOST_KEY) || '{}') || {}; }
+    catch (e) { return {}; }
+  }
+  function setHost(cfg) {
+    var cur = readHost();
+    var next = { url: (cfg && cfg.url) || cur.url || 'http://127.0.0.1:8791', enabled: cfg && cfg.enabled != null ? !!cfg.enabled : cur.enabled !== false };
+    try { localStorage.setItem(HOST_KEY, JSON.stringify(next)); } catch (e) { /* 忽略 */ }
+    return next;
+  }
+
+  async function probeHost(timeoutMs) {
+    var cfg = readHost();
+    var base = (cfg.url || '').replace(/\/+$/, '');
+    if (!base) return { ok: false, code: 'E_NO_HOST_CFG', message: '未配置本地服务地址' };
+    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, timeoutMs || 1500);
+    try {
+      var r = await fetch(base + '/health', { signal: ctrl ? ctrl.signal : undefined, cache: 'no-store' });
+      var data = await r.json().catch(function () { return {}; });
+      if (r.ok) return { ok: true, base: base, health: data };
+      return { ok: false, code: 'E_HOST_BAD', message: '本地服务响应异常（HTTP ' + r.status + '）' };
+    } catch (e) {
+      return { ok: false, code: 'E_HOST_DOWN', message: '本地服务未运行' };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  function openWebClient(version, opts) {
+    opts = opts || {};
+    var log = opts.onLog || function () {};
+    var url = WEB_CLIENTS[version];
+    if (!url) return { ok: false, code: 'E_NO_WEB_CLIENT', message: version + ' 没有可用的浏览器客户端（网页版仅支持 1.5.2 / 1.8.8）' };
+    log('在浏览器内打开 Eaglercraft 网页客户端：' + version);
+    if (typeof global.open === 'function') {
+      var w = global.open(url, '_blank', 'noopener');
+      return { ok: true, mode: 'webrun', url: url, opened: !!w };
+    }
+    return { ok: true, mode: 'webrun', url: url, opened: false };
+  }
+
   async function launch(plan, opts) {
     opts = opts || {};
     var log = opts.onLog || function () {};
     if (!plan) return { ok: false, code: 'E_PLAN', message: '缺少启动配置' };
+
+    var version = plan.mcVersion || plan.version || '';
+    var mode = opts.mode || 'auto';
+
+    // 1) 明确要求浏览器内运行：直接开网页客户端，零本地依赖
+    if (mode === 'web' || mode === 'auto') {
+      if (WEB_CLIENTS[version]) {
+        return openWebClient(version, opts);
+      }
+    }
+
+    // 2) 本地常驻 host：浏览器只发 HTTP，安全模型完全允许
+    var probe = await probeHost(opts.timeoutMs);
+    if (probe.ok) {
+      try {
+        log('本地服务在线（' + probe.base + '），提交启动请求…');
+        var r = await fetch(probe.base + '/launch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ instance: plan.id, version: version, plan: plan })
+        });
+        var data = await r.json().catch(function () { return {}; });
+        if (r.ok && data.ok !== false) {
+          log('已由本地服务启动实例 ' + plan.id);
+          return { ok: true, mode: 'host', pid: data.pid || null, base: probe.base };
+        }
+        return { ok: false, code: data.code || 'E_HOST_LAUNCH', message: data.message || ('本地服务拒绝启动（HTTP ' + r.status + '）'), hostReachable: true };
+      } catch (e) {
+        return { ok: false, code: 'E_HOST_LAUNCH', message: '本地服务启动失败：' + e.message, hostReachable: true };
+      }
+    }
+
+    // 3) 回退：协议桥（需已注册 .reg）
     var bridge = readBridge();
-    if (!bridge.enabled) {
-      log('未启用本地协议桥（niao-mc://），无法从浏览器直接启动本地客户端。');
-      return {
-        ok: false,
-        code: 'E_NO_BRIDGE',
-        message: '资源与配置已就绪，但浏览器的安全模型不允许直接执行本地程序；' +
-          '请用本地启动器打开实例目录，或在站内启用 niao-mc:// 协议桥后重试。'
-      };
+    if (bridge.enabled) {
+      try {
+        log('通过 niao-mc:// 协议桥请求启动…');
+        global.location.href = 'niao-mc://launch/' + encodeURIComponent(plan.id);
+        return { ok: true, mode: 'protocol', notice: '已唤起本地启动器；若浏览器弹出「打开 niao-mc?」请点允许。' };
+      } catch (e) {
+        return { ok: false, code: 'E_BRIDGE', message: '协议启动失败：' + e.message };
+      }
     }
-    try {
-      log('通过 niao-mc:// 协议桥请求启动…');
-      global.location.href = 'niao-mc://launch/' + encodeURIComponent(plan.id);
-      return { ok: true, mode: 'protocol' };
-    } catch (e) {
-      return { ok: false, code: 'E_BRIDGE', message: '协议启动失败：' + e.message };
-    }
+
+    // 4) 全部不可用：给出可执行的下一步，而不是死路
+    log('本地服务未运行，协议桥也未启用。');
+    return {
+      ok: false,
+      code: 'E_NO_LAUNCH_PATH',
+      message: '实例资源已就绪。三种开玩方式任选其一：' +
+        (WEB_CLIENTS[version] ? '① 网页版直接玩（点「浏览器内开玩」）；' : '') +
+        '② 启动本地服务后重试（niao-mc host --port 8791）；' +
+        '③ 用本地启动器打开实例目录 ' + (plan.id || '') + '。',
+      webUrl: WEB_CLIENTS[version] || '',
+      hostUrl: readHost().url || 'http://127.0.0.1:8791'
+    };
   }
 
   /* ---------------- 对外接口 ---------------- */
@@ -1238,6 +1329,11 @@
     buildCmd: buildCmd,
     verifyPlan: verifyPlan,
     launch: launch,
+    openWebClient: openWebClient,
+    probeHost: probeHost,
+    readHost: readHost,
+    setHost: setHost,
+    WEB_CLIENTS: WEB_CLIENTS,
     readBridge: readBridge,
     enableBridge: enableBridge,
     saveDirHandle: saveDirHandle,

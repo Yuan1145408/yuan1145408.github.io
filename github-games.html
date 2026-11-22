@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>开源网页游戏库 - 鸟国网站</title>
+    <meta name="description" content="从 GitHub 筛选出的开源网页游戏聚合：可直接在浏览器游玩或嵌入体验，附仓库、在线入口、运行方式、标签与可用性说明，支持搜索与分类筛选。" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="search.html">聚合搜索</a>
+          <a href="download.html">下载中心</a>
+          <a href="settings.html">设置</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html">游戏专区</a>
+          <a href="webgames.html">网页游戏</a>
+          <a href="github-games.html" class="active">开源游戏库</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+          <a href="android.html">安卓专区</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="gg-hero">
+        <div class="container">
+          <p class="gg-hero__eyebrow">GitHub 开源网页游戏 · 逐条实测</p>
+          <h2 class="gg-hero__title">打开就能玩的 <span id="ggHeroN">39</span> 款开源游戏</h2>
+          <p class="gg-hero__lead">
+            从 GitHub 的 <strong>200+ 个候选仓库</strong>里筛出来的：必须<strong>公开、开源、能在浏览器里直接体验</strong>，
+            排除私有库、已归档、纯引擎/模板、演示站已下线的项目。每条都标注了在线入口、运行方式、技术栈和可用性，
+            能嵌入的就在站内试玩，不能嵌入的给你新窗口跳转和明确提示。
+          </p>
+          <div class="gg-hero__stats" id="ggStats">
+            <span class="gg-stat"><b>39</b> 款游戏</span>
+            <span class="gg-stat"><b>33</b> 款可站内试玩</span>
+            <span class="gg-stat"><b>10</b> 个分类</span>
+            <span class="gg-stat"><b>2026-11-22</b> 链接检测</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section gg-player-sec" id="ggPlayerSec" hidden>
+        <div class="container">
+          <div class="card gg-player">
+            <div class="gg-player__bar">
+              <div class="gg-player__meta">
+                <div class="gg-player__name" id="ggPlayerTitle" role="heading" aria-level="3">正在载入…</div>
+                <p class="muted" id="ggPlayerSub">站内试玩 · 按 ESC 关闭</p>
+              </div>
+              <div class="gg-player__actions">
+                <button class="btn" id="ggPlayerClose" type="button">关闭</button>
+                <a class="btn" id="ggPlayerDetail" href="#" role="button">查看详情</a>
+                <a class="btn primary" id="ggPlayerNewTab" href="#" target="_blank" rel="noopener noreferrer">新窗口打开</a>
+              </div>
+            </div>
+            <div class="gg-player__frame">
+              <iframe id="ggPlayerFrame" src="about:blank" title="站内游戏播放器"
+                allow="fullscreen; gamepad; autoplay; accelerometer; gyroscope; clipboard-write"></iframe>
+              <div class="gg-player__fallback" id="ggPlayerFallback" hidden>
+                <strong>画面一直没出来？</strong>
+                <p>多数情况是对方站点拒绝被嵌入，或该站点在当前网络下加载缓慢。</p>
+                <ol>
+                  <li>先点右上角<b>「新窗口打开」</b>，绝大多数游戏在新标签页里都能正常运行。</li>
+                  <li>境外站点可能需要代理，换条网络线路再试。</li>
+                  <li>如果新窗口也打不开，说明该入口已失效，请回到列表换一款，或在详情里复制信息反馈。</li>
+                </ol>
+                <div class="gg-player__fallback-actions">
+                  <a class="btn primary" id="ggPlayerFallbackOpen" href="#" target="_blank" rel="noopener noreferrer">在新窗口打开</a>
+                  <button class="btn" id="ggPlayerFallbackCopy" type="button">复制入口链接</button>
+                </div>
+              </div>
+            </div>
+            <p class="gg-player__hint muted">
+              提示：站内播放器是直接嵌入对方页面的 iframe，不代理、不修改游戏内容。部分游戏需要键盘或鼠标锁定，建议切到全屏后操作。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="gg-toolbar" id="ggToolbar">
+            <div class="gg-tabs" id="ggTabs" role="tablist" aria-label="按分类筛选"></div>
+            <div class="gg-controls">
+              <label class="gg-search">
+                <span class="sr-only">搜索游戏</span>
+                <input id="ggSearch" type="search" placeholder="搜索名称、简介、标签或仓库…" autocomplete="off" />
+              </label>
+              <label class="gg-select">
+                <span class="sr-only">按可玩方式筛选</span>
+                <select id="ggAccess">
+                  <option value="all">全部可玩方式</option>
+                  <option value="embed">可在站内试玩</option>
+                  <option value="link">需新窗口打开</option>
+                  <option value="account">需要账号</option>
+                  <option value="selfhost">需要自建 / 自备服务</option>
+                </select>
+              </label>
+              <label class="gg-select">
+                <span class="sr-only">排序方式</span>
+                <select id="ggSort">
+                  <option value="curated">推荐排序</option>
+                  <option value="stars">按 Star 数</option>
+                  <option value="name">按名称</option>
+                  <option value="cat">按分类</option>
+                </select>
+              </label>
+              <span class="gg-count" id="ggCount" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <div class="gg-grid" id="ggGrid">
+            <p class="gg-loading">正在读取游戏清单…</p>
+          </div>
+
+          <div class="gg-empty" id="ggEmpty" hidden>
+            <strong>没有匹配的游戏</strong>
+            <p>试试更短的关键词，或者点「全部」清掉筛选条件。</p>
+            <button class="btn" type="button" id="ggReset">重置筛选</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section gg-about">
+        <div class="container">
+          <div class="gg-about__grid">
+            <div class="card gg-about__card">
+              <h3>收录标准</h3>
+              <ul>
+                <li><b>公开可访问：</b>仓库可匿名打开，非私有、非仅限组织内。</li>
+                <li><b>真的是游戏：</b>排除引擎、框架、脚手架、示例合集与素材库。</li>
+                <li><b>浏览器可运行：</b>有可直接访问的在线入口；或提供公开实例（需账号/自建会明确标注）。</li>
+                <li><b>链接可用：</b>2026-11-22 逐条做过 HTTP 探测，确认返回正常页面而不是首页跳转或错误页。</li>
+                <li><b>授权清晰：</b>仓库公开可见；本站只做索引，不复制、不托管游戏资源。</li>
+              </ul>
+            </div>
+            <div class="card gg-about__card">
+              <h3>可用性怎么读</h3>
+              <ul>
+                <li><span class="gg-badge is-ok">站内试玩</span>页面没有禁止嵌入，可以直接在站内打开。</li>
+                <li><span class="gg-badge is-link">仅跳转</span>对方设置了禁止嵌入的安全头，只能新窗口打开。</li>
+                <li><span class="gg-badge is-account">需账号</span>要先注册或登录才能进入游戏。</li>
+                <li><span class="gg-badge is-self">需自建</span>要自己部署服务或准备游戏文件。</li>
+                <li><span class="gg-badge is-warn">链接异常</span>检测时不可达，已在详情里写明原因。</li>
+              </ul>
+            </div>
+          </div>
+
+          <details class="gg-excluded" id="ggExcluded">
+            <summary>被排除的项目与原因（<span id="ggExcludedN">6</span> 项）</summary>
+            <ul id="ggExcludedList">
+              <li>正在读取…</li>
+            </ul>
+          </details>
+
+          <p class="gg-source muted">
+            检索方式：GitHub 仓库搜索（topic:html5-game / browser-game / web-game / multiplayer-game 等）+ 已知项目人工核对，
+            再用 HTTP 探测确认入口状态与 <code>X-Frame-Options</code> / <code>frame-ancestors</code> 策略。
+            游戏版权归各项目作者所有，请遵守对应仓库许可证。
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <div class="gg-modal" id="ggModal" hidden>
+      <div class="gg-modal__mask" data-gg-close="1"></div>
+      <div class="gg-modal__panel" role="dialog" aria-modal="true" aria-labelledby="ggModalTitle" tabindex="-1">
+        <div class="gg-modal__head">
+          <div>
+            <p class="gg-modal__eyebrow" id="ggModalCat">分类</p>
+            <div class="gg-modal__title" id="ggModalTitle" role="heading" aria-level="2">游戏名</div>
+          </div>
+          <button class="gg-modal__close" type="button" id="ggModalClose" aria-label="关闭详情">×</button>
+        </div>
+        <div class="gg-modal__body" id="ggModalBody"></div>
+        <div class="gg-modal__foot" id="ggModalFoot"></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <span>© 2025 鸟国网站 niaoguo.com</span>
+        <span class="gg-credit">索引自 GitHub 公开仓库 · 链接 2026-11-22 检测 · 不托管游戏本体</span>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        window.Niao = window.Niao || {};
+        window.Niao.config = window.Niao.config || {};
+        window.Niao.config.static = true;
+        window.Niao.config.apiBase = 'http://localhost:5050';
+      })();
+    </script>
+    <script src="script.js"></script>
+    <script src="github-games.js"></script>
+    <script src="nav-glider.js"></script>
+  </body>
+</html>

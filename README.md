@@ -110,6 +110,23 @@ python build_search_index.py     # 内容更新后重建站内索引
 
 ---
 
+## 开源网页游戏库（github-games.html）
+从 GitHub 公开仓库里筛出的浏览器可玩游戏聚合，数据在 `github-games.json`，页面与逻辑在 `github-games.html` / `github-games.js`。
+
+| 能力 | 说明 |
+|---|---|
+| 收录标准 | 公开仓库 + 真游戏（排除引擎/模板/素材）+ 有可直接访问的在线入口（需账号或自建会标注）+ 链接探测可用 |
+| 条目字段 | 名称、中文简介、仓库、在线入口、运行方式、分类、技术栈、标签、Star、可用性说明、最近检测日期 |
+| 筛选 | 10 个分类 tab + 关键词（名称/简介/标签/仓库/技术栈）+ 可玩方式（可嵌入/仅跳转/需账号/需自建）+ 4 种排序 |
+| 打开方式 | `embed: true` 的条目在站内 iframe 播放器试玩；其余新窗口跳转，并解释为什么不能嵌入 |
+| 失效兜底 | 播放器 9s 未出画面自动给出「新窗口打开 / 复制链接」方案；详情页可一键复制反馈信息 |
+| 数据校验 | 每条记录上线前做 HTTP 探测，读取 `X-Frame-Options` / CSP `frame-ancestors` 决定 `embed` 值 |
+| 排除记录 | `excluded` 字段记录被排除的项目与原因（演示站下线、仓库 404、仅剩镜像等），页面底部可展开 |
+
+新增条目：在 `github-games.json` 的 `items` 里追加对象（`id` 唯一、`cat` 必须在 `categories` 中），刷新即可；`embed` 需实测确认后再置 `true`。
+
+---
+
 ## 小游戏（arcade.html）
 站内自带、纯前端运行，不依赖任何外站嵌入（原来 iframe 外站常被 X-Frame-Options 拦截，导致白屏）：
 - **单人 / 双人模式统一**：`?g=<游戏>&mode=2p` 直达双人模式；支持双人的游戏在页内可一键切换模式
@@ -140,7 +157,7 @@ python build_search_index.py     # 内容更新后重建站内索引
 | 版本识别 | `mmc-pack.json` → `versions/*.json`（Forge/Fabric 坐标）→ `logs/latest.log` → 手动填写 |
 | 同步 | 三方比较（本地 / 上次同步基线 / 云端），冲突逐文件决策，`saves/` 世界默认保留本地 |
 | 缓存 | Cache Storage 按内容哈希缓存，分块级续传，写盘后按 sha256 校验 |
-| 启动 | 写入 `niao-launch.cmd` + `launch-plan.json`，双击调用本地启动器；可选注册 `niao-mc://` 协议 |
+| 启动 | 常驻本地服务 `niao-host.js` 在线时，页面检测到后点一次即**在浏览器内直接开玩**；否则回退到 `niao-launch.cmd` 双击启动，或注册 `niao-mc://` 协议兜底 |
 
 ## 我的世界网页版（minecraft-web.html）
 | 能力 | 说明 |
@@ -150,6 +167,53 @@ python build_search_index.py     # 内容更新后重建站内索引
 | Mod 启动器 | 内置 Prism / HMCL / PCL2 / 官方启动器，可添加自定义启动器并配置路径、内存、JVM 参数、游戏目录 |
 | 模组管理 | 添加 / 编辑 / 删除 / 启用 / 禁用 / 搜索 / 按加载器筛选 / 导出清单；启用状态带入启动向导 |
 | 数据存储 | 全部存 `localStorage`（`niao.mc.launchers.v1` / `niao.mc.mods.v1` / `niao.mc.settings.v1`），无后端 |
+
+### 像网页游戏一样直接用（本地常驻服务 `niao-host.js`）
+
+浏览器出于安全模型不能直接执行本地程序，但可以随意发 HTTP 请求。`niao-host.js`
+常驻在 `127.0.0.1:8791`，页面只负责「发请求」，由它去启动客户端，所以体验等同网页游戏。
+
+```bash
+node niao-host.js --port 8791 --instance 26 --root "D:\"   # 前台运行
+node niao-host.js --install                                 # 注册开机自启（Windows）
+node niao-host.js --uninstall                               # 移除自启
+```
+
+| 接口 | 作用 |
+|---|---|
+| `GET /health` | 存活探测，页面据此判断能否「在浏览器内启动」 |
+| `GET /instances` | 列出实例及是否带启动脚本 |
+| `POST /launch` | `{"instance":"26"}` → 按实例的 `launch-plan.json` 直接拉起 JVM |
+| `GET /status` | 正在运行的实例、PID、是否存活 |
+| `POST /assets/complete` | 按 `assets/indexes/<id>.json` 补全缺失的资源对象 |
+| `GET /assets` | 资源补全进度（done / total / failed） |
+| `GET/POST /settings` | 读取/保存显示模式（`display`: `embedded` 默认 / `desktop`） |
+| `POST /stop` | 结束指定实例进程 |
+| `GET /window` | 游戏窗口句柄与当前显示模式 |
+| `POST /window/sync` | 把无边框游戏窗口对齐到网页上的播放区域 |
+
+### 游戏窗口显示位置（可在设置里切换）
+
+`mc-play.html` 的设置区提供两种模式，选择会写进 `niao-host.settings.json` 持久保存：
+
+| 模式 | 行为 |
+|---|---|
+| **浏览器内嵌（默认）** | 启动后把游戏窗口的标题栏/边框去掉（`SetWindowLong` 清掉 `WS_CAPTION` 等），页面用「在浏览器中显示画面」把画面接进 16:9 小窗口播放；`/window/sync` 负责把无边框窗口贴到播放区域后面，点一下窗口即可接管鼠标键盘 |
+| **桌面独立窗口** | 恢复标准窗口样式，正常弹出独立游戏窗口，可自由拖动、缩放、全屏 |
+
+也可以用命令行指定：`node niao-host.js --display desktop`。
+
+> 为什么内嵌要分两步：标准 Minecraft 客户端是 JVM + LWJGL 程序，画面直接画在原生窗口里，
+> 浏览器无法把它当成真网页画布来渲染。所以内嵌模式采用「无边框窗口 + 浏览器内画面接管」的
+> 组合：默认给你一个嵌在页面里的小窗口体验，需要极致流畅时切到桌面窗口。
+
+启动时会自动补建 `logs/`、`saves/`、`crash-reports/`、`resourcepacks/`、`mods/` 等
+Minecraft 必需但不会自建的目录，并把 `--gameDir` / `--assetsDir` 的相对路径转成绝对路径，
+避免「Could not create directory」类崩溃。
+
+> 兼容性说明：若当前进程运行在没有可见桌面的会话里（`SESSIONNAME` 为空），
+> LWJGL 建不出游戏窗口，Minecraft 会正常加载完资源后打出 `Stopping!` 退出。
+> 这不是资源或配置问题，在普通桌面会话下点一次即可看到游戏窗口。
 
 ### 下载代理与「缺失 N 项」排查
 - 设置在 `niao.settings.v1`：`download.proxyOn` / `download.proxyUrl`（自定义代理）、`search.proxy`（公共代理兜底）。
