@@ -20,6 +20,8 @@
     'download.retry': 2,            // 分片失败重试次数
     'download.autoStart': true,     // 解析成功后自动开始
     'download.saveMode': 'blob',    // blob=内存合并后保存 / stream=直接交给浏览器
+    'download.proxyOn': false,      // 是否使用自定义 CORS 代理取资源
+    'download.proxyUrl': '',        // 代理地址：前缀型或 {url} 模板型
     // 安装
     'install.mode': 'auto',         // auto=可下载则下载，否则新标签打开 / browser=交给浏览器 / open=新标签打开
     'install.checkFile': true,      // 安装前检查是否为可执行文件

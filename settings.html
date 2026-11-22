@@ -117,6 +117,29 @@
           </div>
 
           <div class="card" style="margin-top:16px;">
+            <h4>下载代理</h4>
+            <p class="muted" style="margin-top:0;font-size:13px;">
+              浏览器直连部分镜像（BMCLAPI、libraries.minecraft.net 等）会被跨域策略拦截，
+              「网页版启动」在准备客户端资源时如果提示「缺失 N 项」，通常是这里没有配置代理。
+            </p>
+            <div class="settings-grid">
+              <label class="field-row">
+                <span>启用自定义代理</span>
+                <input type="checkbox" id="setDownloadProxyOn" data-key="download.proxyOn" />
+              </label>
+              <label class="field-row">
+                <span>代理地址</span>
+                <input type="text" id="setDownloadProxyUrl" data-key="download.proxyUrl"
+                  placeholder="https://your-proxy.example.com/?url={url}" />
+              </label>
+            </div>
+            <p class="muted" style="font-size:12px;margin:8px 0 0;">
+              支持两种写法：前缀型 <code>https://ghproxy.net/</code>（直接拼接原地址）；模板型
+              <code>https://proxy.example.com/?url={url}</code>。同时建议保留「允许公共代理兜底」。
+            </p>
+          </div>
+
+          <div class="card" style="margin-top:16px;">
             <h4>搜索</h4>
             <div class="settings-grid">
               <label class="field-row">

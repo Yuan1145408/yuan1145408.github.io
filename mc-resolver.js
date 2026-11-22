@@ -117,22 +117,64 @@
     bridge: '尝试启动客户端'
   };
 
-  /* ---------------- 站点代理设置（复用下载中心的配置） ---------------- */
+  /* ---------------- 代理配置 ----------------
+     设置结构（niao.settings.v1）：
+       download.proxyOn / download.proxyUrl   自定义代理（前缀型或 {url} 模板型）
+       search.proxy                            是否允许公共 CORS 代理兜底
+     -------------------------------------------------- */
 
-  function readProxy() {
+  function readSettings() {
+    // localStorage 是唯一真源：其它标签页/设置页保存后立即可见
     try {
-      var s = JSON.parse(localStorage.getItem('niao.settings.v1') || '{}');
-      var d = s.download || {};
-      if (d.proxyOn && /^https?:\/\//.test(String(d.proxyUrl || ''))) {
-        return String(d.proxyUrl).replace(/\/+$/, '');
+      var raw = localStorage.getItem('niao.settings.v1');
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') return parsed;
       }
     } catch (e) { /* 忽略 */ }
-    return '';
+    try {
+      if (global.NiaoSettings && typeof global.NiaoSettings.get === 'function') {
+        var viaApi = global.NiaoSettings.get();
+        if (viaApi && typeof viaApi === 'object') return viaApi;
+      }
+    } catch (e) { /* 忽略 */ }
+    return {};
   }
 
+  function readProxy() {
+    var s = readSettings();
+    var on = s['download.proxyOn'];
+    var url = String(s['download.proxyUrl'] || '').trim();
+    // 兼容旧版嵌套写法 { download: { proxyOn, proxyUrl } }
+    if (!on && s.download && s.download.proxyOn) {
+      on = true;
+      url = String(s.download.proxyUrl || '').trim();
+    }
+    if (!on || !/^https?:\/\//i.test(url)) return '';
+    if (url.indexOf('{url}') >= 0 || url.indexOf('?') >= 0) return url;
+    return url.replace(/\/+$/, '') + '/';
+  }
+
+  // 支持三种代理写法：{url} 模板、?url= 查询型、纯前缀型
   function viaProxy(url, proxy) {
     if (!proxy) return url;
-    return proxy + (proxy.indexOf('?') >= 0 ? '&' : '?') + 'url=' + encodeURIComponent(url);
+    if (proxy.indexOf('{url}') >= 0) return proxy.replace(/\{url\}/g, encodeURIComponent(url));
+    if (/[?&]url=$/.test(proxy)) return proxy + encodeURIComponent(url);
+    if (proxy.indexOf('?') >= 0) {
+      return proxy + (/[?&]$/.test(proxy) ? '' : '&') + 'url=' + encodeURIComponent(url);
+    }
+    return proxy + url;
+  }
+
+  // 公共 CORS 代理：受「允许公共代理兜底」开关控制
+  function publicProxies() {
+    var s = readSettings();
+    if (s['search.proxy'] === false) return [];
+    var list = global.NIAO_SEARCH_PROXIES;
+    if (Array.isArray(list) && list.length) {
+      return list.map(function (p) { return { id: p.name, name: p.name, wrap: p.wrap }; });
+    }
+    return CORS_PROXIES;
   }
 
   /* ---------------- 小工具 ---------------- */
@@ -482,7 +524,7 @@
     // 最后兜底：公共 CORS 代理（对跨域无 ACAO 的镜像有效）
     var primary = task.urls[0];
     if (primary) {
-      CORS_PROXIES.forEach(function (p) {
+      ctx.publicProxies.forEach(function (p) {
         task.urls = task.urls.concat([{ url: p.wrap(primary.url), label: primary.label + '（' + p.name + '）' }]);
       });
     }
@@ -530,6 +572,7 @@
           ctx.stats.bytes += blob.size;
           ctx.stats.downloaded++;
           ctx.hostOk[host] = (ctx.hostOk[host] || 0) + 1;
+          ctx.doneKeys[task.key] = true;
           if (c.source !== '缓存' && c.label) ctx.stats.sourceUsed[c.label] = (ctx.stats.sourceUsed[c.label] || 0) + 1;
           return { blob: blob, source: c.label, fromCache: false };
         } catch (e) {
@@ -589,13 +632,13 @@
       cands.push({ name: m.name, make: function (r) { return m.base + r; }, probe: m.base + rel });
     });
     if (ctx.proxy) {
-      cands.push({
-        name: '站点代理',
+      cands.unshift({
+        name: '自定义代理',
         make: function (r) { return viaProxy('https://libraries.minecraft.net/' + r, ctx.proxy); },
         probe: viaProxy('https://libraries.minecraft.net/' + rel, ctx.proxy)
       });
     }
-    CORS_PROXIES.forEach(function (p) {
+    ctx.publicProxies.forEach(function (p) {
       cands.push({
         name: p.name,
         make: function (r) { return p.wrap('https://libraries.minecraft.net/' + r); },
@@ -606,14 +649,21 @@
     var usable = [];
     for (var i = 0; i < cands.length; i++) {
       var c = cands[i];
-      try {
-        var res = await fetchWith(c.probe, { headers: { Range: 'bytes=0-255' } }, 7000, ctx.signal);
-        // 能拿到状态码就说明跨域可读
-        usable.push(c);
-        ctx.log('  ✓ 依赖库源可用：' + c.name + '（HTTP ' + res.status + '）');
-      } catch (e) {
-        ctx.log('  ✗ 依赖库源不可用：' + c.name + '（' + e.message + '）');
+      var ok = false;
+      var lastMsg = '';
+      for (var attempt = 0; attempt < 2 && !ok; attempt++) {
+        try {
+          var res = await fetchWith(c.probe, { headers: { Range: 'bytes=0-255' } }, 7000, ctx.signal);
+          ok = true;
+          usable.push(c);
+          ctx.log('  ✓ 依赖库源可用：' + c.name + '（HTTP ' + res.status + '）');
+        } catch (e) {
+          if (e.code === 'E_ABORT') throw e;
+          lastMsg = e.message;
+          if (attempt === 0) await sleep(350);
+        }
       }
+      if (!ok) ctx.log('  ✗ 依赖库源不可用：' + c.name + '（' + lastMsg + '）');
     }
     return usable;
   }
@@ -631,6 +681,13 @@
       probe: ASSET_CDN.url(version, 'minecraft/lang/en_us.json'),
       needsKey: true, lenient: true
     });
+    if (ctx.proxy && sampleHash) {
+      cands.unshift({
+        name: '自定义代理',
+        make: function (hash) { return viaProxy('https://resources.download.minecraft.net/' + hash.slice(0, 2) + '/' + hash, ctx.proxy); },
+        probe: viaProxy('https://resources.download.minecraft.net/' + sampleHash.slice(0, 2) + '/' + sampleHash, ctx.proxy)
+      });
+    }
     var usable = [];
     for (var i = 0; i < cands.length; i++) {
       try {
@@ -652,9 +709,11 @@
     var ctx = {
       signal: opts.signal,
       proxy: readProxy(),
+      publicProxies: publicProxies(),
       hostFail: {},
       hostOk: {},
       deadHost: {},
+      doneKeys: {},
       stageName: 'health',
       stats: {
         downloaded: 0, cached: 0, verified: 0, unverified: 0,
@@ -676,7 +735,14 @@
     };
 
     ctx.log('=== 开始解析 Minecraft ' + version + '（静默模式，不跳转、不弹下载）===');
-    if (ctx.proxy) ctx.log('已读取站点代理设置，直连失败时将经代理重试：' + ctx.proxy);
+    if (ctx.proxy) {
+      ctx.log('已启用自定义代理：' + ctx.proxy + '（直连失败后经代理重试）');
+    } else {
+      ctx.log('未启用自定义代理（设置 → 下载代理）');
+    }
+    ctx.log(ctx.publicProxies.length
+      ? '公共代理兜底：已开启（' + ctx.publicProxies.map(function (p) { return p.name; }).join('、') + '）'
+      : '公共代理兜底：已关闭（设置 → 搜索 → 允许公共代理兜底）');
     if (WEB_VERSIONS.indexOf(version) >= 0) {
       ctx.log('提示：' + version + ' 同时存在网页客户端；本次按本地客户端资源流程处理。');
     }
@@ -721,7 +787,8 @@
     var mavens = await probeMavenHosts(health, ctx, version);
     if (!mavens.length) {
       throw err('E_LIB_SOURCE', '所有依赖库下载源均不可用（多为跨域拦截），已阻止启动。' +
-        '请在站点「设置 → 下载代理」配置代理后重试。', 'libraries');
+        (ctx.proxy ? '已配置自定义代理但仍失败，请检查代理是否可用。'
+          : '请在「设置 → 下载代理」填写代理并启用，或在「设置 → 搜索」打开「允许公共代理兜底」。'), 'libraries');
     }
     ctx.log('可用依赖库源：' + mavens.map(function (m) { return m.name; }).join('、'));
 
@@ -776,7 +843,25 @@
         });
       }
     });
-    ctx.log('依赖库完成：成功 ' + (libEntries.length - ctx.stats.failed) + ' / ' + libEntries.length);
+    // 第二轮回填：镜像偶发抖动常导致个别文件失败，单独补一次
+    var failedTasks = libEntries.filter(function (t) { return !ctx.doneKeys[t.key]; });
+    if (failedTasks.length) {
+      ctx.log('有 ' + failedTasks.length + ' 个依赖首次失败，进行第 2 轮重试…', 'warn');
+      for (var fi = 0; fi < failedTasks.length && fi < 40; fi++) {
+        if (ctx.signal && ctx.signal.aborted) break;
+        await sleep(300);
+        try {
+          await downloadOne(failedTasks[fi], ctx);
+          ctx.stats.failed = Math.max(0, ctx.stats.failed - 1);
+          ctx.log('  ↻ 重试成功：' + failedTasks[fi].rel, 'ok');
+        } catch (e) {
+          if (e.code === 'E_ABORT') throw e;
+        }
+      }
+    }
+    var stillMissing = libEntries.filter(function (t) { return !ctx.doneKeys[t.key]; }).length;
+    ctx.log('依赖库完成：成功 ' + (libEntries.length - stillMissing) + ' / ' + libEntries.length +
+      (stillMissing ? '（仍缺 ' + stillMissing + ' 个）' : ''), stillMissing ? 'warn' : 'ok');
 
     // 4) 资源索引
     ctx.stage('assetIndex');
@@ -876,9 +961,22 @@
     var verify = await verifyPlan(plan, ctx);
     ctx.log('校验结果：通过 ' + verify.ok + ' 项，缺失 ' + verify.missing.length + ' 项，跳过校验 ' + verify.unverified + ' 项');
     if (verify.missing.length) {
-      ctx.log('缺失清单：' + verify.missing.slice(0, 6).join('、') + (verify.missing.length > 6 ? ' 等' : ''));
-      throw err('E_VERIFY', '资源不完整（缺失 ' + verify.missing.length + ' 项），已阻止启动。' +
-        '若日志中多为「跨域被拦截（CORS）」，可在站点「设置 → 下载代理」配置代理后重试。', 'verify', verify.missing);
+      var shortList = verify.missing.map(function (p) { return p.replace(/^libraries\//, ''); });
+      ctx.log('缺失清单（共 ' + shortList.length + ' 项）：');
+      shortList.slice(0, 20).forEach(function (p) { ctx.log('  - ' + p); });
+      if (shortList.length > 20) ctx.log('  … 其余 ' + (shortList.length - 20) + ' 项见控制台');
+      var steps = [];
+      if (!ctx.proxy) steps.push('在「设置 → 下载代理」填写一个可用代理并勾选启用');
+      if (!ctx.publicProxies.length) steps.push('在「设置 → 搜索」打开「允许公共代理兜底」');
+      steps.push('确认网络能访问 repo.spongepowered.org（本流程唯一公开的 Mojang 私有构件源）');
+      steps.push('上述都无效时换一个版本重试，或改用本地启动器自行补全依赖');
+      var stepText = steps.map(function (t, i) {
+        return ['①', '②', '③', '④', '⑤'][i] + t;
+      }).join('；');
+      throw err('E_VERIFY',
+        '资源不完整（缺失 ' + shortList.length + ' 项），已阻止启动。缺失：' +
+        shortList.slice(0, 6).join('、') + (shortList.length > 6 ? ' 等' : '') +
+        '。处理步骤：' + stepText, 'verify', verify.missing);
     }
 
     var elapsed = Date.now() - t0;
@@ -1132,6 +1230,8 @@
     CORS_PROXIES: CORS_PROXIES,
     ASSET_CDN: ASSET_CDN,
     readProxy: readProxy,
+    viaProxy: viaProxy,
+    publicProxies: publicProxies,
     resolve: resolve,
     materialize: materialize,
     buildPlan: buildPlan,

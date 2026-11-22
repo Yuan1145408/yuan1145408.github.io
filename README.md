@@ -151,6 +151,12 @@ python build_search_index.py     # 内容更新后重建站内索引
 | 模组管理 | 添加 / 编辑 / 删除 / 启用 / 禁用 / 搜索 / 按加载器筛选 / 导出清单；启用状态带入启动向导 |
 | 数据存储 | 全部存 `localStorage`（`niao.mc.launchers.v1` / `niao.mc.mods.v1` / `niao.mc.settings.v1`），无后端 |
 
+### 下载代理与「缺失 N 项」排查
+- 设置在 `niao.settings.v1`：`download.proxyOn` / `download.proxyUrl`（自定义代理）、`search.proxy`（公共代理兜底）。
+- 代理写法支持三种：前缀型 `https://ghproxy.net/`、查询型 `https://proxy/raw?url=`、模板型 `https://proxy/?url={url}`。
+- 浏览器直连 `libraries.minecraft.net`、`resources.download.minecraft.net`、BMCLAPI 都没有 CORS 头；`com.mojang:*` 私有构件只有 `repo.spongepowered.org` 公开可跨域取到（偶发抖动）。
+- 依赖下载失败会做第 2 轮重试；仍缺失则 `E_VERIFY` 阻止启动，并在消息里列出全部缺失路径与处理步骤。
+
 ### 无网页客户端版本的启动流程（`mc-resolver.js`）
 
 当所选版本不是 1.5.2 / 1.8.8 时，不再提示用户"切换版本或去浏览器打开"，改为在后台静默准备：
