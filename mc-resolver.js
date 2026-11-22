@@ -1217,10 +1217,12 @@
     return next;
   }
 
+  var DEFAULT_HOST = 'http://127.0.0.1:8791';
+
   async function probeHost(timeoutMs) {
     var cfg = readHost();
-    var base = (cfg.url || '').replace(/\/+$/, '');
-    if (!base) return { ok: false, code: 'E_NO_HOST_CFG', message: '未配置本地服务地址' };
+    // 没配置过也要试默认端口，否则首次使用永远「未配置」
+    var base = (cfg.url || DEFAULT_HOST).replace(/\/+$/, '');
     var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
     var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, timeoutMs || 1500);
     try {
@@ -1229,9 +1231,39 @@
       if (r.ok) return { ok: true, base: base, health: data };
       return { ok: false, code: 'E_HOST_BAD', message: '本地服务响应异常（HTTP ' + r.status + '）' };
     } catch (e) {
-      return { ok: false, code: 'E_HOST_DOWN', message: '本地服务未运行' };
+      var insecure = global.isSecureContext === false;
+      return {
+        ok: false,
+        code: 'E_HOST_DOWN',
+        base: base,
+        message: insecure
+          ? '当前页面不是安全上下文（需要 https 或 localhost），浏览器会拦截对本地服务的请求'
+          : '本地服务未运行（' + base + '）'
+      };
     } finally {
       clearTimeout(timer);
+    }
+  }
+
+  /**
+   * 实例目录名 ≠ 启动清单 id（清单里是 niao-1.20.1，目录可能叫 26）。
+   * 优先用调用方给的目录名，其次问本地服务哪些实例真实存在。
+   */
+  function resolveInstanceId(plan, opts) {
+    if (opts && opts.instanceId) return String(opts.instanceId);
+    var stored = '';
+    try { stored = JSON.parse(localStorage.getItem('niao.mc.instance.v1') || '{}').id || ''; } catch (e) { }
+    if (stored) return stored;
+    return plan.dirName || plan.id;
+  }
+
+  async function fetchInstances(base) {
+    try {
+      var r = await fetch(base + '/instances', { cache: 'no-store' });
+      var d = await r.json();
+      return (d && d.items) || [];
+    } catch (e) {
+      return [];
     }
   }
 
@@ -1266,22 +1298,42 @@
     // 2) 本地常驻 host：浏览器只发 HTTP，安全模型完全允许
     var probe = await probeHost(opts.timeoutMs);
     if (probe.ok) {
-      try {
-        log('本地服务在线（' + probe.base + '），提交启动请求…');
-        var r = await fetch(probe.base + '/launch', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ instance: plan.id, version: version, plan: plan })
-        });
-        var data = await r.json().catch(function () { return {}; });
-        if (r.ok && data.ok !== false) {
-          log('已由本地服务启动实例 ' + plan.id);
-          return { ok: true, mode: 'host', pid: data.pid || null, base: probe.base };
+      log('本地服务在线（' + probe.base + '），提交启动请求…');
+      // 候选目录名：调用方给的 → 本地存过的 → 清单 id → 服务端列出的实例
+      var candidates = [];
+      var push = function (v) { if (v && candidates.indexOf(String(v)) < 0) candidates.push(String(v)); };
+      push(resolveInstanceId(plan, opts));
+      var listed = await fetchInstances(probe.base);
+      listed.forEach(function (it) { if (it.hasScript) push(it.id); });
+      push(plan.id);
+
+      var lastFail = null;
+      for (var i = 0; i < candidates.length; i++) {
+        try {
+          var r = await fetch(probe.base + '/launch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ instance: candidates[i], version: version, plan: plan })
+          });
+          var data = await r.json().catch(function () { return {}; });
+          if (r.ok && data.ok !== false) {
+            log('已由本地服务启动实例 ' + candidates[i] + (data.pid ? '（进程 ' + data.pid + '）' : ''));
+            try { localStorage.setItem('niao.mc.instance.v1', JSON.stringify({ id: candidates[i] })); } catch (e) { }
+            return { ok: true, mode: 'host', pid: data.pid || null, base: probe.base, instanceId: candidates[i] };
+          }
+          lastFail = { code: data.code || 'E_HOST_LAUNCH', message: data.message || ('本地服务拒绝启动（HTTP ' + r.status + '）') };
+          log('实例 ' + candidates[i] + ' 未被接受：' + lastFail.message);
+        } catch (e) {
+          lastFail = { code: 'E_HOST_LAUNCH', message: '本地服务启动失败：' + e.message };
         }
-        return { ok: false, code: data.code || 'E_HOST_LAUNCH', message: data.message || ('本地服务拒绝启动（HTTP ' + r.status + '）'), hostReachable: true };
-      } catch (e) {
-        return { ok: false, code: 'E_HOST_LAUNCH', message: '本地服务启动失败：' + e.message, hostReachable: true };
       }
+      return {
+        ok: false,
+        code: (lastFail && lastFail.code) || 'E_HOST_LAUNCH',
+        message: (lastFail && lastFail.message) || '本地服务在线，但没有匹配到可启动的实例目录',
+        hostReachable: true,
+        candidates: candidates
+      };
     }
 
     // 3) 回退：协议桥（需已注册 .reg）

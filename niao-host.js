@@ -396,14 +396,19 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { ok: true, service: 'niao-mc-host', port: cfg.port, instancesRoot: cfg.root, defaultInstance: cfg.instance, version: '1.0.0' });
     }
     if (p === '/instances') {
+      // 只列真正像 Minecraft 实例的目录，避免把根目录下的系统文件夹全扫出来
       let items = [];
       try {
         items = fs.readdirSync(cfg.root, { withFileTypes: true })
           .filter((d) => d.isDirectory())
-          .map((d) => ({
-            id: d.name,
-            hasScript: fs.existsSync(path.join(cfg.root, d.name, process.platform === 'win32' ? 'niao-launch.cmd' : 'niao-launch.sh'))
-          }));
+          .map((d) => {
+            const full = path.join(cfg.root, d.name);
+            const hasScript = fs.existsSync(path.join(full, process.platform === 'win32' ? 'niao-launch.cmd' : 'niao-launch.sh'));
+            const hasPlan = fs.existsSync(path.join(full, 'launch-plan.json'));
+            const hasVersions = fs.existsSync(path.join(full, 'versions'));
+            return { id: d.name, hasScript: hasScript, hasPlan: hasPlan, isInstance: hasScript || hasPlan || hasVersions };
+          })
+          .filter((it) => it.isInstance);
       } catch (e) { items = []; }
       return json(res, 200, { ok: true, count: items.length, items: items });
     }

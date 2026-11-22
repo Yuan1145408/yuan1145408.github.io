@@ -650,14 +650,19 @@
 
       // 写入本地实例目录
       var dirOk = false;
+      var instanceName = '';   // 磁盘上的真实目录名，启动本地服务时要用它
       if (dir) {
         var mat = await Resolver.materialize(res.plan, dir, { onLog: function (x) { provLog(x); } });
         dirOk = true;
+        instanceName = mat.dirName || '';
         provLog('实例目录写入完成：' + mat.written + ' 个文件（' + mat.dirName + '）', 'ok');
       }
 
       // 确认资源可用后再启动
-      var lr = await Resolver.launch(res.plan, { onLog: function (x) { provLog(x); } });
+      var lr = await Resolver.launch(res.plan, {
+        onLog: function (x) { provLog(x); },
+        instanceId: instanceName
+      });
       var stamp = new Date().toLocaleString('zh-CN', { hour12: false });
       var modNote = enabledMods().length ? '（' + enabledMods().length + ' 个模组已记录，网页版不加载本地模组）' : '';
 
