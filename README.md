@@ -122,6 +122,16 @@ python build_search_index.py     # 内容更新后重建站内索引
 - 网页游戏整合：`webgames.json` 中实测允许嵌入的条目（`embeddable: true`）已同步到
   游戏专区「网页游戏 · 站内畅玩」区块，经 `webgames.html?play=<id>` 的站内播放器运行
 
+## Mod 搜索与批量下载（mod-search.html + mod-search.js）
+| 能力 | 说明 |
+|---|---|
+| 多源搜索 | Modrinth（JSON API，可下载）+ MC百科（资料库，仅发现）；并发请求、单源 9s 超时、失败不影响其他来源 |
+| 统一字段 | 名称 / 简介 / 版本 / 来源 / 依赖 / 下载状态 / 勾选状态，跨源同名结果自动合并 |
+| 依赖解析 | 必需依赖自动展开、可选依赖按需勾选；同一项目去重；DFS 检测环；不同版本需求取较新并记录冲突 |
+| 下载 | 按拓扑顺序下载，流式进度，SHA-1 + 大小校验，jar 结构校验（ZIP 中央目录）后读取 modid |
+| 导入 | File System Access 写入 `<实例>/mods/`，同名文件提示覆盖，同批次 modid 冲突拒绝，回读校验写入大小 |
+| 状态机 | idle / queued / downloading / done / failed / unavailable / skipped，失败带错误码与原因 |
+
 ## 我的世界实例管理（mc-instances.html）
 | 能力 | 说明 |
 |---|---|

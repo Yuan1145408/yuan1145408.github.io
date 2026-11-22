@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mod 搜索与批量下载 · 鸟国网站</title>
+    <meta name="description" content="跨来源搜索 Minecraft Mod，汇总为统一列表，自动解析必需/可选依赖，去重、处理版本冲突与循环依赖，校验后一键导入游戏 mods 目录。" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .ms-toolbar { display: flex; gap: var(--sp-2); flex-wrap: wrap; align-items: flex-end; }
+      .ms-toolbar .ms-field { display: flex; flex-direction: column; gap: 4px; }
+      .ms-toolbar label { font-size: var(--fs-xs); color: var(--muted); }
+      .ms-toolbar input[type="text"], .ms-toolbar input[type="search"], .ms-toolbar select {
+        height: 34px; min-width: 110px; padding: 0 10px; border-radius: var(--r-sm);
+        border: 1px solid var(--border); background: var(--bg); color: var(--text);
+      }
+      .ms-toolbar input[type="search"] { min-width: 240px; }
+      .ms-grow { flex: 1 1 220px; }
+      .ms-checks { display: flex; gap: var(--sp-3); flex-wrap: wrap; align-items: center; }
+      .ms-checks label { display: inline-flex; gap: 6px; align-items: center; font-size: var(--fs-sm); color: var(--muted); }
+      .ms-checks input { width: 15px; height: 15px; accent-color: var(--primary); }
+
+      .ms-stats { display: flex; gap: var(--sp-3); flex-wrap: wrap; align-items: center; font-size: var(--fs-sm); color: var(--muted); }
+      .ms-chip { display: inline-flex; gap: 6px; align-items: center; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--border); font-size: var(--fs-xs); }
+      .ms-chip.ok { color: #4fd08a; border-color: color-mix(in oklab, #4fd08a 40%, var(--border)); }
+      .ms-chip.warn { color: #ffc457; border-color: color-mix(in oklab, #ffc457 40%, var(--border)); }
+      .ms-chip.err { color: #ff6b6b; border-color: color-mix(in oklab, #ff6b6b 40%, var(--border)); }
+
+      .ms-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-md); }
+      table.ms-table { width: 100%; border-collapse: collapse; min-width: 720px; }
+      .ms-table th, .ms-table td { padding: 9px 10px; text-align: left; font-size: var(--fs-sm); vertical-align: top; border-bottom: 1px solid var(--border); }
+      .ms-table th { font-size: var(--fs-xs); color: var(--muted); font-weight: 500; background: var(--card-2); position: sticky; top: 0; z-index: 1; }
+      .ms-table tr:last-child td { border-bottom: 0; }
+      .ms-table td.ms-name { min-width: 240px; }
+      .ms-name b { display: block; color: var(--text-strong); font-size: var(--fs-sm); }
+      .ms-name small { color: var(--muted); line-height: 1.6; display: block; }
+      .ms-name .ms-tags { margin-top: 4px; display: flex; gap: 4px; flex-wrap: wrap; }
+      .ms-tag { font-size: 11px; padding: 0 6px; border-radius: 4px; background: var(--card-2); color: var(--muted); border: 1px solid var(--border); }
+      .ms-state { font-size: var(--fs-xs); white-space: nowrap; }
+      .ms-state.idle { color: var(--muted); }
+      .ms-state.queued { color: var(--muted); }
+      .ms-state.downloading { color: var(--primary); }
+      .ms-state.done { color: #4fd08a; }
+      .ms-state.failed { color: #ff6b6b; }
+      .ms-state.unavailable { color: #ffc457; }
+      .ms-bar { height: 4px; width: 78px; border-radius: 999px; background: var(--border); overflow: hidden; margin-top: 4px; }
+      .ms-bar i { display: block; height: 100%; width: 0; background: var(--primary); transition: width .2s ease; }
+      .ms-deps { font-size: var(--fs-xs); color: var(--muted); max-width: 200px; }
+      .ms-deps b { color: var(--text); font-weight: 500; }
+
+      .ms-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--sp-4); }
+      .ms-panel { border: 1px solid var(--border); border-radius: var(--r-md); padding: var(--sp-3); background: var(--card); }
+      .ms-panel h4 { margin: 0 0 var(--sp-2); font-size: var(--fs-sm); }
+      .ms-log { margin: 0; padding: var(--sp-2); border-radius: var(--r-sm); background: var(--bg); border: 1px solid var(--border);
+        font-family: var(--font-mono); font-size: 12px; line-height: 1.65; max-height: 260px; overflow: auto; white-space: pre-wrap; word-break: break-all; }
+      .ms-log .ok { color: #4fd08a; }
+      .ms-log .warn { color: #ffc457; }
+      .ms-log .err { color: #ff6b6b; }
+      .ms-dep-item { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-bottom: 1px dashed var(--border); font-size: var(--fs-sm); }
+      .ms-dep-item:last-child { border-bottom: 0; }
+      .ms-dep-item input[type="checkbox"] { margin-top: 3px; width: 15px; height: 15px; accent-color: var(--primary); }
+      .ms-dep-item small { display: block; color: var(--muted); font-size: var(--fs-xs); }
+      .ms-empty { color: var(--muted); font-size: var(--fs-sm); padding: var(--sp-3); text-align: center; }
+      .ms-row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+      @media (max-width: 900px) { .ms-grid { grid-template-columns: 1fr; } }
+      @media (prefers-reduced-motion: reduce) { .ms-bar i { transition: none; } }
+
+      /* 浅色主题下提高状态色对比度 */
+      :root[data-theme="light"] .ms-log .ok,
+      :root[data-theme="light"] .ms-state.done,
+      :root[data-theme="light"] .ms-chip.ok { color: #0f7a4d; }
+      :root[data-theme="light"] .ms-log .warn,
+      :root[data-theme="light"] .ms-state.unavailable,
+      :root[data-theme="light"] .ms-chip.warn { color: #8a5c00; }
+      :root[data-theme="light"] .ms-log .err,
+      :root[data-theme="light"] .ms-state.failed,
+      :root[data-theme="light"] .ms-chip.err { color: #b3282f; }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="search.html">聚合搜索</a>
+          <a href="download.html">下载中心</a>
+          <a href="settings.html">设置</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html">游戏专区</a>
+          <a href="webgames.html">网页游戏</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+          <a href="android.html">安卓专区</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container">
+          <h3 id="sec-1">Mod 搜索与批量下载</h3>
+          <p class="muted" style="margin-top:0;">
+            输入关键词，一次性汇总多个来源的 Mod；勾选后自动补齐<strong>必需依赖</strong>，
+            <strong>可选依赖</strong>由你决定，自动去重、处理版本冲突与循环依赖，校验通过后再写入游戏目录。
+          </p>
+
+          <div class="card">
+            <div class="ms-toolbar">
+              <div class="ms-field ms-grow">
+                <label for="msQuery">关键词</label>
+                <input id="msQuery" type="search" placeholder="如 sodium / jei / 机械动力" autocomplete="off" />
+              </div>
+              <div class="ms-field">
+                <label for="msLoader">加载器</label>
+                <select id="msLoader">
+                  <option value="">不限</option>
+                  <option value="fabric">Fabric</option>
+                  <option value="forge">Forge</option>
+                  <option value="neoforge">NeoForge</option>
+                  <option value="quilt">Quilt</option>
+                </select>
+              </div>
+              <div class="ms-field">
+                <label for="msGameVer">游戏版本</label>
+                <input id="msGameVer" type="text" value="1.20.1" placeholder="1.20.1" />
+              </div>
+              <button class="btn primary" id="msSearchBtn" type="button">搜索</button>
+            </div>
+
+            <div class="ms-checks" style="margin-top:var(--sp-3);">
+              <span class="muted" style="font-size:var(--fs-xs);">数据来源：</span>
+              <label><input id="msSrcModrinth" type="checkbox" checked /> Modrinth</label>
+              <label><input id="msSrcMcmod" type="checkbox" /> MC百科</label>
+              <label><input id="msOnlyDl" type="checkbox" /> 仅显示可下载</label>
+              <label><input id="msAutoDeps" type="checkbox" checked /> 自动补齐必需依赖</label>
+            </div>
+
+            <div class="ms-stats" id="msStats" style="margin-top:var(--sp-3);">
+              <span>还没有搜索。</span>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:var(--sp-3);">
+            <div class="row" style="justify-content:space-between;align-items:center;gap:var(--sp-2);flex-wrap:wrap;">
+              <label style="display:inline-flex;gap:8px;align-items:center;font-size:var(--fs-sm);color:var(--muted);">
+                <input id="msSelectAll" type="checkbox" style="width:15px;height:15px;accent-color:var(--primary);" />
+                全选当前结果
+              </label>
+              <div class="ms-row-actions">
+                <button class="btn" id="msBtnPlan" type="button">解析依赖</button>
+                <button class="btn primary" id="msBtnDownload" type="button">下载选中</button>
+                <button class="btn" id="msBtnImport" type="button">导入游戏</button>
+                <button class="btn" id="msBtnCancel" type="button" disabled>取消</button>
+              </div>
+            </div>
+            <div class="ms-table-wrap" style="margin-top:var(--sp-3);">
+              <table class="ms-table">
+                <thead>
+                  <tr>
+                    <th style="width:36px;"></th>
+                    <th>名称 / 简介</th>
+                    <th style="width:110px;">版本</th>
+                    <th style="width:96px;">来源</th>
+                    <th style="width:190px;">依赖</th>
+                    <th style="width:118px;">下载状态</th>
+                  </tr>
+                </thead>
+                <tbody id="msTable">
+                  <tr><td colspan="6"><div class="ms-empty">输入关键词后点击「搜索」。</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ms-grid" style="margin-top:var(--sp-3);">
+            <div class="ms-panel">
+              <h4>依赖解析结果</h4>
+              <p class="muted" style="font-size:var(--fs-xs);margin-top:0;" id="msDepSummary">勾选 Mod 后点「解析依赖」。</p>
+              <div id="msDepBox"><div class="ms-empty">暂无解析结果。</div></div>
+            </div>
+            <div class="ms-panel">
+              <h4>运行日志</h4>
+              <pre class="ms-log" id="msLog"></pre>
+            </div>
+          </div>
+
+          <div class="card" id="msImportCard" style="margin-top:var(--sp-3);" hidden>
+            <h4 style="margin-top:0;">导入结果</h4>
+            <div id="msImportResult"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>鸟国网站 · Mod 搜索与批量下载</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="mod-search.js"></script>
+    <script src="nav-glider.js"></script>
+  </body>
+</html>
