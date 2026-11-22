@@ -113,12 +113,23 @@ python build_search_index.py     # 内容更新后重建站内索引
 ## 小游戏（arcade.html）
 站内自带、纯前端运行，不依赖任何外站嵌入（原来 iframe 外站常被 X-Frame-Options 拦截，导致白屏）：
 - **单人 / 双人模式统一**：`?g=<游戏>&mode=2p` 直达双人模式；支持双人的游戏在页内可一键切换模式
-- 站内游戏：2048、贪吃蛇（含双人同屏）、扫雷、乒乓（1P vs AI / 2P）、井字棋（AI / 2P）、
-  四子棋（AI / 2P）、黑白棋（AI / 2P）、记忆翻牌、打砖块、十五拼图，全部在 `arcade.html` + `arcade-games.js`
+- **站内 20 款小游戏**（`arcade.html` + `arcade-games.js`）：2048、俄罗斯方块、贪吃蛇（含双人同屏）、扫雷、
+  吃豆人、像素鸟、数独、国际象棋（AI / 2P）、西洋跳棋（AI / 2P）、四子棋、井字棋、黑白棋（后三者均 AI / 2P）、
+  记忆翻牌、打砖块、乒乓（1P vs AI / 2P）、十五拼图、太空侵略者、恐龙跑酷、接龙、麻将连连看
+- 开源网页游戏整合：`webgames.json` 中 `embeddable: true` 的条目在小游戏大厅底部统一展示，走站内播放器
 - `games-extra.json` 每个小游戏带 `modes` 与 `play1p` / `play2p` 字段，游戏专区卡片渲染
   「单人模式 / 双人模式」按钮；同源内嵌不再显示「本站游玩」按钮
 - 网页游戏整合：`webgames.json` 中实测允许嵌入的条目（`embeddable: true`）已同步到
   游戏专区「网页游戏 · 站内畅玩」区块，经 `webgames.html?play=<id>` 的站内播放器运行
+
+## 我的世界网页版（minecraft-web.html）
+| 能力 | 说明 |
+|---|---|
+| 版本选择 | 读取 Mojang 官方 `version_manifest_v2`（925+ 版本，含快照/旧版），跨域失败时回退内置常用版本清单 |
+| 启动方式 | 浏览器网页版（Eaglercraft，1.5.2 / 1.8.8）、本地启动器参数摘要、导出实例 JSON |
+| Mod 启动器 | 内置 Prism / HMCL / PCL2 / 官方启动器，可添加自定义启动器并配置路径、内存、JVM 参数、游戏目录 |
+| 模组管理 | 添加 / 编辑 / 删除 / 启用 / 禁用 / 搜索 / 按加载器筛选 / 导出清单；启用状态带入启动向导 |
+| 数据存储 | 全部存 `localStorage`（`niao.mc.launchers.v1` / `niao.mc.mods.v1` / `niao.mc.settings.v1`），无后端 |
 
 ## 下载中心（download.html）
 | 能力 | 说明 |

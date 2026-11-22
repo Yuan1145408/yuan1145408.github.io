@@ -96,7 +96,7 @@
   },
   {
     "id": "warface",
-    "name": "Warface",
+    "name": "战争前线（Warface）",
     "category": "games",
     "genre": "shooter",
     "website": "https://pc.warface.com/",
@@ -110,7 +110,7 @@
   },
   {
     "id": "apexlegends",
-    "name": "Apex Legends",
+    "name": "Apex 英雄（Apex Legends）",
     "category": "games",
     "genre": "shooter",
     "website": "https://www.ea.com/games/apex-legends",
@@ -124,7 +124,7 @@
   },
   {
     "id": "cs2",
-    "name": "Counter-Strike 2（CS2）",
+    "name": "反恐精英 2（CS2）",
     "category": "games",
     "genre": "shooter",
     "website": "https://store.steampowered.com/app/730/CounterStrike_2/",
@@ -138,7 +138,7 @@
   },
   {
     "id": "crossout",
-    "name": "Crossout",
+    "name": "创世战车（Crossout）",
     "category": "games",
     "genre": "shooter",
     "website": "https://crossout.net/",
@@ -182,7 +182,7 @@
   },
   {
     "id": "warframe",
-    "name": "Warframe",
+    "name": "星际战甲（Warframe）",
     "category": "games",
     "genre": "shooter",
     "website": "https://www.warframe.com/",
@@ -253,7 +253,7 @@
   },
   {
     "id": "masterduel",
-    "name": "Yu-Gi-Oh! MASTER DUEL",
+    "name": "游戏王 大师决斗（MASTER DUEL）",
     "category": "games",
     "genre": "card",
     "website": "https://www.konami.com/yugioh/masterduel",
@@ -266,7 +266,7 @@
   },
   {
     "id": "kards",
-    "name": "KARDS",
+    "name": "KARDS 二战卡牌",
     "category": "games",
     "genre": "card",
     "website": "https://www.kards.com/",
@@ -331,7 +331,7 @@
   },
   {
     "id": "startrekonline",
-    "name": "Star Trek Online",
+    "name": "星际迷航 Online",
     "category": "games",
     "genre": "rpg",
     "website": "https://www.playstartrekonline.com/en",
@@ -345,7 +345,7 @@
   },
   {
     "id": "eveonline",
-    "name": "EVE Online",
+    "name": "星战前夜（EVE Online）",
     "category": "games",
     "genre": "rpg",
     "website": "https://www.eveonline.com/",
@@ -377,17 +377,18 @@
     "category": "games",
     "genre": "sandbox",
     "website": "https://www.minecraft.net/zh-hans",
-    "local": "minecraft.html",
     "direct": "minecraft.html",
-    "desc": "经典沙盒游戏（Java & 基岩版）",
+    "desc": "经典沙盒游戏（Java & 基岩版）。站内提供网页版启动向导：选择全部可用版本、配置 Mod 启动器、管理模组后一键启动。",
     "tags": [
       "沙盒",
       "开放世界",
       "基岩版",
       "Java版",
       "1.21.0",
-      "1.21.x"
-    ]
+      "1.21.x",
+      "网页版"
+    ],
+    "webPlay": "minecraft-web.html"
   },
   {
     "id": "eldenring",
@@ -505,14 +506,17 @@
     "category": "minigame",
     "website": "https://tetris.com/play-tetris",
     "play": "https://tetris.com/play-tetris",
-    "desc": "经典下落方块",
+    "desc": "经典下落方块：旋转、消行、速度递增（站内可玩，支持单人模式）",
     "tags": [
       "益智",
-      "经典"
+      "经典",
+      "站内可玩"
     ],
     "modes": [
       "1p"
-    ]
+    ],
+    "play1p": "arcade.html?g=tetris",
+    "local": "arcade.html?g=tetris"
   },
   {
     "id": "minesweeper",
@@ -556,28 +560,34 @@
     "category": "minigame",
     "website": "https://freepacman.org/",
     "play": "https://freepacman.org/",
-    "desc": "街机吃豆人",
+    "desc": "经典街机吃豆人：躲开幽灵吃光豆子（站内可玩，支持单人模式）",
     "tags": [
       "街机",
-      "经典"
+      "经典",
+      "站内可玩"
     ],
     "modes": [
       "1p"
-    ]
+    ],
+    "play1p": "arcade.html?g=pacman",
+    "local": "arcade.html?g=pacman"
   },
   {
     "id": "flappy",
-    "name": "Flappy Bird",
+    "name": "像素鸟（Flappy Bird）",
     "category": "minigame",
     "website": "https://flappybird.io/",
     "play": "https://flappybird.io/",
-    "desc": "点击躲障碍",
+    "desc": "点击让小鸟穿过管道缝隙，越飞越难（站内可玩，支持单人模式）",
     "tags": [
-      "休闲"
+      "休闲",
+      "站内可玩"
     ],
     "modes": [
       "1p"
-    ]
+    ],
+    "play1p": "arcade.html?g=flappy",
+    "local": "arcade.html?g=flappy"
   },
   {
     "id": "sudoku",
@@ -585,13 +595,16 @@
     "category": "minigame",
     "website": "https://sudoku.com/",
     "play": "https://sudoku.com/",
-    "desc": "数字逻辑谜题",
+    "desc": "九宫数独，行列宫不重复，内置多解校验与冲突提示（站内可玩，支持单人模式）",
     "tags": [
-      "益智"
+      "益智",
+      "站内可玩"
     ],
     "modes": [
       "1p"
-    ]
+    ],
+    "play1p": "arcade.html?g=sudoku",
+    "local": "arcade.html?g=sudoku"
   },
   {
     "id": "chess",
@@ -599,14 +612,18 @@
     "category": "minigame",
     "website": "https://www.chess.com/play/computer",
     "play": "https://www.chess.com/play/computer",
-    "desc": "棋类对战",
+    "desc": "完整走子规则的国际象棋，可与人机或同屏双人对弈（站内可玩，支持单人模式与双人模式）",
     "tags": [
-      "棋类"
+      "棋类",
+      "站内可玩"
     ],
     "modes": [
       "1p",
       "2p"
-    ]
+    ],
+    "play1p": "arcade.html?g=chess",
+    "play2p": "arcade.html?g=chess&mode=2p",
+    "local": "arcade.html?g=chess"
   },
   {
     "id": "checkers",
@@ -614,14 +631,18 @@
     "category": "minigame",
     "website": "https://www.247checkers.com/",
     "play": "https://www.247checkers.com/",
-    "desc": "棋类对战（跳棋）",
+    "desc": "西洋跳棋：强制吃子、连跳、升王，支持人机与同屏双人（站内可玩，支持单人模式与双人模式）",
     "tags": [
-      "棋类"
+      "棋类",
+      "站内可玩"
     ],
     "modes": [
       "1p",
       "2p"
-    ]
+    ],
+    "play1p": "arcade.html?g=checkers",
+    "play2p": "arcade.html?g=checkers&mode=2p",
+    "local": "arcade.html?g=checkers"
   },
   {
     "id": "connect4",
@@ -748,14 +769,17 @@
     "category": "minigame",
     "website": "https://elgoog.im/space-invaders/",
     "play": "https://elgoog.im/space-invaders/",
-    "desc": "经典射击街机",
+    "desc": "经典街机射击：左右移动、击落全部外星人（站内可玩，支持单人模式）",
     "tags": [
       "街机",
-      "射击"
+      "射击",
+      "站内可玩"
     ],
     "modes": [
       "1p"
-    ]
+    ],
+    "play1p": "arcade.html?g=spaceinvaders",
+    "local": "arcade.html?g=spaceinvaders"
   },
   {
     "id": "dino",
@@ -763,14 +787,17 @@
     "category": "minigame",
     "website": "https://chromedino.com/",
     "play": "https://chromedino.com/",
-    "desc": "离线恐龙跑酷",
+    "desc": "离线恐龙跑酷：跳跃躲开仙人掌，越跑越快（站内可玩，支持单人模式）",
     "tags": [
       "跑酷",
-      "休闲"
+      "休闲",
+      "站内可玩"
     ],
     "modes": [
       "1p"
-    ]
+    ],
+    "play1p": "arcade.html?g=dino",
+    "local": "arcade.html?g=dino"
   },
   {
     "id": "solitaire",
@@ -778,14 +805,17 @@
     "category": "minigame",
     "website": "https://solitaired.com/",
     "play": "https://solitaired.com/",
-    "desc": "纸牌接龙",
+    "desc": "克朗代克接龙：七列桌牌 + 四个基座，点到点移动（站内可玩，支持单人模式）",
     "tags": [
       "纸牌",
-      "益智"
+      "益智",
+      "站内可玩"
     ],
     "modes": [
       "1p"
-    ]
+    ],
+    "play1p": "arcade.html?g=solitaire",
+    "local": "arcade.html?g=solitaire"
   },
   {
     "id": "mahjong",
@@ -793,13 +823,16 @@
     "category": "minigame",
     "website": "https://www.mahjong.com/",
     "play": "https://www.mahjong.com/",
-    "desc": "麻将连连看",
+    "desc": "麻将连连看：两张相同的牌可连通即消除（站内可玩，支持单人模式）",
     "tags": [
       "益智",
-      "经典"
+      "经典",
+      "站内可玩"
     ],
     "modes": [
       "1p"
-    ]
+    ],
+    "play1p": "arcade.html?g=mahjong",
+    "local": "arcade.html?g=mahjong"
   }
 ]

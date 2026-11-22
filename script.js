@@ -251,6 +251,9 @@
       const direct = sanitizeUrl(d.direct);
       const playUrl = sanitizeUrl(d.play);
       const websiteBtn = website ? `<a class="btn" href="${attrUrl(website)}" target="_blank" rel="noopener noreferrer">官网</a>` : '';
+      // 站内网页版入口（如我的世界网页版启动向导）
+      const webPlay = sanitizeUrl(d.webPlay);
+      const webPlayBtn = webPlay ? `<a class="btn primary" href="${attrUrl(webPlay)}">网页版启动</a>` : '';
       const isMini = ((d.category || '').toLowerCase() === 'minigame');
       const local = sanitizeUrl(d.local);
       const play1p = sanitizeUrl(d.play1p);
@@ -298,6 +301,7 @@
         <p>${esc(d.desc || '')}</p>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           ${costChip}
+          ${webPlayBtn}
           ${websiteBtn}
           ${localBtn}
           ${modeBtns}

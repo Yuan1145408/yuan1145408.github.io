@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>我的世界网页版 - 鸟国网站</title>
+    <meta name="description" content="我的世界网页版启动中心：选择全部可用版本、配置 Mod 启动器、管理并启用模组，一键生成启动方案。" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <style>
+      /* 本页专用：启动向导与列表。全部取设计变量，浅色/深色主题自适应 */
+      .mcw-hero {
+        border: 1px solid var(--border);
+        border-radius: var(--r-xl);
+        padding: var(--sp-6);
+        background:
+          radial-gradient(680px 300px at 8% -20%, color-mix(in oklab, var(--primary) 16%, transparent), transparent 70%),
+          var(--card);
+      }
+      .mcw-hero h2 { margin: 0 0 var(--sp-3); font-size: var(--fs-2xl); line-height: var(--lh-tight); }
+      .mcw-hero p { color: var(--muted); margin: 0 0 var(--sp-4); max-width: 68ch; }
+      .mcw-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+      .mcw-steps { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-4); }
+      .mcw-step {
+        display: flex; align-items: center; gap: 8px;
+        padding: 6px 12px; border-radius: var(--r-full);
+        border: 1px solid var(--border); background: var(--card-2);
+        font-size: var(--fs-sm); color: var(--muted);
+      }
+      .mcw-step b {
+        display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+        background: color-mix(in oklab, var(--primary) 18%, transparent);
+        color: var(--primary); font-size: 11px;
+      }
+      .mcw-step.is-on { border-color: color-mix(in oklab, var(--primary) 55%, var(--border)); color: var(--text-strong); }
+      .mcw-step.is-done b { background: color-mix(in oklab, var(--ok, #3ddc97) 26%, transparent); color: var(--ok, #3ddc97); }
+      .mcw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--sp-4); }
+      .mcw-panel h4 { display: flex; align-items: center; gap: 8px; }
+      .mcw-panel h4 span.n {
+        display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+        background: color-mix(in oklab, var(--primary) 16%, transparent); color: var(--primary); font-size: 12px;
+      }
+      .mcw-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: var(--sp-3); }
+      .mcw-field > label { font-size: var(--fs-sm); color: var(--muted); }
+      .mcw-field input, .mcw-field select, .mcw-field textarea {
+        width: 100%; box-sizing: border-box; padding: 7px 9px;
+        border: 1px solid var(--border); border-radius: var(--r-sm);
+        background: var(--card-2); color: var(--text); font: inherit; font-size: var(--fs-sm);
+      }
+      .mcw-field input:focus, .mcw-field select:focus, .mcw-field textarea:focus {
+        outline: none; border-color: color-mix(in oklab, var(--primary) 55%, var(--border)); box-shadow: var(--ring);
+      }
+      .mcw-two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+      @media (max-width: 620px) { .mcw-two { grid-template-columns: 1fr; } }
+      .mcw-opt {
+        display: flex; gap: 10px; align-items: flex-start;
+        padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--r-md);
+        background: var(--card-2); margin-bottom: 8px; cursor: pointer;
+      }
+      .mcw-opt:has(input:checked) { border-color: color-mix(in oklab, var(--primary) 60%, var(--border)); background: color-mix(in oklab, var(--primary) 8%, var(--card-2)); }
+      .mcw-opt input { margin-top: 3px; accent-color: var(--primary); }
+      .mcw-opt strong { display: block; font-size: var(--fs-base); color: var(--text-strong); }
+      .mcw-opt small { color: var(--muted); font-size: var(--fs-xs); line-height: 1.6; display: block; }
+      .mcw-list {
+        max-height: 268px; overflow: auto; border: 1px solid var(--border); border-radius: var(--r-md);
+        background: var(--card-2);
+      }
+      .mcw-list button {
+        display: flex; width: 100%; gap: 10px; align-items: center; justify-content: space-between;
+        padding: 7px 10px; border: 0; border-bottom: 1px solid var(--border-soft, var(--border));
+        background: transparent; color: var(--text); font: inherit; font-size: var(--fs-sm); cursor: pointer; text-align: left;
+      }
+      .mcw-list button:hover { background: color-mix(in oklab, var(--primary) 8%, transparent); }
+      .mcw-list button.is-on { background: color-mix(in oklab, var(--primary) 16%, transparent); color: var(--text-strong); font-weight: 640; }
+      .mcw-list .vtype { font-size: 11px; color: var(--muted); }
+      .mcw-cmd {
+        margin: var(--sp-3) 0 0; padding: var(--sp-3); border-radius: var(--r-md);
+        background: var(--bg); border: 1px solid var(--border);
+        font-family: var(--font-mono); font-size: 12px; line-height: 1.7; white-space: pre-wrap; word-break: break-all;
+        max-height: 260px; overflow: auto;
+      }
+      .mcw-kv { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 4px; font-size: var(--fs-sm); }
+      .mcw-kv b { color: var(--muted); font-weight: 500; min-width: 76px; }
+      .mcw-item { display: flex; gap: var(--sp-3); align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+      .mcw-item__main { flex: 1 1 260px; min-width: 0; }
+      .mcw-item__btns { display: flex; gap: 6px; flex-wrap: wrap; }
+      .mcw-switch { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--muted); cursor: pointer; }
+      .mcw-switch input { accent-color: var(--primary); width: 16px; height: 16px; }
+      .mcw-card.is-off { opacity: .62; }
+      .mcw-note { font-size: var(--fs-xs); color: var(--muted); line-height: 1.8; }
+      .mcw-banner {
+        display: flex; gap: var(--sp-3); align-items: center; justify-content: space-between; flex-wrap: wrap;
+        border: 1px solid color-mix(in oklab, var(--primary) 34%, var(--border));
+        background: color-mix(in oklab, var(--primary) 8%, var(--card));
+        border-radius: var(--r-lg); padding: var(--sp-3) var(--sp-4);
+      }
+      .mcw-banner p { margin: 0; font-size: var(--fs-sm); color: var(--muted); }
+      .mcw-banner strong { color: var(--text-strong); }
+      .mcw-empty { color: var(--muted); font-size: var(--fs-sm); padding: var(--sp-4); text-align: center; }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="search.html">聚合搜索</a>
+          <a href="download.html">下载中心</a>
+          <a href="settings.html">设置</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html">游戏专区</a>
+          <a href="webgames.html">网页游戏</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+          <a href="android.html">安卓专区</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container">
+          <div class="mcw-hero">
+            <p><span class="chip">我的世界 · 网页版</span></p>
+            <h2 id="sec-1">选版本、配启动器、管模组，一次搞定</h2>
+            <p>
+              这里的启动向导把「选哪个版本」「用哪个启动器」「带哪些 Mod」串成一条流程：
+              可以走浏览器网页版直接开玩，也可以按你的本地启动器生成实例配置。
+              版本清单来自官方版本元数据，本站不托管任何游戏本体。
+            </p>
+            <div class="row" id="mcwStats" style="margin-bottom:var(--sp-4);"></div>
+            <div class="mcw-actions">
+              <a class="btn primary" href="#mcwWizard">开始启动向导</a>
+              <a class="btn" href="#mcwLaunchers">管理启动器</a>
+              <a class="btn" href="#mcwMods">管理模组</a>
+              <a class="btn" href="minecraft.html">资源下载页</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 启动向导 -->
+      <section class="section" id="mcwWizard" style="padding-top:0;">
+        <div class="container">
+          <h3 id="sec-2">启动向导</h3>
+          <div class="mcw-steps" id="mcwSteps">
+            <span class="mcw-step is-on" data-step="1"><b>1</b>选择版本</span>
+            <span class="mcw-step" data-step="2"><b>2</b>启动方式</span>
+            <span class="mcw-step" data-step="3"><b>3</b>启用模组</span>
+            <span class="mcw-step" data-step="4"><b>4</b>确认启动</span>
+          </div>
+
+          <div class="mcw-grid">
+            <!-- 1 版本 -->
+            <div class="card mcw-panel" data-step="1">
+              <h4><span class="n">1</span>选择版本</h4>
+              <div class="mcw-two">
+                <div class="mcw-field">
+                  <label for="mcwVersionSearch">搜索版本</label>
+                  <input id="mcwVersionSearch" type="search" placeholder="如 1.21 / 1.8 / 快照" autocomplete="off" />
+                </div>
+                <div class="mcw-field">
+                  <label for="mcwVersionType">版本类型</label>
+                  <select id="mcwVersionType">
+                    <option value="release">正式版</option>
+                    <option value="snapshot">快照</option>
+                    <option value="old">旧版 / 远古版本</option>
+                    <option value="all">全部版本</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mcw-list" id="mcwVersionList" role="listbox" aria-label="可用版本"></div>
+              <p class="mcw-note" id="mcwVersionMeta">正在读取官方版本清单…</p>
+            </div>
+
+            <!-- 2 启动方式 -->
+            <div class="card mcw-panel" data-step="2">
+              <h4><span class="n">2</span>选择启动方式</h4>
+              <label class="mcw-opt">
+                <input type="radio" name="mcwMode" value="web" checked />
+                <span>
+                  <strong>浏览器网页版（免安装）</strong>
+                  <small>由开源项目 Eaglercraft 提供，打开新标签页即玩。仅支持 1.5.2 与 1.8.8 两个版本。</small>
+                </span>
+              </label>
+              <label class="mcw-opt">
+                <input type="radio" name="mcwMode" value="launcher" />
+                <span>
+                  <strong>本地启动器</strong>
+                  <small>选择已配置的启动器，生成本次实例的参数摘要，复制到启动器里使用。</small>
+                </span>
+              </label>
+              <label class="mcw-opt">
+                <input type="radio" name="mcwMode" value="export" />
+                <span>
+                  <strong>导出实例配置</strong>
+                  <small>下载一份 JSON 配置（版本、内存、JVM 参数、模组清单），便于归档或迁移。</small>
+                </span>
+              </label>
+              <div id="mcwLauncherPick" hidden>
+                <div class="mcw-field">
+                  <label for="mcwLauncherSelect">使用哪个启动器</label>
+                  <select id="mcwLauncherSelect"></select>
+                </div>
+                <p class="mcw-note" id="mcwLauncherMeta"></p>
+              </div>
+              <p class="mcw-note" id="mcwModeHint"></p>
+            </div>
+
+            <!-- 3 Mod -->
+            <div class="card mcw-panel" data-step="3">
+              <h4><span class="n">3</span>启用本次要带的模组</h4>
+              <div id="mcwModPick"><p class="mcw-empty">还没有添加模组，可到下方「模组管理」添加。</p></div>
+              <p class="mcw-note" id="mcwModSummary"></p>
+            </div>
+
+            <!-- 4 确认 -->
+            <div class="card mcw-panel" data-step="4">
+              <h4><span class="n">4</span>确认并启动</h4>
+              <div id="mcwSummary"></div>
+              <pre class="mcw-cmd" id="mcwCmdBox" hidden></pre>
+              <div class="row" style="margin-top:var(--sp-4);">
+                <button class="btn primary" id="mcwLaunchBtn" type="button">开始启动</button>
+                <button class="btn" id="mcwCopyBtn" type="button" hidden>复制参数</button>
+                <button class="btn" id="mcwExportBtn" type="button" hidden>下载实例配置</button>
+              </div>
+              <p class="mcw-note" id="mcwLaunchMsg" style="margin-top:var(--sp-3);"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 启动器管理 -->
+      <section class="section" id="mcwLaunchers">
+        <div class="container">
+          <div class="section-head" style="margin-bottom:var(--sp-3);">
+            <h3 id="sec-3">Mod 启动器管理</h3>
+            <button class="btn primary" id="mcwAddLauncher" type="button">添加启动器</button>
+          </div>
+          <p class="muted" style="margin-top:0;">内置常见启动器；也可以添加你自己的启动器（名称、路径、内存、JVM 参数均可配置），配置保存在当前浏览器。</p>
+
+          <form class="card" id="mcwLauncherForm" hidden autocomplete="off">
+            <h4 id="mcwLauncherFormTitle">添加启动器</h4>
+            <div class="mcw-two">
+              <div class="mcw-field"><label for="mcwLName">名称</label><input id="mcwLName" required placeholder="如 我的 Prism 实例启动器" /></div>
+              <div class="mcw-field"><label for="mcwLType">类型</label>
+                <select id="mcwLType">
+                  <option value="custom">自定义</option>
+                  <option value="prism">Prism Launcher</option>
+                  <option value="hmcl">HMCL</option>
+                  <option value="pcl2">PCL2</option>
+                  <option value="official">官方启动器</option>
+                  <option value="multimc">MultiMC</option>
+                </select>
+              </div>
+            </div>
+            <div class="mcw-field"><label for="mcwLPath">程序路径或下载地址</label><input id="mcwLPath" placeholder="如 D:\PrismLauncher\prismlauncher.exe 或 https://…" /></div>
+            <div class="mcw-two">
+              <div class="mcw-field"><label for="mcwLMem">分配内存（MB）</label><input id="mcwLMem" type="number" min="512" max="32768" step="512" value="4096" /></div>
+              <div class="mcw-field"><label for="mcwLGameDir">游戏目录</label><input id="mcwLGameDir" placeholder="如 ./instances/1.21.4" /></div>
+            </div>
+            <div class="mcw-field"><label for="mcwLJvm">JVM 参数</label><input id="mcwLJvm" placeholder="如 -XX:+UseG1GC -XX:MaxGCPauseMillis=50" /></div>
+            <div class="mcw-field"><label for="mcwLExtra">附加参数（可选）</label><input id="mcwLExtra" placeholder="启动器自定义参数，如 --demo" /></div>
+            <div class="row">
+              <button class="btn primary" id="mcwLSave" type="submit">保存</button>
+              <button class="btn" id="mcwLCancel" type="button">取消</button>
+            </div>
+          </form>
+
+          <div class="grid" id="mcwLauncherGrid"></div>
+        </div>
+      </section>
+
+      <!-- 模组管理 -->
+      <section class="section" id="mcwMods">
+        <div class="container">
+          <div class="section-head" style="margin-bottom:var(--sp-3);">
+            <h3 id="sec-4">模组管理</h3>
+            <div class="row">
+              <button class="btn" id="mcwExportMods" type="button">导出模组清单</button>
+              <button class="btn primary" id="mcwAddMod" type="button">添加模组</button>
+            </div>
+          </div>
+          <p class="muted" style="margin-top:0;">记录你手头的模组（名称、版本、加载器、适用版本、文件名或下载地址），可以随时启用、禁用、编辑或删除。启用状态会带进启动向导。</p>
+
+          <div class="card" style="margin-bottom:var(--sp-3);">
+            <div class="mcw-two" style="grid-template-columns:1.4fr .8fr .8fr;align-items:end;gap:var(--sp-3);">
+              <div class="mcw-field" style="margin:0;"><label for="mcwModSearch">搜索</label><input id="mcwModSearch" type="search" placeholder="名称 / 文件名 / 备注" /></div>
+              <div class="mcw-field" style="margin:0;"><label for="mcwModLoader">加载器</label>
+                <select id="mcwModLoader">
+                  <option value="">全部</option>
+                  <option value="Fabric">Fabric</option>
+                  <option value="Forge">Forge</option>
+                  <option value="NeoForge">NeoForge</option>
+                  <option value="Quilt">Quilt</option>
+                  <option value="基岩版">基岩版</option>
+                </select>
+              </div>
+              <div class="mcw-field" style="margin:0;"><label for="mcwModState">状态</label>
+                <select id="mcwModState">
+                  <option value="">全部</option>
+                  <option value="on">已启用</option>
+                  <option value="off">已禁用</option>
+                </select>
+              </div>
+            </div>
+            <p class="mcw-note" id="mcwModCount" style="margin:var(--sp-3) 0 0;"></p>
+          </div>
+
+          <form class="card" id="mcwModForm" hidden autocomplete="off">
+            <h4 id="mcwModFormTitle">添加模组</h4>
+            <div class="mcw-two">
+              <div class="mcw-field"><label for="mcwMName">名称</label><input id="mcwMName" required placeholder="如 Sodium" /></div>
+              <div class="mcw-field"><label for="mcwMVersion">版本</label><input id="mcwMVersion" placeholder="如 0.6.9" /></div>
+            </div>
+            <div class="mcw-two">
+              <div class="mcw-field"><label for="mcwMLoader">加载器</label>
+                <select id="mcwMLoader">
+                  <option value="Fabric">Fabric</option>
+                  <option value="Forge">Forge</option>
+                  <option value="NeoForge">NeoForge</option>
+                  <option value="Quilt">Quilt</option>
+                  <option value="基岩版">基岩版</option>
+                </select>
+              </div>
+              <div class="mcw-field"><label for="mcwMMcver">适用 MC 版本</label><input id="mcwMMcver" placeholder="如 1.21.x 或 1.20.1" /></div>
+            </div>
+            <div class="mcw-field"><label for="mcwMFile">文件名或下载地址</label><input id="mcwMFile" placeholder="如 sodium-fabric-0.6.9.jar 或 https://modrinth.com/mod/sodium" /></div>
+            <div class="mcw-field"><label for="mcwMNote">备注（可选）</label><input id="mcwMNote" placeholder="如 需要 Fabric API" /></div>
+            <div class="row">
+              <button class="btn primary" id="mcwMSave" type="submit">保存</button>
+              <button class="btn" id="mcwMCancel" type="button">取消</button>
+            </div>
+          </form>
+
+          <div class="grid" id="mcwModGrid"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h3 id="sec-5">启动记录</h3>
+          <div class="card" id="mcwRecent"><p class="mcw-note">还没有启动记录。</p></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="card">
+            <h4>使用须知</h4>
+            <ul class="mcw-note" style="margin:0;padding-left:1.1em;">
+              <li>网页版由开源项目 Eaglercraft 提供，属于社区实现；请支持正版，本地启动请使用你已购买的游戏。</li>
+              <li>本站不托管游戏本体、模组文件或账号数据，所有配置只保存在你当前浏览器的本地存储里。</li>
+              <li>模组只做清单管理（记录与启用状态），不会自动下载；下载请前往 Modrinth / CurseForge 等官方来源。</li>
+              <li>本地启动器需要自行安装并配置 Java 运行环境；不同启动器的实例路径不同，请按提示填写。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <span>© 2025 鸟国网站 niaoguo.com</span>
+        <span class="muted" style="font-size:var(--fs-xs);">版本元数据来自 Mojang 官方清单</span>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        window.Niao = window.Niao || {};
+        window.Niao.config = window.Niao.config || {};
+        window.Niao.config.static = true;
+      })();
+    </script>
+    <script src="script.js"></script>
+    <script src="minecraft-web.js"></script>
+    <script src="nav-glider.js"></script>
+  </body>
+</html>

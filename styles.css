@@ -1368,3 +1368,24 @@ body > .container > p { color: var(--text); }
   .wg-card__host { max-width: 100%; }
   .wg-card__actions { margin-left: 0; }
 }
+
+/* ============================================================
+   站内推广横幅（游戏专区 / 我的世界页共用）
+   ============================================================ */
+.promo-banner {
+  display: flex; gap: var(--sp-3); align-items: center; justify-content: space-between; flex-wrap: wrap;
+  padding: var(--sp-4);
+  border: 1px solid color-mix(in oklab, var(--primary) 32%, var(--border));
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(420px 180px at 0% -30%, color-mix(in oklab, var(--primary) 16%, transparent), transparent 70%),
+    color-mix(in oklab, var(--primary) 7%, var(--card));
+}
+.promo-banner__body { min-width: 0; }
+.promo-banner__body strong { display: block; font-size: var(--fs-md); color: var(--text-strong); margin-bottom: 2px; }
+.promo-banner__body p { margin: 0; font-size: var(--fs-sm); color: var(--muted); line-height: 1.7; }
+.promo-banner__actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+@media (max-width: 620px) {
+  .promo-banner { align-items: flex-start; }
+  .promo-banner__actions { width: 100%; }
+}

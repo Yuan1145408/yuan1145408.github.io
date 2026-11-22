@@ -22,6 +22,10 @@
         touch-action: manipulation;
       }
       .arcade-tabs { display: inline-flex; padding: 4px; gap: 4px; border: 1px solid var(--border); border-radius: var(--r-full); background: var(--card-2); }
+      /* 20 款游戏：标签允许换行，避免横向溢出 */
+      #arcadeTabs { flex-wrap: wrap; border-radius: var(--r-lg); max-width: 100%; }
+      @media (max-width: 900px) { #arcadeTabs { border-radius: var(--r-md); } }
+      .arcade-meta { justify-content: flex-start; }
       .arcade-tabs button {
         border: 0; background: transparent; color: var(--muted);
         padding: 7px 16px; border-radius: var(--r-full); font: inherit; font-size: var(--fs-sm); cursor: pointer;
@@ -123,15 +127,25 @@
               <div class="arcade-meta">
                 <div class="arcade-tabs" id="arcadeTabs" role="tablist" aria-label="选择游戏">
                   <button type="button" role="tab" data-game="2048" class="is-on" aria-selected="true">2048</button>
-                  <button type="button" role="tab" data-game="snake" aria-selected="false">贪吃蛇</button>
+                  <button type="button" role="tab" data-game="tetris" aria-selected="false">俄罗斯方块</button>
                   <button type="button" role="tab" data-game="mine" aria-selected="false">扫雷</button>
-                  <button type="button" role="tab" data-game="pong" aria-selected="false">乒乓</button>
-                  <button type="button" role="tab" data-game="ttt" aria-selected="false">井字棋</button>
+                  <button type="button" role="tab" data-game="snake" aria-selected="false">贪吃蛇</button>
+                  <button type="button" role="tab" data-game="pacman" aria-selected="false">吃豆人</button>
+                  <button type="button" role="tab" data-game="flappy" aria-selected="false">像素鸟</button>
+                  <button type="button" role="tab" data-game="sudoku" aria-selected="false">数独</button>
+                  <button type="button" role="tab" data-game="chess" aria-selected="false">国际象棋</button>
+                  <button type="button" role="tab" data-game="checkers" aria-selected="false">西洋跳棋</button>
                   <button type="button" role="tab" data-game="c4" aria-selected="false">四子棋</button>
+                  <button type="button" role="tab" data-game="ttt" aria-selected="false">井字棋</button>
                   <button type="button" role="tab" data-game="reversi" aria-selected="false">黑白棋</button>
                   <button type="button" role="tab" data-game="memory" aria-selected="false">记忆翻牌</button>
                   <button type="button" role="tab" data-game="breakout" aria-selected="false">打砖块</button>
+                  <button type="button" role="tab" data-game="pong" aria-selected="false">乒乓</button>
                   <button type="button" role="tab" data-game="fifteen" aria-selected="false">十五拼图</button>
+                  <button type="button" role="tab" data-game="spaceinvaders" aria-selected="false">太空侵略者</button>
+                  <button type="button" role="tab" data-game="dino" aria-selected="false">恐龙跑酷</button>
+                  <button type="button" role="tab" data-game="solitaire" aria-selected="false">接龙</button>
+                  <button type="button" role="tab" data-game="mahjong" aria-selected="false">麻将连连看</button>
                 </div>
                 <div class="arcade-tabs" id="modeWrap" role="group" aria-label="游戏模式" hidden>
                   <button type="button" data-mode="1p" class="is-on">单人模式</button>
@@ -171,6 +185,13 @@
               </p>
             </aside>
           </div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="container">
+          <h3 id="sec-2">更多开源网页游戏</h3>
+          <p class="muted">来自<a href="webgames.html">网页游戏栏目</a>、已确认允许站内嵌入的开源移植作品，点开即在站内播放器中运行。</p>
+          <div class="grid" id="arcadeWebGames"><p class="muted">正在读取入口列表…</p></div>
         </div>
       </section>
     </main>
@@ -451,7 +472,8 @@
       };
 
       var MODES = { '2048': ['1p'], snake: ['1p', '2p'], mine: ['1p'] };
-      var EXT_MODES = { snake2: ['2p'], pong: ['1p', '2p'], ttt: ['1p', '2p'], c4: ['1p', '2p'], reversi: ['1p', '2p'], memory: ['1p'], breakout: ['1p'], fifteen: ['1p'] };
+      var EXT_MODES = { snake2: ['2p'], pong: ['1p', '2p'], ttt: ['1p', '2p'], c4: ['1p', '2p'], reversi: ['1p', '2p'], memory: ['1p'], breakout: ['1p'], fifteen: ['1p'],
+        tetris: ['1p'], pacman: ['1p'], flappy: ['1p'], sudoku: ['1p'], chess: ['1p', '2p'], checkers: ['1p', '2p'], spaceinvaders: ['1p'], dino: ['1p'], solitaire: ['1p'], mahjong: ['1p'] };
       var gameMode = '1p';
       var pendingExt = false;
       var curExt = null, curKeyHandler = null;
@@ -630,7 +652,9 @@
       var qs = new URLSearchParams(location.search);
       var qp = qs.get('g');
       if (qs.get('mode') === '2p') gameMode = '2p';
-      switchGame(['2048', 'snake', 'mine', 'pong', 'ttt', 'c4', 'reversi', 'memory', 'breakout', 'fifteen'].indexOf(qp) >= 0 ? qp : '2048');
+      switchGame(['2048', 'snake', 'mine', 'pong', 'ttt', 'c4', 'reversi', 'memory', 'breakout', 'fifteen',
+        'tetris', 'pacman', 'flappy', 'sudoku', 'chess', 'checkers', 'spaceinvaders', 'dino', 'solitaire', 'mahjong'
+      ].indexOf(qp) >= 0 ? qp : '2048');
     })();
     </script>
     <script src="arcade-games.js"></script>

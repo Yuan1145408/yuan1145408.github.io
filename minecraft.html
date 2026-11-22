@@ -34,6 +34,19 @@
     <main>
       <section class="section">
         <div class="container">
+          <div class="promo-banner">
+            <div class="promo-banner__body">
+              <strong>想直接开玩？试试我的世界网页版</strong>
+              <p>选择全部可用版本、配置 Mod 启动器、管理并启用模组，一条流程完成启动；也可导出实例配置。</p>
+            </div>
+            <div class="promo-banner__actions">
+              <a class="btn primary" href="minecraft-web.html">进入网页版启动中心</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="container">
           <h3 id="sec-1">我的世界（Minecraft）资源</h3>
           <p>本页提供“启动器”“模组/光影/材质包”“MC 资料搜索”三个分区：前两个支持直接下载安装（直装）与筛选，第三个可在线检索 MC百科、Minecraft Wiki 与 Modrinth 的模组、版本、整合包资料。</p>
           <p>提示：部分直链可能随官方发布变动而变化，如遇下载失败请点击“官网”进入官方发布页。</p>
@@ -118,8 +131,8 @@
           </div>
           <div class="grid" id="mcBedrockGrid"><!-- 动态渲染区域 --></div>
           <div class="card" style="margin-top:12px;">
-            <h4>基岩版 Add-ons 全集（自动抓取 MCPEDL）</h4>
-            <p>点击“加载更多”可自动爬取 MCPEDL 的 Add-ons 列表并在此展示（部署到 Netlify 后生效，本地预览可能无法抓取）。也可在下方搜索已加载的条目。</p>
+            <h4>基岩版附加内容（Add-ons）全集（自动抓取 MCPEDL）</h4>
+            <p>点击“加载更多”可自动爬取 MCPEDL 的附加内容列表并在此展示（部署到 Netlify 后生效，本地预览可能无法抓取）。也可在下方搜索已加载的条目。</p>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
               <button class="btn" id="bedrockAllLoadBtn">加载更多</button>
               <input id="bedrockAllFilter" type="text" placeholder="在已加载内容中搜索，如 vein / tree / backpack" style="flex:1;min-width:260px;" />
