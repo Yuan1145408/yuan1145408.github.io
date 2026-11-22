@@ -43,6 +43,8 @@
   var instList = $('mcwPlayInstanceList');
   var cmdBox = $('mcwPlayCmd');
   var logBox = $('mcwPlayLog');
+  var localLink = $('mcwPlayLocal');
+  if (localLink) localLink.href = BASE + '/play';
 
   var online = false;
   var running = false;
@@ -100,7 +102,7 @@
       running = false;
       stopSharing();
       phTitle.textContent = '本地服务未运行';
-      phNote.textContent = '先在本机启动服务，页面会自动重试检测';
+      phNote.textContent = '服务没启动，或浏览器拦下了「本地网络访问」——可点「本机游玩页」直接在本机打开';
       say('本地服务不可用：' + BASE);
     }
   }
@@ -376,8 +378,8 @@
   say('准备就绪，正在检测本地服务…');
   probe().then(function (ok) {
     if (!ok) {
-      phTitle.textContent = '本地服务未运行';
-      phNote.textContent = '在实例目录执行下方命令后，页面会自动检测到它';
+      phTitle.textContent = '未连上本机服务';
+      phNote.textContent = '先运行下方命令；如果服务已经在跑，说明浏览器拦下了本地网络访问，点「本机游玩页」即可绕过';
     }
     // 在线时每 3s 刷新运行状态；离线时每 6s 重新探测
     statusTimer = setInterval(function () {

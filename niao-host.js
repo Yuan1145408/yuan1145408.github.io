@@ -362,6 +362,8 @@ function json(res, status, obj) {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    // 关键：https 页面（如 GitHub Pages）访问 127.0.0.1 会触发 Private Network Access 预检
+    'Access-Control-Allow-Private-Network': 'true',
     'Cache-Control': 'no-store'
   });
   res.end(body);
@@ -386,12 +388,29 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Private-Network': 'true'
     });
     return res.end();
   }
 
   try {
+    if (p === '/' || p === '/play' || p === '/play/') {
+      // 以本机同源方式提供游玩页，绕开 https 站点访问 loopback 的网络权限限制
+      let page = '';
+      try { page = fs.readFileSync(path.join(__dirname, 'mc-play.html'), 'utf8'); } catch (e) { page = ''; }
+      if (!page) return json(res, 500, { ok: false, code: 'E_NO_PAGE', message: 'mc-play.html 不存在，请与 niao-host.js 放在同一目录' });
+      page = page.replace(/var INSTANCE = '[^']*';/, "var INSTANCE = '" + cfg.instance + "';")
+                 .replace(/<title>[^<]*<\/title>/, '<title>实例 ' + cfg.instance + ' · 我的世界</title>');
+      const html = Buffer.from(page, 'utf8');
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Content-Length': html.length,
+        'Cache-Control': 'no-store',
+        'Access-Control-Allow-Origin': '*'
+      });
+      return res.end(html);
+    }
     if (p === '/health') {
       return json(res, 200, { ok: true, service: 'niao-mc-host', port: cfg.port, instancesRoot: cfg.root, defaultInstance: cfg.instance, version: '1.0.0' });
     }

@@ -99,7 +99,10 @@
 
 <script>
 (function () {
-  var BASE = 'http://127.0.0.1:8791';
+  // 由 niao-host.js 以 /play 直接提供时同源；其它情况（github.io / 本地文件）用默认端口
+  var BASE = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)
+    ? location.origin
+    : 'http://127.0.0.1:8791';
   var INSTANCE = '26';
 
   var $ = function (id) { return document.getElementById(id); };
