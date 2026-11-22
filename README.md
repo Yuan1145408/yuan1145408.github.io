@@ -122,6 +122,16 @@ python build_search_index.py     # 内容更新后重建站内索引
 - 网页游戏整合：`webgames.json` 中实测允许嵌入的条目（`embeddable: true`）已同步到
   游戏专区「网页游戏 · 站内畅玩」区块，经 `webgames.html?play=<id>` 的站内播放器运行
 
+## 我的世界实例管理（mc-instances.html）
+| 能力 | 说明 |
+|---|---|
+| 存储 | 实例（世界/模组/配置，可选依赖）以 Git 提交形式存放在你的 GitHub 仓库 `<root>/<id>/` 下 |
+| 增量上传 | 每文件算 git blob SHA 与仓库现有路径比对，未改动零请求跳过；大文件按 16MB 切块存 `parts/` |
+| 版本识别 | `mmc-pack.json` → `versions/*.json`（Forge/Fabric 坐标）→ `logs/latest.log` → 手动填写 |
+| 同步 | 三方比较（本地 / 上次同步基线 / 云端），冲突逐文件决策，`saves/` 世界默认保留本地 |
+| 缓存 | Cache Storage 按内容哈希缓存，分块级续传，写盘后按 sha256 校验 |
+| 启动 | 写入 `niao-launch.cmd` + `launch-plan.json`，双击调用本地启动器；可选注册 `niao-mc://` 协议 |
+
 ## 我的世界网页版（minecraft-web.html）
 | 能力 | 说明 |
 |---|---|

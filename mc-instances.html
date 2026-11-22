@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>我的世界实例管理 - 鸟国网站</title>
+    <meta name="description" content="把完整的我的世界实例（世界、模组、配置）上传到 GitHub，游玩时由浏览器启动器同步最新版本到本地并生成启动脚本。" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <style>
+      .mi-hero {
+        border: 1px solid var(--border); border-radius: var(--r-xl); padding: var(--sp-6);
+        background:
+          radial-gradient(620px 280px at 6% -20%, color-mix(in oklab, var(--primary) 15%, transparent), transparent 70%),
+          var(--card);
+      }
+      .mi-hero h2 { margin: 0 0 var(--sp-3); font-size: var(--fs-2xl); line-height: var(--lh-tight); }
+      .mi-hero p { color: var(--muted); margin: 0 0 var(--sp-4); max-width: 70ch; }
+      .mi-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; align-items: center; }
+      .mi-steps { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin: var(--sp-4) 0 0; }
+      .mi-steps .chip { background: var(--card-2); }
+      .mi-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: var(--sp-3); min-width: 0; }
+      .mi-field > label { font-size: var(--fs-sm); color: var(--muted); }
+      .mi-field input, .mi-field select, .mi-field textarea {
+        width: 100%; box-sizing: border-box; padding: 7px 9px;
+        border: 1px solid var(--border); border-radius: var(--r-sm);
+        background: var(--card-2); color: var(--text); font: inherit; font-size: var(--fs-sm);
+      }
+      .mi-field input:focus, .mi-field select:focus, .mi-field textarea:focus {
+        outline: none; border-color: color-mix(in oklab, var(--primary) 55%, var(--border)); box-shadow: var(--ring);
+      }
+      .mi-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+      .mi-grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3); }
+      @media (max-width: 760px) { .mi-grid2, .mi-grid3 { grid-template-columns: 1fr; } }
+      .mi-note { font-size: var(--fs-xs); color: var(--muted); line-height: 1.8; }
+      .mi-warn { color: var(--warn, #ffc457); }
+      .mi-ok { color: var(--ok, #3ddc97); }
+      .mi-err { color: var(--err, #ff6b78); }
+      .mi-log {
+        margin: var(--sp-3) 0 0; padding: var(--sp-3); max-height: 220px; overflow: auto;
+        background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md);
+        font-family: var(--font-mono); font-size: 12px; line-height: 1.65; white-space: pre-wrap; word-break: break-all;
+      }
+      .mi-bar { height: 8px; border-radius: 999px; background: var(--card-2); border: 1px solid var(--border); overflow: hidden; margin: var(--sp-3) 0; }
+      .mi-bar > i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary-2, var(--primary)), var(--primary)); transition: width 180ms linear; }
+      .mi-inst { display: flex; gap: var(--sp-3); justify-content: space-between; flex-wrap: wrap; align-items: flex-start; }
+      .mi-inst__main { flex: 1 1 320px; min-width: 0; }
+      .mi-kv { display: flex; gap: 8px; font-size: var(--fs-sm); margin: 0 0 4px; }
+      .mi-kv b { color: var(--muted); font-weight: 500; min-width: 68px; flex: none; }
+      .mi-kv span { min-width: 0; word-break: break-all; }
+      .mi-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+      .mi-table th, .mi-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+      .mi-table th { color: var(--muted); font-weight: 500; white-space: nowrap; }
+      .mi-table select { min-width: 104px; padding: 3px 6px; border-radius: var(--r-xs); border: 1px solid var(--border); background: var(--card-2); color: var(--text); font: inherit; font-size: 12px; }
+      .mi-scroll { max-height: 320px; overflow: auto; border: 1px solid var(--border); border-radius: var(--r-md); }
+      .mi-empty { color: var(--muted); font-size: var(--fs-sm); padding: var(--sp-4); text-align: center; }
+      .mi-badge { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11px; border: 1px solid var(--border); color: var(--muted); }
+      .mi-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--sp-3); }
+      .mi-tabs button {
+        border: 1px solid var(--border); background: var(--card-2); color: var(--muted);
+        padding: 5px 12px; border-radius: var(--r-full); font: inherit; font-size: var(--fs-sm); cursor: pointer;
+      }
+      .mi-tabs button.is-on { color: var(--primary); border-color: color-mix(in oklab, var(--primary) 50%, var(--border)); font-weight: 600; }
+      .mi-spec h4 { margin-bottom: 6px; }
+      .mi-spec ol, .mi-spec ul { margin: 0; padding-left: 1.2em; color: var(--muted); font-size: var(--fs-sm); line-height: 1.9; }
+      .mi-spec b { color: var(--text-strong); }
+      .mi-spec code { font-family: var(--font-mono); font-size: 12px; background: var(--card-2); padding: 1px 5px; border-radius: 4px; }
+      .mi-dialog {
+        position: fixed; inset: 0; background: color-mix(in oklab, #000 55%, transparent);
+        display: grid; place-items: center; padding: var(--sp-4); z-index: 60;
+      }
+      .mi-dialog__panel {
+        width: min(760px, 96vw); max-height: 86vh; overflow: auto; background: var(--card);
+        border: 1px solid var(--border); border-radius: var(--r-lg); padding: var(--sp-5);
+      }
+      .mi-dialog__panel h4 { margin-top: 0; }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="search.html">聚合搜索</a>
+          <a href="download.html">下载中心</a>
+          <a href="settings.html">设置</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html">游戏专区</a>
+          <a href="webgames.html">网页游戏</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+          <a href="android.html">安卓专区</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container">
+          <div class="mi-hero">
+            <p><span class="chip">我的世界 · 实例管理</span></p>
+            <h2 id="sec-1">实例存在 GitHub，浏览器只当启动器</h2>
+            <p>
+              把完整的游戏实例（世界存档、模组、配置文件）打包提交到你的 GitHub 仓库；
+              换台电脑打开这个页面，选中实例目录就能把最新版本同步到本地，并生成启动脚本。
+              游戏本身仍由你本地的启动器（Forge / NeoForge / Fabric 等）拉起，本站不代跑、不托管游戏本体。
+            </p>
+            <div class="mi-row" id="miHeroStats">
+              <span class="chip">增量上传（按内容哈希去重）</span>
+              <span class="chip">分块传输（单文件 ≤ 100MB 限制）</span>
+              <span class="chip">三方差异合并</span>
+              <span class="chip">本地缓存复用</span>
+            </div>
+            <div class="mi-steps">
+              <a class="btn primary" href="#miConnect">1. 连接 GitHub</a>
+              <a class="btn" href="#miUpload">2. 上传实例</a>
+              <a class="btn" href="#miSync">3. 同步并启动</a>
+              <a class="btn" href="#miSpec">实现要求</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 连接 -->
+      <section class="section" id="miConnect">
+        <div class="container">
+          <h3 id="sec-2">连接 GitHub</h3>
+          <div class="card">
+            <p class="mi-note">
+              需要一个<strong>细粒度令牌</strong>（Fine-grained token），只勾选目标仓库的
+              <code>Contents: Read and write</code> 权限即可。令牌默认只存在当前标签页，关闭即失效；
+              勾选“记住”才会写入本地存储（公共电脑上不要勾）。
+            </p>
+            <div class="mi-grid3">
+              <div class="mi-field">
+                <label for="miToken">访问令牌</label>
+                <input id="miToken" type="password" placeholder="github_pat_..." autocomplete="off" spellcheck="false" />
+              </div>
+              <div class="mi-field">
+                <label for="miOwner">仓库所有者</label>
+                <input id="miOwner" placeholder="你的 GitHub 用户名" autocomplete="off" spellcheck="false" />
+              </div>
+              <div class="mi-field">
+                <label for="miRepo">仓库名</label>
+                <input id="miRepo" placeholder="例如 mc-instances" autocomplete="off" spellcheck="false" />
+              </div>
+            </div>
+            <div class="mi-grid3">
+              <div class="mi-field">
+                <label for="miBranch">分支</label>
+                <input id="miBranch" value="main" autocomplete="off" spellcheck="false" />
+              </div>
+              <div class="mi-field">
+                <label for="miRoot">存放目录</label>
+                <input id="miRoot" value=".mc-instances" autocomplete="off" spellcheck="false" />
+              </div>
+              <div class="mi-field" style="justify-content:flex-end;">
+                <label style="display:flex;gap:6px;align-items:center;font-size:var(--fs-sm);">
+                  <input id="miRemember" type="checkbox" style="width:auto;" /> 在本机记住令牌
+                </label>
+              </div>
+            </div>
+            <div class="mi-row">
+              <button class="btn primary" id="miConnectBtn" type="button">验证并连接</button>
+              <button class="btn" id="miForgetBtn" type="button">清除令牌</button>
+              <span class="mi-note" id="miConnState">尚未连接</span>
+            </div>
+            <pre class="mi-log" id="miConnLog" hidden></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- 实例列表 -->
+      <section class="section" id="miInstances">
+        <div class="container">
+          <div class="section-head" style="margin-bottom:var(--sp-3);">
+            <h3 id="sec-3">云端实例</h3>
+            <button class="btn" id="miRefreshBtn" type="button">刷新列表</button>
+          </div>
+          <div class="grid" id="miInstanceGrid">
+            <p class="mi-empty">连接 GitHub 后这里会列出仓库中的实例。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 上传 -->
+      <section class="section" id="miUpload">
+        <div class="container">
+          <h3 id="sec-4">上传实例</h3>
+          <div class="card">
+            <p class="mi-note">
+              选择一个本地实例目录（例如 <code>.minecraft</code> 或 Prism 的 <code>instances/xxx</code>）。
+              默认只同步<strong>最小可复现集</strong>：<code>mods/ config/ saves/ resourcepacks/ shaderpacks/</code> 等；
+              <code>libraries/ assets/ versions/</code> 由启动器按版本重建，不进仓库。
+            </p>
+            <div class="mi-row" style="margin-bottom:var(--sp-3);">
+              <button class="btn primary" id="miPickDirBtn" type="button">选择实例目录</button>
+              <label class="btn" style="cursor:pointer;">
+                用文件选择器（兼容模式）
+                <input id="miDirInput" type="file" webkitdirectory directory multiple hidden />
+              </label>
+              <span class="mi-note" id="miScanState">未选择目录</span>
+            </div>
+
+            <label class="mi-note" style="display:flex;gap:6px;align-items:flex-start;margin-bottom:var(--sp-3);">
+              <input id="miIncludeDeps" type="checkbox" style="width:auto;margin-top:3px;" />
+              <span>同时上传 <code>libraries/ assets/ versions/</code>（完整离线可玩，体积可能超过 1GB，仓库有容量上限）</span>
+            </label>
+
+            <div id="miUploadPreview" hidden>
+              <div class="mi-grid3">
+                <div class="mi-field"><label for="miInstId">实例标识（仓库内目录名）</label><input id="miInstId" placeholder="survival-1.20.1" /></div>
+                <div class="mi-field"><label for="miInstName">显示名称</label><input id="miInstName" placeholder="生存服 1.20.1" /></div>
+                <div class="mi-field"><label for="miInstDesc">备注（可选）</label><input id="miInstDesc" placeholder="含 12 个模组 / 两个世界" /></div>
+              </div>
+              <div class="mi-grid3">
+                <div class="mi-field"><label for="miMcVersion">MC 版本</label><input id="miMcVersion" placeholder="1.20.1" /></div>
+                <div class="mi-field">
+                  <label for="miLoaderType">Mod 加载器</label>
+                  <select id="miLoaderType">
+                    <option value="">原版 / 无</option>
+                    <option value="forge">Forge</option>
+                    <option value="neoforge">NeoForge</option>
+                    <option value="fabric">Fabric</option>
+                    <option value="quilt">Quilt</option>
+                    <option value="liteloader">LiteLoader</option>
+                  </select>
+                </div>
+                <div class="mi-field"><label for="miLoaderVersion">加载器版本</label><input id="miLoaderVersion" placeholder="47.2.20" /></div>
+              </div>
+              <p class="mi-note" id="miVersionHint"></p>
+
+              <div class="mi-row" style="margin:var(--sp-3) 0;">
+                <button class="btn" id="miDryRunBtn" type="button">预检（不上传）</button>
+                <button class="btn primary" id="miPublishBtn" type="button" disabled>开始上传</button>
+                <button class="btn" id="miCancelBtn" type="button" hidden>取消</button>
+              </div>
+              <div class="mi-bar" id="miUpBar" hidden><i></i></div>
+              <pre class="mi-log" id="miUploadLog" hidden></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 同步与启动 -->
+      <section class="section" id="miSync">
+        <div class="container">
+          <h3 id="sec-5">同步到本地并启动</h3>
+          <div class="card">
+            <p class="mi-note">
+              先在上方实例列表点「同步」，或直接在这里填实例标识。同步时会比较三份状态：
+              <strong>本地现状</strong>、<strong>上次同步基线</strong>、<strong>云端最新</strong>；
+              冲突文件逐个给你选择，世界存档默认保留本地。
+            </p>
+            <div class="mi-grid3">
+              <div class="mi-field"><label for="miSyncId">实例标识</label><input id="miSyncId" placeholder="survival-1.20.1" /></div>
+              <div class="mi-field" style="grid-column:span 2;">
+                <label for="miSyncLauncher">启动器可执行文件（可选，用于生成启动脚本）</label>
+                <input id="miSyncLauncher" placeholder="例如 D:\PrismLauncher\prismlauncher.exe" />
+              </div>
+            </div>
+            <div class="mi-row">
+              <button class="btn primary" id="miSyncPickBtn" type="button">选择本地实例目录并检查差异</button>
+              <span class="mi-note" id="miSyncState">尚未选择目录</span>
+            </div>
+
+            <div id="miSyncResult" hidden>
+              <div id="miSyncSummary" class="mi-note" style="margin-top:var(--sp-3);"></div>
+              <div class="mi-tabs" id="miSyncTabs" style="margin-top:var(--sp-3);">
+                <button type="button" data-tab="conflict" class="is-on">冲突</button>
+                <button type="button" data-tab="download">待下载</button>
+                <button type="button" data-tab="keepLocal">本地修改</button>
+                <button type="button" data-tab="deleteLocal">待删除</button>
+                <button type="button" data-tab="unchanged">无变化</button>
+              </div>
+              <div class="mi-scroll"><table class="mi-table" id="miDiffTable"></table></div>
+              <div class="mi-row" style="margin-top:var(--sp-3);">
+                <button class="btn primary" id="miApplyBtn" type="button">执行同步</button>
+                <button class="btn" id="miCancelSyncBtn" type="button" hidden>取消</button>
+                <label class="mi-note" style="display:flex;gap:6px;align-items:center;">
+                  <input id="miVerify" type="checkbox" checked style="width:auto;" /> 下载后校验内容哈希
+                </label>
+              </div>
+              <div class="mi-bar" id="miDlBar" hidden><i></i></div>
+              <pre class="mi-log" id="miSyncLog" hidden></pre>
+            </div>
+          </div>
+
+          <div class="card" id="miLaunchCard" hidden style="margin-top:var(--sp-3);">
+            <h4>启动</h4>
+            <p class="mi-note" id="miLaunchText"></p>
+            <div class="mi-row">
+              <button class="btn primary" id="miGenScriptBtn" type="button">生成启动脚本</button>
+              <button class="btn" id="miProtocolBtn" type="button">下载协议注册文件</button>
+              <a class="btn" id="miProtocolLaunch" href="#" hidden>通过协议启动</a>
+            </div>
+            <p class="mi-note" style="margin-top:var(--sp-2);">
+              浏览器不能直接执行本地程序：脚本写入实例目录后双击即可启动；
+              若下载并运行协议注册文件（只需一次），页面上的「通过协议启动」就能唤起本地脚本。
+            </p>
+            <pre class="mi-log" id="miLaunchLog" hidden></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- 实现要求 -->
+      <section class="section mi-spec" id="miSpec">
+        <div class="container">
+          <h3 id="sec-6">实现要求</h3>
+          <div class="grid">
+            <div class="card">
+              <h4>1. 实例上传</h4>
+              <ul>
+                <li><b>范围</b>：只提交最小可复现集；<code>libraries/ assets/ versions/ logs/</code> 默认排除，由启动器重建。</li>
+                <li><b>去重</b>：每个文件算 git blob SHA（SHA-1），与仓库现有同名路径比对，一致则零请求跳过。</li>
+                <li><b>分块</b>：单文件 &gt; 16MB 切成 <code>parts/xxx.partNNN</code>，规避 Git Blob API 100MB 上限。</li>
+                <li><b>提交</b>：一次上传用一个 tree + 一个 commit 完成；删除项写 <code>sha:null</code> 才会真删。</li>
+                <li><b>并发与重试</b>：顺序上传避免限流；失败按指数退避重试 2 次。</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>2. 版本识别</h4>
+              <ol>
+                <li><code>mmc-pack.json</code>（Prism / MultiMC 的 components）</li>
+                <li><code>versions/*/*.json</code>：<code>id</code> / <code>inheritsFrom</code> / <code>libraries</code> 里的 <code>net.minecraftforge:forge:1.20.1-47.2.20</code> 等坐标</li>
+                <li><code>logs/latest.log</code> 首行：<code>Loading Minecraft X with Forge Y</code></li>
+                <li>以上都失败 → 要求手填，并按「MC 版本 + 加载器 + 模组指纹」生成 <code>fingerprint</code></li>
+              </ol>
+              <p class="mi-note">指纹用于判断“版本没变但内容变了”，并在同步时快速确认是否需要更新。</p>
+            </div>
+            <div class="card">
+              <h4>3. 下载缓存</h4>
+              <ul>
+                <li>以内容哈希为键存 Cache Storage，同一文件跨实例、跨次同步复用。</li>
+                <li>分块文件按块缓存：中断重试只补缺块，已下载块不重传。</li>
+                <li>命中缓存直接写盘，跳过网络；缓存命中率与占用可在页面查看/清理。</li>
+                <li>写盘后按清单 <code>sha256</code> 校验，不一致则淘汰该缓存条目并重试一次。</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>4. 更新冲突</h4>
+              <ul>
+                <li>三方比较：本地 / 基线 / 云端，分为「仅云端改」「仅本地改」「两边都改」「单边新增/删除」。</li>
+                <li>两边都改 = 冲突，逐文件选择「用云端 / 保留本地 / 两者都留（改名 .local-时间戳）」。</li>
+                <li><b>世界存档默认保护</b>：<code>saves/</code> 下冲突默认保留本地，避免覆盖进度。</li>
+                <li>提交时使用 <code>force:false</code>；分支被他人推进则重新比对后重试，最多 2 轮。</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>5. 错误处理</h4>
+              <ul>
+                <li>错误分类：<code>E_AUTH / E_SCOPE / E_RATELIMIT / E_NET / E_TIMEOUT / E_TOO_LARGE / E_CONFLICT / E_FS_DENIED / E_FS_LOCKED / E_HASH / E_SCHEMA</code>。</li>
+                <li>每类错误给出中文原因与下一步动作，日志保留原始响应供排查。</li>
+                <li>限流读取 <code>X-RateLimit-Reset</code> 自动等待；网络错误指数退避；非幂等操作不自动重试。</li>
+                <li>文件被占用（游戏运行中）单独识别，提示先退出游戏，不强行覆盖。</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>6. 启动方式（边界）</h4>
+              <ul>
+                <li>浏览器只能写文件、生成脚本，<b>不能直接运行 exe</b>。</li>
+                <li>同步完成后写入 <code>niao-launch.cmd</code> 与 <code>launch-plan.json</code>，双击即用启动器打开实例。</li>
+                <li>可选注册 <code>niao-mc://</code> 协议，让页面按钮唤起本地脚本（需运行一次 .reg）。</li>
+                <li>启动参数（内存 / JVM）随实例清单下发，游戏仍按本地启动器规则运行。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <span>© 2025 鸟国网站 niaoguo.com</span>
+        <span class="mi-note">实例存储在你的 GitHub 仓库；本站不保存令牌与存档</span>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        window.Niao = window.Niao || {};
+        window.Niao.config = window.Niao.config || {};
+        window.Niao.config.static = true;
+      })();
+    </script>
+    <script src="script.js"></script>
+    <script src="mc-gh.js"></script>
+    <script src="mc-sync.js"></script>
+    <script src="mc-instances.js"></script>
+    <script src="nav-glider.js"></script>
+  </body>
+</html>
