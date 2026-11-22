@@ -44,6 +44,7 @@
   var cmdBox = $('mcwPlayCmd');
   var logBox = $('mcwPlayLog');
   var localLink = $('mcwPlayLocal');
+  var guestBox = $('mcwPlayGuest');
   if (localLink) localLink.href = BASE + '/play';
 
   var online = false;
@@ -98,6 +99,7 @@
         : '两种可能：① niao-host.js 没启动；② 浏览器拦下了本地网络访问（可在地址栏提示里允许，或点「本机游玩页」）';
     }
     syncButtons();
+    if (guestBox) guestBox.hidden = ok;
     if (!ok) {
       running = false;
       stopSharing();

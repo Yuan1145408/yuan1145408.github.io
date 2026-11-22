@@ -119,6 +119,17 @@
       .mcw-play { margin-top: var(--sp-4); }
       .mcw-play__head { display: flex; gap: var(--sp-3); align-items: flex-start; justify-content: space-between; flex-wrap: wrap; margin-bottom: var(--sp-4); }
       .mcw-play__head p { margin-bottom: var(--sp-2); }
+      .mcw-play__guest {
+        display: flex; gap: var(--sp-3); align-items: center; justify-content: space-between; flex-wrap: wrap;
+        padding: var(--sp-3) var(--sp-4); margin-bottom: var(--sp-4);
+        border: 1px solid color-mix(in oklab, var(--warn) 34%, var(--border));
+        border-radius: var(--r-md);
+        background: var(--warn-soft);
+      }
+      .mcw-play__guest strong { display: block; color: var(--text-strong); font-size: var(--fs-sm); margin-bottom: 2px; }
+      .mcw-play__guest p { margin: 0; font-size: var(--fs-xs); color: var(--muted); line-height: 1.7; max-width: 62ch; }
+      .mcw-play__guest code { font-family: var(--font-mono); }
+      .mcw-play__guest-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
       .mcw-play__grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr); gap: var(--sp-4); align-items: start; }
       .mcw-play__stage {
         position: relative; width: 100%; aspect-ratio: 16 / 9;
@@ -225,6 +236,17 @@
               </div>
               <div class="mcw-actions">
                 <a class="btn" href="mc-play.html">独立游玩页</a>
+              </div>
+            </div>
+
+            <div class="mcw-play__guest" id="mcwPlayGuest" hidden>
+              <div>
+                <strong>你还没有在本机运行 <code>niao-host.js</code></strong>
+                <p>这一块是给「已经在自己电脑上装好实例」的人用的本机启动器。没有本地实例也能玩：用浏览器网页版（1.5.2 / 1.8.8）直接开一局，或走启动向导导出配置给自己常用的启动器。</p>
+              </div>
+              <div class="mcw-play__guest-actions">
+                <a class="btn primary" href="#mcwWizard">用浏览器网页版玩</a>
+                <a class="btn" href="#mcwWizard">导出启动器配置</a>
               </div>
             </div>
 
