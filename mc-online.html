@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>网页版我的世界 · 打开就玩 - 鸟国网站</title>
+    <meta name="description" content="Eaglercraft 网页版我的世界：选版本直接进游戏，不用下载客户端、不用装 Java、不用本地服务。支持 1.8.8 / 1.5.2 / 26.2 / 26.3，可单人创造生存，也可连服务器。" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1 class="site-title"><a href="index.html">鸟国网站</a></h1>
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="search.html">聚合搜索</a>
+          <a href="download.html">下载中心</a>
+          <a href="settings.html">设置</a>
+          <a href="features.html">功能分类</a>
+          <a href="downloads.html">软件下载</a>
+          <a href="tutorials.html">教程专区</a>
+          <a href="vm.html">虚拟机专区</a>
+          <a href="os.html">系统镜像专区</a>
+          <a href="games.html">游戏专区</a>
+          <a href="webgames.html">网页游戏</a>
+          <a href="github-games.html">开源游戏库</a>
+          <a href="official.html">官方跳转</a>
+          <a href="tasks.html" id="navTasks">任务</a>
+          <a href="user.html" id="navUser">用户</a>
+          <a href="#" id="navLogin">登录</a>
+          <a href="android.html">安卓专区</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="mco-hero">
+        <div class="container">
+          <p class="mco-eyebrow">Eaglercraft · 浏览器内运行</p>
+          <h2>网页版我的世界，打开就玩</h2>
+          <p class="mco-lead">
+            这是真正能玩的 Minecraft 1.8.8 客户端（Eaglercraft，TeaVM 把 Java 编译成 JS/WebAssembly），
+            <strong>不下载、不装 Java、不连本机服务</strong>，选好版本就进游戏。可以单人创造/生存，也可以连公开服务器。
+          </p>
+          <div class="mco-note">
+            <strong>关于来源</strong>
+            <p>
+              游戏客户端由公开部署的
+              <a href="https://eaglercraft.playclassicgame.com/en/games/1.8.8.html" target="_blank" rel="noopener noreferrer">Eaglercraft 站点</a>
+              提供，本站只做嵌入播放，不托管游戏资源、不分发客户端文件。如果第三方地址失效，页面会给出新窗口入口与备用方案。
+              想玩原版完整客户端（含模组、光影），走
+              <a href="minecraft-web.html">我的世界网页版启动中心</a>。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section mco-main">
+        <div class="container">
+          <div class="mco-versions" id="mcoVersions" role="tablist" aria-label="选择游戏版本"></div>
+
+          <div class="mco-stage" id="mcoStage">
+            <iframe
+              id="mcoFrame"
+              title="网页版我的世界"
+              allow="fullscreen; gamepad; autoplay; clipboard-write; encrypted-media"
+              allowfullscreen
+            ></iframe>
+
+            <div class="mco-veil" id="mcoVeil">
+              <div class="mco-veil__box">
+                <div class="mco-veil__spin" aria-hidden="true"></div>
+                <strong id="mcoVeilTitle">正在载入 1.8.8 客户端…</strong>
+                <p id="mcoVeilNote">首次打开要下载约 4 MB 的客户端代码，慢的时候 20–60 秒。<br />载入完成后这里会变成一个「开始游戏」按钮。</p>
+                <div class="mco-veil__acts">
+                  <button class="btn primary" type="button" id="mcoStart" hidden>点我开始</button>
+                  <button class="btn" type="button" id="mcoVeilNew" hidden>新窗口打开</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mco-toolbar">
+            <button class="btn primary" type="button" id="mcoPlay">开始游戏</button>
+            <button class="btn" type="button" id="mcoFull">全屏</button>
+            <button class="btn" type="button" id="mcoReload">重新载入</button>
+            <a class="btn" id="mcoOpen" href="https://eaglercraft.playclassicgame.com/en/games/1.8.8.html" target="_blank" rel="noopener noreferrer">新窗口打开</a>
+            <span class="mco-state" id="mcoState">未开始</span>
+          </div>
+
+          <div class="mco-tips">
+            <div class="card">
+              <h3>操作方式</h3>
+              <ul>
+                <li><b>W A S D</b> 移动，<b>空格</b> 跳，<b>Shift</b> 潜行，<b>Ctrl</b> 疾跑</li>
+                <li><b>鼠标左键</b> 挖掘/攻击，<b>右键</b> 放置/使用</li>
+                <li><b>E</b> 背包，<b>1–9</b> 快捷栏，<b>T</b> 聊天，<b>Esc</b> 暂停菜单</li>
+                <li>第一次进去要先点一下画面，浏览器才把键盘交给游戏</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>存档在哪</h3>
+              <ul>
+                <li>单人世界存在浏览器的 IndexedDB 里，<b>换浏览器或清缓存会丢</b></li>
+                <li>想长期保存：在游戏里用「Edit World → Export」，导出成 .epk 备份</li>
+                <li>本站不做账号，游戏数据不经过我们的服务器</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>版本怎么选</h3>
+              <ul>
+                <li><b>1.8.8</b>：公开服务器几乎都是这个版本，PvP、小游戏、生存服最多，优先选它</li>
+                <li><b>1.5.2</b>：最轻，老机器和手机更稳</li>
+                <li><b>26.3 / 26.2</b>：新版本，单人体验更完整，能连的服务器少</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>打不开怎么办</h3>
+              <ul>
+                <li>黑屏 30 秒以上：点「重新载入」，或换一个版本再试</li>
+                <li>仍不行：用「新窗口打开」直接到来源站点玩</li>
+                <li>公司/学校网络可能拦 WebAssembly，换网络或手机热点</li>
+                <li>手机能玩，但触屏手感一般，建议横屏</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <span>© 2025 鸟国网站 niaoguo.com</span>
+        <span class="muted" style="font-size:var(--fs-xs);">Eaglercraft 客户端由第三方公开部署提供，本站仅作聚合展示</span>
+      </div>
+    </footer>
+
+    <script src="mc-online.js"></script>
+  </body>
+</html>

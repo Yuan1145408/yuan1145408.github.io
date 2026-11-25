@@ -20,9 +20,12 @@
   };
 
   // 网页版（Eaglercraft）公开支持的版本 → 客户端地址
+  // 站内网页版播放器：不跳第三方，直接打开 mc-online.html 对应版本
   var WEB_CLIENTS = {
-    '1.5.2': 'https://eaglercraft.com/mc/1.5.2/',
-    '1.8.8': 'https://eaglercraft.com/mc/1.8.8/'
+    '1.5.2': 'mc-online.html?v=1.5.2',
+    '1.8.8': 'mc-online.html?v=1.8.8',
+    '26.2': 'mc-online.html?v=26.2',
+    '26.3': 'mc-online.html?v=26.3'
   };
 
   var TYPE_LABEL = {
@@ -291,7 +294,7 @@
       if (state.mode === 'web') {
         var v = state.version ? state.version.id : '';
         hint.innerHTML = WEB_CLIENTS[v]
-          ? '当前版本 <b>' + esc(v) + '</b> 有对应的网页版客户端，点击「开始启动」会在新标签页打开。'
+          ? '当前版本 <b>' + esc(v) + '</b> 有站内网页版客户端，点击「开始启动」会在新标签页打开，打开就能玩。'
           : '当前版本 <b>' + esc(v || '—') + '</b> 没有内置网页客户端：点击「开始启动」后会在后台按 ' +
             'HMCL 源 → PCL 源 → MC百科 → 官方源 的顺序自动获取客户端与依赖，校验通过后写入实例目录并启动，' +
             '不会跳转页面，也不会弹出下载窗口。';
@@ -493,7 +496,7 @@
         return;
       }
       pushRecent({ time: stamp, version: v, mode: 'web', modCount: on.length });
-      if (msg) msg.innerHTML = '正在新标签页打开 <b>' + esc(v) + '</b> 的网页版客户端（Eaglercraft）。' +
+      if (msg) msg.innerHTML = '正在新标签页打开 <b>' + esc(v) + '</b> 的站内网页版客户端（Eaglercraft）。' +
         (on.length ? '注意：网页版不支持加载本地模组，已启用清单仅作记录。' : '');
       window.open(url, '_blank', 'noopener');
       return;
@@ -518,7 +521,7 @@
   }
 
   /* ---------------- 后台资源准备与静默启动 ----------------
-     适用：所选版本没有内置网页客户端（非 1.5.2 / 1.8.8）。
+     适用：所选版本没有内置网页客户端（非 1.8.8 / 1.5.2 / 26.2 / 26.3）。
      行为：按 HMCL → PCL → MC百科 → 官方源 逐级获取客户端/依赖/资源，
            校验通过后写入实例目录并尝试启动；任一步失败即写日志并阻止启动。
            全流程不发 window.open、不触发 <a download>，无页面跳转与下载窗口。
@@ -886,7 +889,7 @@
       '<span class="chip">可用版本 ' + state.versions.length + ' 个</span>' +
       '<span class="chip">启动器 ' + launchers.length + ' 个</span>' +
       '<span class="chip">模组 ' + mods.length + ' 个（启用 ' + onMods + '）</span>' +
-      '<span class="chip">网页版支持 1.5.2 / 1.8.8</span>';
+      '<span class="chip">网页版支持 1.8.8 / 1.5.2 / 26.2 / 26.3</span>';
   }
 
   /* ---------------- 事件绑定 ---------------- */

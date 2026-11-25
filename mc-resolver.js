@@ -1200,8 +1200,10 @@
 
   // Eaglercraft 官方公开客户端：浏览器内 WASM/JS 运行，无需本地程序
   var WEB_CLIENTS = {
-    '1.5.2': 'https://eaglercraft.com/mc/1.5.2/',
-    '1.8.8': 'https://eaglercraft.com/mc/1.8.8/'
+    '1.5.2': 'mc-online.html?v=1.5.2',
+    '1.8.8': 'mc-online.html?v=1.8.8',
+    '26.2': 'mc-online.html?v=26.2',
+    '26.3': 'mc-online.html?v=26.3'
   };
 
   // 本地常驻 host 服务（由本地启动器 install 后常驻），浏览器只发 HTTP，不执行程序
@@ -1271,7 +1273,7 @@
     opts = opts || {};
     var log = opts.onLog || function () {};
     var url = WEB_CLIENTS[version];
-    if (!url) return { ok: false, code: 'E_NO_WEB_CLIENT', message: version + ' 没有可用的浏览器客户端（网页版仅支持 1.5.2 / 1.8.8）' };
+    if (!url) return { ok: false, code: 'E_NO_WEB_CLIENT', message: version + ' 没有可用的浏览器客户端（网页版支持 1.8.8 / 1.5.2 / 26.2 / 26.3）' };
     log('在浏览器内打开 Eaglercraft 网页客户端：' + version);
     if (typeof global.open === 'function') {
       var w = global.open(url, '_blank', 'noopener');

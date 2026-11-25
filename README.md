@@ -159,20 +159,18 @@ python build_search_index.py     # 内容更新后重建站内索引
 | 缓存 | Cache Storage 按内容哈希缓存，分块级续传，写盘后按 sha256 校验 |
 | 启动 | 常驻本地服务 `niao-host.js` 在线时，页面检测到后点一次即**在浏览器内直接开玩**；否则回退到 `niao-launch.cmd` 双击启动，或注册 `niao-mc://` 协议兜底 |
 
-## 网页版方块沙盒（mc-sandbox.html + mc-sandbox.js）
-纯前端的体素沙盒，打开网页就能挖方块、搭建筑，**不需要本地服务、不依赖第三方客户端**（对比 `#mcwPlay` 的本机启动器）。
+## 网页版我的世界在线玩（mc-online.html + mc-online.js）
+站内嵌入播放器，直接用现成的 Eaglercraft 客户端在浏览器里跑真正的 Minecraft，不做自研简化版。
 
 | 能力 | 说明 |
 |---|---|
-| 地形 | 种子 + 三层值噪声，草地/沙滩/水面/树木，64×64×32，水面高度 10 |
-| 渲染 | 手写区块合并：隐藏内部面、顶点色 + 每面固定明暗，基础材质避免过曝；水体单独半透明渲染 |
-| 物理 | AABB 逐轴碰撞、重力、跳跃、边界钳制，出生点自动找中心附近的草地 |
-| 交互 | 指针锁定视角，WASD / 空格 / Shift，左键挖、右键放，1–6 与滚轮换方块，DDA 射线拾取（6 格） |
-| 存档 | 只写被改动的方块到 `localStorage['niao.mc.sandbox.v1']`，支持换种子与清空 |
-| 依赖 | `vendor/three.min.js`（r128，MIT）本地化，不走 CDN |
-| 调试 | `window.NiaoSandbox` 暴露 player / getBlock / setBlock / raycast / reseed |
+| 版本 | 1.8.8（服务器最多，默认）/ 1.5.2（最轻）/ 26.3（最新）/ 26.2（稳定），URL 可分享 `?v=1.8.8` |
+| 运行 | iframe 加载公开部署的 Eaglercraft 客户端（TeaVM 把 Java 编译成 JS/WebAssembly），站内即可进游戏 |
+| 交互 | 载入遮罩 + 90s 超时兜底；「点我开始」把键盘焦点交给游戏；全屏、重新载入、新窗口打开 |
+| 存档 | 单人世界存在浏览器 IndexedDB，页面明确告知「清缓存会丢、可用 Edit World → Export 导出 .epk」 |
+| 边界 | **不托管游戏资源、不分发客户端文件**，客户端由第三方公开部署提供；失效时提示新窗口与备用方案 |
 
-入口：`minecraft-web.html` 首屏「网页版沙盒（免安装）」、`minecraft.html` 顶部横幅、`index.html` 快速入口。
+入口：`minecraft-web.html` 首屏「网页版在线玩（免安装）」、访客分流提示、启动向导的「浏览器网页版」方式（`WEB_CLIENTS` 指向站内 `mc-online.html?v=`）、`minecraft.html` 横幅、`index.html` 快速入口。
 
 ## 我的世界网页版（minecraft-web.html）
 | 能力 | 说明 |
